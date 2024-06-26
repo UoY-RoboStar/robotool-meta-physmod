@@ -1,0 +1,12 @@
+[submodule "robochart-textual"]
+	path = robochart-textual
+	url = git@github.com:UoY-RoboStar/robochart-textual.git
+[submodule "robochart-metamodel"]
+	path = robochart-metamodel
+	url = git@github.com:UoY-RoboStar/robochart-metamodel.git
+[submodule "robochart-assertions"]
+	path = robochart-assertions
+	url = git@github.com:UoY-RoboStar/robochart-assertions.git
+[submodule "robochart-csp-gen"]
+	path = robochart-csp-gen
+	url = git@github.com:UoY-RoboStar/robochart-csp-gen.git
