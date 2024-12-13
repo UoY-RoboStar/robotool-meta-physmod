@@ -29,6 +29,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
+          ssh-key: ${{ secrets.SUBMODULE_KEY }}
         
       - name: Set up JDK 17
         uses: actions/setup-java@v3
