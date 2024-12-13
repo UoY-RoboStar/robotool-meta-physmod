@@ -28,7 +28,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
         with:
-          ssh-key: ${{ secrets.SUBMODULE_CONTENT_PULL_KEY }}
           submodules: 'recursive'
         
       - name: Set up JDK 17
