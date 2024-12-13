@@ -27,6 +27,9 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.SUBMODULE_CONTENT_PULL_KEY }}
+          submodules: 'recursive'
         
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -43,7 +46,7 @@ jobs:
       #   run: mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=${RELEASE_VERSION} 
   
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
 
       # - name: List P2 unit versions
       #   run: ./robotool-product/target/products/robotool.product/linux/gtk/x86_64/eclipse -application org.eclipse.equinox.p2.director -repository file:`realpath robotool-product/target/repository/` -list -lf "\${id} | \${version}" | grep -E '(circus\.|robostar|sirius|rcp)' | grep -v 'jar' > versions.md
