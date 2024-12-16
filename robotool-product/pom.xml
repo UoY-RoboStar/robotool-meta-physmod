@@ -66,6 +66,7 @@
            Alternative way of applying XSLT above via command line too. -->
       <groupId>org.codehaus.mojo</groupId>
       <artifactId>xml-maven-plugin</artifactId>
+      <version>1.1.0</version>
       <executions>
         <execution>
           <phase>package</phase>
@@ -170,47 +171,47 @@
  </build>
  <repositories>
 		<repository>
-            <id>eclipse-release</id>
-            <url>${eclipse-repo.url}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>eclipse-release-2</id>
-            <url>https://download.eclipse.org/eclipse/updates/4.22</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-        	<id>eclipse-release-3</id>
-        	<url>https://download.eclipse.org/technology/epp/packages/2021-12</url>
-        	<layout>p2</layout>
-        </repository>
+        <id>eclipse-release</id>
+        <url>${eclipse-repo.url}</url>
+        <layout>p2</layout>
+    </repository>
+    <repository>
+        <id>eclipse-release-2</id>
+        <url>https://download.eclipse.org/eclipse/updates/4.22</url>
+        <layout>p2</layout>
+    </repository>
+    <repository>
+      <id>eclipse-release-3</id>
+      <url>https://download.eclipse.org/technology/epp/packages/2021-12</url>
+      <layout>p2</layout>
+    </repository>
 		<repository>
-            <id>xtext</id>
-            <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/${xtextVersion}/</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
+        <id>xtext</id>
+        <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/${xtextVersion}/</url>
+        <layout>p2</layout>
+    </repository>
+    <repository>
 			<id>orbit</id>
 			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository</url>
 			<layout>p2</layout>
 		</repository>        
-        <repository>
-            <id>epsilon</id>
-            <url>https://download.eclipse.org/epsilon/updates/2.4</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>sirius</id>
-            <url>https://archive.eclipse.org/sirius/updates/releases/6.5.1/2020-09</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>java</id>
-            <url> https://download.eclipse.org/justj/jres/17/updates/release/latest</url>
-            <layout>p2</layout>
-        </repository>
-     </repositories>
-  	<pluginRepositories>
+    <repository>
+        <id>epsilon</id>
+        <url>https://download.eclipse.org/epsilon/updates/2.4</url>
+        <layout>p2</layout>
+    </repository>
+    <repository>
+        <id>sirius</id>
+        <url>https://archive.eclipse.org/sirius/updates/releases/6.5.1/2020-09</url>
+        <layout>p2</layout>
+    </repository>
+    <repository>
+        <id>java</id>
+        <url>https://download.eclipse.org/justj/jres/17/updates/release/latest</url>
+        <layout>p2</layout>
+    </repository>
+  </repositories>
+  <pluginRepositories>
 		<pluginRepository>
 			<id>codehaus-snapshots</id>
 			<name>disable dead 'Codehaus Snapshots' repository, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481478</name>

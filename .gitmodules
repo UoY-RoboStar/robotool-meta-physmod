@@ -10,3 +10,6 @@
 [submodule "robochart-csp-gen"]
 	path = robochart-csp-gen
 	url = git@github.com:UoY-RoboStar/robochart-csp-gen.git
+[submodule "robochart-graphical"]
+	path = robochart-graphical
+	url = git@github.com:UoY-RoboStar/robochart-graphical.git

@@ -72,6 +72,7 @@
   <module>robochart-textual</module>
   <module>robochart-assertions</module>
   <module>robochart-csp-gen</module>
+  <module>robochart-graphical</module>
   <module>robotool-feature</module>
   <module>robotool-customization</module>
   <module>robotool-customization-repository</module>
