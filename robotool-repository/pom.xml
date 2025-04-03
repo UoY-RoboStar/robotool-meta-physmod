@@ -39,6 +39,11 @@
       <url>${eclipse-repo.url}</url>
       <layout>p2</layout>
   </repository>
+  <repository>
+      <id>Sirius</id>
+      <url>http://download.eclipse.org/sirius/updates/releases/6.2.2/2019-06</url>
+      <layout>p2</layout>
+  </repository>
   </repositories>
   <pluginRepositories>
 		<pluginRepository>
