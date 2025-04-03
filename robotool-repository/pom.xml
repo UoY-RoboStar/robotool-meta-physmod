@@ -1,0 +1,63 @@
+<project>
+	<parent>
+		<groupId>robostar.robotool</groupId>
+		<artifactId>robotool-meta</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+ <modelVersion>4.0.0</modelVersion>
+ <artifactId>robostar.robotool.product.repository</artifactId>
+ <version>1.0.0-SNAPSHOT</version>
+ <packaging>eclipse-repository</packaging>
+
+ <properties>
+  <tycho.version>2.7.5</tycho.version>
+  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <eclipse-repo.url>https://download.eclipse.org/releases/2021-12</eclipse-repo.url>
+ </properties>
+
+ <build>
+   <pluginManagement>
+     <plugins>
+       
+     </plugins>
+   </pluginManagement>
+
+  <plugins>
+  	<plugin>
+      <groupId>org.eclipse.tycho</groupId>
+      <artifactId>tycho-p2-repository-plugin</artifactId>
+      <version>${tycho.version}</version>
+      <configuration>
+        <includeAllDependencies>false</includeAllDependencies>
+      </configuration>
+    </plugin>
+  </plugins>
+ </build>
+ <repositories>
+  <repository>
+      <id>eclipse</id>
+      <url>${eclipse-repo.url}</url>
+      <layout>p2</layout>
+  </repository>
+  </repositories>
+  <pluginRepositories>
+		<pluginRepository>
+			<id>codehaus-snapshots</id>
+			<name>disable dead 'Codehaus Snapshots' repository, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481478</name>
+			<url>http://nexus.codehaus.org/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+ <dependencies>
+ 	<dependency>
+ 		<groupId>robostar.robotool</groupId>
+ 		<artifactId>robostar.robotool.product.standalone</artifactId>
+ 		<version>1.0.0-SNAPSHOT</version>
+ 	</dependency>
+ </dependencies>
+</project>

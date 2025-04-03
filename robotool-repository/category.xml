@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <!-- WARNING:  This file should be in sync with ../robotool-product/RoboTool.product, 
+                  so that the features listed there are also included in this p2 repository.
+
+                  The idea is that this is the standalone repository to serve as the update
+                  site for a RoboTool product release. The maven module 'robotool-product'
+                  needs its own separate P2 repository that includes every transitive
+                  dependency to enable local installation, and therefore, packaging of
+                  RoboTool.
+
+        TODO: Add all categories here.
+   -->
+   <feature id="robostar.robotool.customization.feature"/>
+   <feature id="circus.robocalc.robochart.assertions.feature"/>
+   <feature id="circus.robocalc.robochart.generator.csp.feature"/>
+   <feature id="circus.robocalc.robochart.feature"/>
+   <!--<category-def name="robostar.robotool.customization" label="RoboTool Product"/>-->
+</site>
