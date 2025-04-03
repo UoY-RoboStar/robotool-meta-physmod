@@ -12,8 +12,24 @@
         TODO: Add all categories here.
    -->
    <feature id="robostar.robotool.customization.feature"/>
-   <feature id="circus.robocalc.robochart.assertions.feature"/>
-   <feature id="circus.robocalc.robochart.generator.csp.feature"/>
-   <feature id="circus.robocalc.robochart.feature"/>
+
+   <feature id="circus.robocalc.robochart.assertions.feature">
+      <category name="robochart"/>
+   </feature>
+   <feature id="circus.robocalc.robochart.generator.csp.feature">
+      <category name="robochart.generator"/>
+   </feature>
+   <feature id="circus.robocalc.robochart.feature">
+      <category name="robochart"/>
+   </feature>
+   <feature id="circus.robocalc.robochart.textual.feature">
+      <category name="robochart"/>
+   </feature>
+   <feature id="circus.robocalc.robochart.graphical.feature">
+      <category name="robochart"/>
+   </feature>
+
+   <category-def name="robochart" label="RoboChart"/>
+   <category-def name="robochart.generator" label="RoboChart Generator"/>
    <!--<category-def name="robostar.robotool.customization" label="RoboTool Product"/>-->
 </site>

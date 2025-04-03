@@ -50,8 +50,9 @@
       <feature id="robostar.robotool.customization.feature" installMode="root"/>
       <feature id="circus.robocalc.robochart.assertions.feature" installMode="root"/>
       <feature id="circus.robocalc.robochart.generator.csp.feature" installMode="root"/>
-      <!--<feature id="circus.robocalc.robochart.graphical.feature" installMode="root"/>-->
+      <feature id="circus.robocalc.robochart.graphical.feature" installMode="root"/>
       <feature id="circus.robocalc.robochart.feature" installMode="root"/>
+      <feature id="circus.robocalc.robochart.textual.feature" installMode="root"/>
       <!--<feature id="circus.robocalc.robotool.versioning.feature" installMode="root"/>-->
       <feature id="org.eclipse.justj.openjdk.hotspot.jre.full" installMode="root"/>
    </features>
