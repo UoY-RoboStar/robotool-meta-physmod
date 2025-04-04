@@ -139,16 +139,10 @@ jobs:
       - name: Collect markdown output
         run: cat output.md >> summary.md
 
-      - name: Read test results
-        id: results
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: ./summary.md
-
       - name: Create commit comment
         uses: peter-evans/commit-comment@v3
         with:
-          body: ${{ steps.results.outputs.content }}
+          body-path: ./summary.md
 
       - name: Delete robochart-csp-gen artifact
         uses: geekyeggo/delete-artifact@v5
@@ -166,9 +160,6 @@ jobs:
         with:
           name: robotool-repository
           path: robotool-repository
-
-      - name: Display structure of downloaded files
-        run: ls -R
 
       - name: Deploying repository
         run: echo ${{needs.build.outputs.version}}
@@ -221,9 +212,6 @@ jobs:
         with:
           name: robotool-product
           path: robotool-product
-
-      - name: Display structure of downloaded files
-        run: ls -R
     
       - name: Deploying
         run: |
