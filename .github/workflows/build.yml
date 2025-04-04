@@ -48,6 +48,87 @@ jobs:
       - name: Build with Maven
         run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
 
+      - name: Store robochart-csp-gen
+        uses: actions/upload-artifact@v4
+        with:
+          name: robochart-csp-gen
+          path: robochart-csp-gen/
+          retention-days: 1
+          overwrite: true
+
+      - name: Store robotool-repository
+        uses: actions/upload-artifact@v4
+        with:
+          name: robotool-repository
+          path: robotool-repository/target/repository/
+          retention-days: 1
+          overwrite: true
+
+      - name: Store robotool-product
+        uses: actions/upload-artifact@v4
+        with:
+          name: robotool-product
+          path: robotool-product/target/products/*.zip
+          retention-days: 1
+          overwrite: true
+
+  # Testing of RoboChart CSP generator
+  test-robochart-csp-gen:
+    needs: build
+    runs-on: robostar
+    container: 
+      image: ghcr.io/uoy-robostar/robotool-dev-docker:main
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    steps:
+    
+      - name: Setup java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+      - name: Download robochart-csp-gen
+        uses: actions/download-artifact@v4
+        with:
+          name: robochart-csp-gen
+
+      - name: Get FDR4 license
+        uses: UoY-RoboStar/ga-activate-fdr@master
+        with:
+          name: 'RoboTool'
+          email: 'robotool@gmail.com'
+
+      - name: Run FDR tests [default configuration]
+        working-directory: robochart-csp-gen
+        run: python3 run-tests.py -m -p
+
+      - name: Collect markdown output
+        working-directory: robochart-csp-gen
+        run: cat output.md >> summary.md
+
+      # Same as above but with iteration and assertion compression on
+      - name: Run FDR tests [with compressions on]
+        working-directory: robochart-csp-gen
+        run: python3 run-tests.py -m -p --iteratedComp --assertionComp
+
+      - name: Collect markdown output
+        working-directory: robochart-csp-gen
+        run: cat output.md >> summary.md
+
+      - name: Read test results
+        id: results
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./robochart-csp-gen/summary.md
+
+      - name: Create commit comment
+        uses: peter-evans/commit-comment@v1
+        with:
+          body: ${{ steps.results.outputs.content }}
+
+
       # - name: List P2 unit versions
       #   run: ./robotool-product/target/products/robotool.product/linux/gtk/x86_64/eclipse -application org.eclipse.equinox.p2.director -repository file:`realpath robotool-product/target/repository/` -list -lf "\${id} | \${version}" | grep -E '(circus\.|robostar|sirius|rcp)' | grep -v 'jar' > versions.md
 
