@@ -125,27 +125,23 @@ jobs:
           email: 'robotool@gmail.com'
 
       - name: Run FDR tests [default configuration]
-        working-directory: robochart-csp-gen
         run: python3 run-tests.py -m -p
 
       - name: Collect markdown output
-        working-directory: robochart-csp-gen
         run: cat output.md >> summary.md
 
       # Same as above but with iteration and assertion compression on
       - name: Run FDR tests [with compressions on]
-        working-directory: robochart-csp-gen
         run: python3 run-tests.py -m -p --iteratedComp --assertionComp
 
       - name: Collect markdown output
-        working-directory: robochart-csp-gen
         run: cat output.md >> summary.md
 
       - name: Read test results
         id: results
         uses: juliangruber/read-file-action@v1
         with:
-          path: ./robochart-csp-gen/summary.md
+          path: ./summary.md
 
       - name: Create commit comment
         uses: peter-evans/commit-comment@v1
@@ -167,6 +163,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: robotool-repository
+          path: robotool-repository
 
       - name: Deploying repository
         run: echo ${{needs.build.outputs.version}}
@@ -215,6 +212,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: robotool-product
+          path: robotool-product
     
       - name: Deploying
         run: echo ${{needs.build.outputs.version}}
