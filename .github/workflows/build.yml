@@ -20,6 +20,9 @@ jobs:
       version: ${{ steps.version.outputs.VERSION }}
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
       changelog: ${{ steps.tag_version.outputs.changelog }}
+    permissions:
+      contents: write
+      packages: write
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -67,9 +70,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: robochart-csp-gen
+          include-hidden-files: true
           path: |
             robochart-csp-gen/run-tests.py
-            robochart-csp-gen/circus.robocalc.robochart.generator.csp.tests/*
+            robochart-csp-gen/circus.robocalc.robochart.generator.csp.tests/
             robochart-csp-gen/circus.robocalc.robochart.generator.csp/target/robochart.jar
           retention-days: 1
           overwrite: true
