@@ -4,6 +4,7 @@ name: CI
 # Controls when the workflow will run
 on:
   push:
+  pull_request:
     branches: [ main ]
   
   # Allows you to run this workflow manually from the Actions tab
@@ -19,9 +20,6 @@ jobs:
       version: ${{ steps.version.outputs.VERSION }}
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
       changelog: ${{ steps.tag_version.outputs.changelog }}
-    permissions:
-      contents: write
-      packages: write
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -99,6 +97,9 @@ jobs:
   test-robochart-csp-gen:
     needs: build
     runs-on: robostar
+    permissions:
+      contents: write
+      packages: write
     container: 
       image: ghcr.io/uoy-robostar/robotool-dev-docker:main
       credentials:
@@ -144,7 +145,7 @@ jobs:
           path: ./summary.md
 
       - name: Create commit comment
-        uses: peter-evans/commit-comment@v1
+        uses: peter-evans/commit-comment@v3
         with:
           body: ${{ steps.results.outputs.content }}
 
@@ -207,6 +208,9 @@ jobs:
     if: ${{ startsWith(github.ref, 'refs/heads/main') }}
     runs-on: ubuntu-latest
     needs: [build, test-robochart-csp-gen]
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Download robochart-csp-gen
         uses: actions/download-artifact@v4
