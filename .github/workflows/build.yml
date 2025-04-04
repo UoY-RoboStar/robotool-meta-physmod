@@ -120,9 +120,6 @@ jobs:
         with:
           name: robochart-csp-gen
 
-      - name: Display structure of downloaded files
-        run: ls -R
-
       - name: Get FDR4 license
         uses: UoY-RoboStar/ga-activate-fdr@master
         with:
@@ -169,6 +166,9 @@ jobs:
         with:
           name: robotool-repository
           path: robotool-repository
+
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: Deploying repository
         run: echo ${{needs.build.outputs.version}}
@@ -221,9 +221,13 @@ jobs:
         with:
           name: robotool-product
           path: robotool-product
+
+      - name: Display structure of downloaded files
+        run: ls -R
     
       - name: Deploying
-        run: echo ${{needs.build.outputs.version}}
+        run: |
+          echo "Version: ${{ needs.build.outputs.version }}"
      
       - name: List P2 unit versions
         run: ./robotool-product/target/products/robotool.product/linux/gtk/x86_64/eclipse -application org.eclipse.equinox.p2.director -repository file:`realpath robotool-product/target/repository/` -list -lf "\${id} | \${version}" | grep -E '(circus\.|robostar|sirius|rcp)' | grep -v 'jar' > versions.md
