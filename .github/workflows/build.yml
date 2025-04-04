@@ -66,6 +66,9 @@ jobs:
       - name: Build with Maven
         run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
 
+      - name: List P2 unit versions
+        run: ./robotool-product/target/products/robotool.product/linux/gtk/x86_64/eclipse -application org.eclipse.equinox.p2.director -repository file:`realpath robotool-product/target/repository/` -list -lf "\${id} | \${version}" | grep -E '(circus\.|robostar|sirius|rcp)' | grep -v 'jar' > versions.md
+
       - name: Store robochart-csp-gen
         uses: actions/upload-artifact@v4
         with:
@@ -93,7 +96,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: robotool-product
-          path: robotool-product/target/products/*.zip
+          path: |
+            robotool-product/target/products/*.zip
+            versions.md
           retention-days: 1
           overwrite: true
 
@@ -161,6 +166,9 @@ jobs:
           name: robotool-repository
           path: robotool-repository
 
+      - name: List files
+        run: ls -R
+
       - name: Deploying repository
         run: echo ${{needs.build.outputs.version}}
 
@@ -220,14 +228,11 @@ jobs:
         run: |
           echo "Version: ${{ needs.build.outputs.version }}"
      
-      - name: List P2 unit versions
-        run: ./robotool-product/target/products/robotool.product/linux/gtk/x86_64/eclipse -application org.eclipse.equinox.p2.director -repository file:`realpath robotool-product/target/repository/` -list -lf "\${id} | \${version}" | grep -E '(circus\.|robostar|sirius|rcp)' | grep -v 'jar' > versions.md
-
       - name: Read repository versions
         id: versions
         uses: juliangruber/read-file-action@v1
         with:
-          path: ./versions.md
+          path: ./robotool-product/versions.md
 
       - name: Create Release
         id: create_release
@@ -252,8 +257,8 @@ jobs:
             
             </details>
           files: |
-            robotool-product/target/products/*.tar.gz
-            robotool-product/target/products/*.zip
+            robotool-product/*.tar.gz
+            robotool-product/*.zip
           draft: false
           prerelease: false
           make_latest: true
