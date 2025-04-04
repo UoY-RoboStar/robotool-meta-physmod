@@ -6,8 +6,8 @@ name: CI
 on:
   push:
     branches: [ main ]
-    tags:
-      - 'v*'
+    # tags:
+    #   - 'v*'
   
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -51,15 +51,10 @@ jobs:
         with:
           format: "YYYYMMDDHHMM"
 
-      - name: Set version env
-        run: | 
-          echo "Version to be released: ${{steps.tag_version.outputs.new_tag}}"
-          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
-
       - name: Set Maven package versions
         run: |
-          echo "Version to be released: ${{steps.tag_version.outputs.new_tag}}.${{steps.time.outputs.time}}"
-          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{steps.tag_version.outputs.new_tag}}.${{steps.time.outputs.time}}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
+          echo "Version to be released: ${{steps.tag_version.outputs.new_version}}.${{steps.time.outputs.time}}"
+          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{steps.tag_version.outputs.new_version}}.${{steps.time.outputs.time}}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
   
       - name: Build with Maven
         run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
