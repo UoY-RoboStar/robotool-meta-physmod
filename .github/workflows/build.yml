@@ -51,13 +51,16 @@ jobs:
         with:
           format: "YYYYMMDDHHMM"
 
-      - name: Set Maven package versions
+      - name: Set RoboTool version for release
         id: version
         run: |
-          echo "VERSION=${{steps.tag_version.outputs.new_version}}.${{steps.time.outputs.time}}" >> $GITHUB_ENV
-          echo "VERSION=${{env.VERSION}}" >> $GITHUB_OUTPUT
-          echo "Version to be released: ${{env.VERSION}}"
-          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{env.VERSION}}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
+          echo "version=${{steps.tag_version.outputs.new_version}}.${{steps.time.outputs.time}}" >> $GITHUB_OUTPUT
+
+      - name: Set Maven package versions
+        id: maven-version
+        run: |
+          echo "Version to be released: ${{ steps.version.version }}"
+          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{ steps.version.version }}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
   
       - name: Build with Maven
         run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
