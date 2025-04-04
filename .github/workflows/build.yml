@@ -59,8 +59,8 @@ jobs:
       - name: Set Maven package versions
         id: maven-version
         run: |
-          echo "Version to be released: ${{ steps.version.version }}"
-          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{ steps.version.version }}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
+          echo "Version to be released: ${{ steps.version.outputs.version }}"
+          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{ steps.version.outputs.version }}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
   
       - name: Build with Maven
         run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
