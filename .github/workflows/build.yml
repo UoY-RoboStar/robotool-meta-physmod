@@ -18,7 +18,10 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+      new_tag: ${{ steps.tag_version.outputs.new_tag }}
+      changelog: ${{ steps.tag_version.outputs.changelog }}
     permissions:
       contents: write
       packages: write
@@ -52,9 +55,12 @@ jobs:
           format: "YYYYMMDDHHMM"
 
       - name: Set Maven package versions
+        id: version
         run: |
-          echo "Version to be released: ${{steps.tag_version.outputs.new_version}}.${{steps.time.outputs.time}}"
-          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{steps.tag_version.outputs.new_version}}.${{steps.time.outputs.time}}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
+          echo "VERSION=${{steps.tag_version.outputs.new_version}}.${{steps.time.outputs.time}}" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Version to be released: ${VERSION}"
+          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${VERSION}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
   
       - name: Build with Maven
         run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
@@ -63,7 +69,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: robochart-csp-gen
-          path: robochart-csp-gen/
+          path: |
+            robochart-csp-gen/run-tests.py
+            robochart-csp-gen/circus.robocalc.robochart.generator.csp.tests/*
+            robochart-csp-gen/circus.robocalc.robochart.generator.csp/target/robochart.jar
           retention-days: 1
           overwrite: true
 
@@ -92,9 +101,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-        
     steps:
-    
       - name: Setup java
         uses: actions/setup-java@v1
         with:
@@ -138,37 +145,112 @@ jobs:
         uses: peter-evans/commit-comment@v1
         with:
           body: ${{ steps.results.outputs.content }}
- 
-      # - name: List P2 unit versions
-      #   run: ./robotool-product/target/products/robotool.product/linux/gtk/x86_64/eclipse -application org.eclipse.equinox.p2.director -repository file:`realpath robotool-product/target/repository/` -list -lf "\${id} | \${version}" | grep -E '(circus\.|robostar|sirius|rcp)' | grep -v 'jar' > versions.md
 
-      # - name: Read repository versions
-      #   id: versions
-      #   uses: juliangruber/read-file-action@v1
-      #   with:
-      #     path: ./versions.md
+      - name: Delete robochart-csp-gen artifact
+        uses: geekyeggo/delete-artifact@v5
+        with:
+            name: robochart-csp-gen
+            failOnError: false
 
-      # - name: Create Release
-      #   id: create_release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     body: |
-      #       RoboTool compiled and packaged as an Eclipse product using Eclipse tycho's Maven builder. 
+  deploy-repository:
+    runs-on: ubuntu-latest
+    needs: [build, test-robochart-csp-gen]
+    steps:
+      - name: Download robotool-repository
+        uses: actions/download-artifact@v4
+        with:
+          name: robotool-repository
 
-      #       Note that binaries are not signed. In particular, when downloaded and extracted under macOS may need [dequarantining](https://superuser.com/questions/526920/how-to-remove-quarantine-from-file-permissions-in-os-x) using the command `xattr -d com.apple.quarantine Eclipse.app` to avoid a message saying that the binary is damaged.
+      - name: Deploying repository
+        run: echo ${{needs.build.outputs.version}}
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.1
+        with:
+          # Private key required to access the host
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add SSH known hosts
+        run: echo "${ROBOSTAR_WEB_HOST} ${ROBOSTAR_WEB_SSH_FINGERPRINT_TYPE} ${ROBOSTAR_WEB_SSH_FINGERPRINT}" >> ~/.ssh/known_hosts
+        env:
+          ROBOSTAR_WEB_HOST: ${{ secrets.ROBOSTAR_WEB_HOST }}
+          ROBOSTAR_WEB_SSH_FINGERPRINT: ${{ secrets.ROBOSTAR_WEB_SSH_FINGERPRINT }}
+          ROBOSTAR_WEB_SSH_FINGERPRINT_TYPE: ${{ secrets.ROBOSTAR_WEB_SSH_FINGERPRINT_TYPE }}
+
+      - id: deploy
+        name: Deploy
+        uses: UoY-RoboStar/ga-eclipse-deploy@master
+        with:
+          remote-host: ${{ secrets.ROBOSTAR_WEB_HOST }}
+          remote-user: ${{ secrets.ROBOSTAR_WEB_USER }}
+          remote-root: ${{ secrets.ROBOSTAR_WEB_ROOT }}
+          remote-baseurl: 'https://robostar.cs.york.ac.uk'
+          remote-relative-path: 'robotool/stable/'
+          maven-target: 'robotool-repository/target/repository/'
+
+      - name: Create commit comment
+        uses: peter-evans/commit-comment@v1
+        with:
+          body: 'Successfully deployed at: https://robostar.cs.york.ac.uk/robotool/stable/${{ steps.deploy.outputs.dest }}'
+
+      - name: Delete robotool-repository artifact
+        uses: geekyeggo/delete-artifact@v5
+        with:
+            name: robotool-repository
+            failOnError: false
+          
+  deploy-product:
+    runs-on: ubuntu-latest
+    needs: [build, test-robochart-csp-gen]
+    steps:
+      - name: Download robochart-csp-gen
+        uses: actions/download-artifact@v4
+        with:
+          name: robotool-product
+    
+      - name: Deploying
+        run: echo ${{needs.build.outputs.version}}
+     
+      - name: List P2 unit versions
+        run: ./robotool-product/target/products/robotool.product/linux/gtk/x86_64/eclipse -application org.eclipse.equinox.p2.director -repository file:`realpath robotool-product/target/repository/` -list -lf "\${id} | \${version}" | grep -E '(circus\.|robostar|sirius|rcp)' | grep -v 'jar' > versions.md
+
+      - name: Read repository versions
+        id: versions
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./versions.md
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{needs.build.outputs.new_tag}}
+          body: |
+            RoboTool version ${{needs.build.outputs.version}} compiled and packaged as an Eclipse product using Eclipse tycho's Maven builder. 
+
+            Note that binaries are not signed. In particular, when downloaded and extracted under macOS may need [dequarantining](https://superuser.com/questions/526920/how-to-remove-quarantine-from-file-permissions-in-os-x) using the command `xattr -d com.apple.quarantine Eclipse.app` to avoid a message saying that the binary is damaged.
+
+            ## Changelog
+            ${{needs.build.outputs.changelog}
             
-      #       <details>
-      #       <summary>Main feature versions</summary>
+            <details>
+            <summary>Main feature versions</summary>
             
-      #       Feature | Version
-      #       --------|--------
-      #       ${{ steps.versions.outputs.content }}
-      #       --------|--------
+            Feature | Version
+            --------|--------
+            ${{ steps.versions.outputs.content }}
+            --------|--------
             
-      #       </details>
-      #     files: |
-      #       robotool-product/target/products/*.tar.gz
-      #       robotool-product/target/products/*.zip
-      #     draft: false
-      #     prerelease: false
-      #     make_latest: true
+            </details>
+          files: |
+            robotool-product/target/products/*.tar.gz
+            robotool-product/target/products/*.zip
+          draft: false
+          prerelease: false
+          make_latest: true
+
+      - name: Delete robotool-product artifact
+        uses: geekyeggo/delete-artifact@v5
+        with:
+            name: robotool-product
+            failOnError: false
