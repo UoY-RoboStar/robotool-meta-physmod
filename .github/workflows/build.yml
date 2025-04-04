@@ -55,9 +55,9 @@ jobs:
         id: version
         run: |
           echo "VERSION=${{steps.tag_version.outputs.new_version}}.${{steps.time.outputs.time}}" >> $GITHUB_ENV
-          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
-          echo "Version to be released: ${VERSION}"
-          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${VERSION}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
+          echo "VERSION=${{env.VERSION}}" >> $GITHUB_OUTPUT
+          echo "Version to be released: ${{env.VERSION}}"
+          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{env.VERSION}}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
   
       - name: Build with Maven
         run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
@@ -150,6 +150,7 @@ jobs:
             failOnError: false
 
   deploy-repository:
+    if: ${{ startsWith(github.ref, 'refs/heads/main') }}
     runs-on: ubuntu-latest
     needs: [build, test-robochart-csp-gen]
     steps:
@@ -197,6 +198,7 @@ jobs:
             failOnError: false
           
   deploy-product:
+    if: ${{ startsWith(github.ref, 'refs/heads/main') }}
     runs-on: ubuntu-latest
     needs: [build, test-robochart-csp-gen]
     steps:
