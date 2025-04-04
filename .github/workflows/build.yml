@@ -221,14 +221,14 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{needs.build.outputs.new_tag}}
+          tag_name: ${{ needs.build.outputs.new_tag }}
           body: |
-            RoboTool version ${{needs.build.outputs.version}} compiled and packaged as an Eclipse product using Eclipse tycho's Maven builder. 
+            RoboTool version ${{ needs.build.outputs.version }} compiled and packaged as an Eclipse product using Eclipse tycho's Maven builder. 
 
             Note that binaries are not signed. In particular, when downloaded and extracted under macOS may need [dequarantining](https://superuser.com/questions/526920/how-to-remove-quarantine-from-file-permissions-in-os-x) using the command `xattr -d com.apple.quarantine Eclipse.app` to avoid a message saying that the binary is damaged.
 
             ## Changelog
-            ${{needs.build.outputs.changelog}
+            ${{ needs.build.outputs.changelog }}
             
             <details>
             <summary>Main feature versions</summary>
