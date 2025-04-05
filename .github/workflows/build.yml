@@ -165,6 +165,9 @@ jobs:
     if: ${{ startsWith(github.ref, 'refs/heads/main') }}
     runs-on: ubuntu-latest
     needs: [build, test-robochart-csp-gen]
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Download robotool-repository
         uses: actions/download-artifact@v4
@@ -193,13 +196,14 @@ jobs:
 
       - id: deploy
         name: Deploy
-        uses: UoY-RoboStar/ga-eclipse-deploy@master
+        uses: UoY-RoboStar/ga-eclipse-deploy@override-version
         with:
           remote-host: ${{ secrets.ROBOSTAR_WEB_HOST }}
           remote-user: ${{ secrets.ROBOSTAR_WEB_USER }}
           remote-root: ${{ secrets.ROBOSTAR_WEB_ROOT }}
           remote-baseurl: 'https://robostar.cs.york.ac.uk'
           remote-relative-path: 'robotool/stable/'
+          version: ${{ needs.build.outputs.version }}
           maven-target: 'robotool-repository/'
 
       - name: Create commit comment
@@ -240,6 +244,10 @@ jobs:
         with:
           path: ./robotool-product/versions.md
 
+      - name: "Build Changelog"
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v5
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -252,7 +260,9 @@ jobs:
 
             ## Changelog
             ${{ needs.build.outputs.changelog }}
-            
+            ${{ steps.build_changelog.outputs.changelog }}
+
+            ## Feature versions
             <details>
             <summary>Main feature versions</summary>
             
