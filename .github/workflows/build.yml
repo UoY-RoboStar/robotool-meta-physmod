@@ -83,6 +83,12 @@ jobs:
 
       # We only need to do the below if deploying. Can avoid it if we're just testing, for example.
       - if: ${{ startsWith(github.ref, 'refs/heads/main') }}
+        name: Store copy of metamodels
+        run: |
+          mkdir -p robotool-repository/target/repository/metamodels
+          cp robochart-metamodel/circus.robocalc.robochart/model/robochart.ecore robotool-repository/target/repository/metamodels/
+      
+      - if: ${{ startsWith(github.ref, 'refs/heads/main') }}
         name: Store robotool-repository
         uses: actions/upload-artifact@v4
         with:
@@ -194,7 +200,7 @@ jobs:
           remote-root: ${{ secrets.ROBOSTAR_WEB_ROOT }}
           remote-baseurl: 'https://robostar.cs.york.ac.uk'
           remote-relative-path: 'robotool/stable/'
-          maven-target: 'robotool-repository/target/repository/'
+          maven-target: 'robotool-repository/'
 
       - name: Create commit comment
         uses: peter-evans/commit-comment@v1
