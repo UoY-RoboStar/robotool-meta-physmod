@@ -230,7 +230,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: robotool-product
-          path: robotool-product
 
       - name: List files
         run: ls -R
@@ -243,7 +242,7 @@ jobs:
         id: versions
         uses: juliangruber/read-file-action@v1
         with:
-          path: ./robotool-product/versions.md
+          path: ./versions.md
 
       - name: "Build Changelog"
         id: build_changelog
@@ -270,12 +269,11 @@ jobs:
             Feature | Version
             --------|--------
             ${{ steps.versions.outputs.content }}
-            --------|--------
             
             </details>
           files: |
-            robotool-product/*.tar.gz
-            robotool-product/*.zip
+            robotool-product/target/products/*.tar.gz
+            robotool-product/target/products/*.zip
           draft: false
           prerelease: false
           make_latest: true
