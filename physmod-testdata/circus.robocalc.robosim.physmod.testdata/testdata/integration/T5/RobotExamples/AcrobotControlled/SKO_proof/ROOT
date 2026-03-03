@@ -1,0 +1,6 @@
+session AcrobotControlled_Proof = "Hybrid-Verification" +
+  options [timeout = 600]
+  directories
+    "temp"
+  theories
+    Proof_solution_EQUATIONS

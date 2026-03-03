@@ -1,0 +1,7 @@
+{
+  "dynamicsFormulation": "SKO",
+  "sensorFormulation": {
+    "Base.BaseSensor": "unknown"
+  },
+  "actuatorFormulation": {}
+}

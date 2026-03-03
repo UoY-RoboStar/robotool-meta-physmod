@@ -1,0 +1,27 @@
+Solution parameter_modes {
+    state {
+        counter: int = 0;
+        array: vec(10) = [0,0,0,0,0,0,0,0,0,0];
+        value: int = 42;
+    }
+    procedures {
+        procedure increment(val-res counter: int) {
+            counter = counter + 1;
+        }
+
+        procedure setValue(res target: int, val newValue: int) {
+            target = newValue;
+        }
+
+        procedure initArray(val-res arr: vec(), val size: int, val initValue: int) {
+            for(i: int in range(0, size-1, 1)) {
+                arr[i] = initValue;
+            }
+        }
+    }
+    computation {
+        {increment(counter);}
+        {setValue(value, 100);}
+        {initArray(array, 10, 7);}
+    }
+}

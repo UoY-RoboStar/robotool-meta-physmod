@@ -1,0 +1,2 @@
+VALIDATION_FAILED: Generator validation error: SKO formulation requires valid model structure for the following issues:
+  - Model has no links defined

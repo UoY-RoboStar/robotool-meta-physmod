@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewpoint:DAnalysis xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description" uid="_V_HGIOo-EfCg17_AJsDfKw" selectedViews="_XPpg8Oo-EfCg17_AJsDfKw" version="14.5.1.202106111100">
+  <semanticResources>Acrobot_Featherstone.pm</semanticResources>
+  <semanticResources>platform:/plugin/circus.robocalc.robochart.textual/lib/robochart/core.rct</semanticResources>
+  <semanticResources>platform:/plugin/circus.robocalc.robosim.physmod.textual/lib/physmod/math.pm</semanticResources>
+  <ownedViews xmi:type="viewpoint:DView" uid="_XPpg8Oo-EfCg17_AJsDfKw">
+    <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/circus.robocalc.robosim.physmod.graphical/description/physmod.odesign#//@ownedViewpoints[name='PhysMod']"/>
+  </ownedViews>
+</viewpoint:DAnalysis>

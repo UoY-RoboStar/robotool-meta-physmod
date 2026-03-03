@@ -1,0 +1,3 @@
+	 	circus.robocalc.robosim.physmod.impl.PModelImpl@5270293b (name: SimpleArm)
+Serial Chain
+

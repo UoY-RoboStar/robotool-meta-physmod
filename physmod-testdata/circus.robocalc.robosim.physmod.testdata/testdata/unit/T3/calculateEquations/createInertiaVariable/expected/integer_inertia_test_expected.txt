@@ -1,0 +1,8 @@
+# Expected behavior for integer inertia test
+# The test should successfully:
+# 1. Parse the model with integer values
+# 2. Convert integer values to FloatExp using toFloatExp()
+# 3. Extract numeric values from IntegerExp using getNumericValue()
+# 4. Handle integer inertia values without ClassCastException
+
+Test should convert integers to floats properly and avoid type casting errors.

@@ -1,0 +1,30 @@
+// Auto-generated from mapping.pm by MappingGenerator
+// Contains SolutionRef entries for platform mapping constraints
+
+// PlatformMapping: OA_1SM
+// D-model: OA_1SM::mobileOA_M
+// P-model: Turtlebot3_Burger
+
+SolutionRef {
+	expression Local { name u type "vector(real,2)" }
+	method SKO::PlatformMapping
+	order 1
+constraint " (u) [ t == 0] ==zeroVec(2)"
+constraint " (u(0)) [ t == t] ==p_mapping.Turtlebot3_Burger.BaseLink.LeftWheelJoint.LeftMotor.ControlIn"
+constraint " (u(1)) [ t == t] ==p_mapping.Turtlebot3_Burger.BaseLink.RightWheelJoint.RightMotor.ControlIn"
+}
+
+SolutionRef {
+	expression Local { name inputEvent_2 type "real" }
+	method SKO::SensorOutputMapping
+	order 2
+constraint " (p_mapping.Turtlebot3_Burger.BaseLink.TBLidar.closestDistance) [ t == t] ==closest_distance"
+}
+
+SolutionRef {
+	expression Local { name inputEvent_3 type "real" }
+	method SKO::SensorOutputMapping
+	order 3
+constraint " (p_mapping.Turtlebot3_Burger.BaseLink.TBLidar.closestAngle) [ t == t] ==closest_angle"
+}
+

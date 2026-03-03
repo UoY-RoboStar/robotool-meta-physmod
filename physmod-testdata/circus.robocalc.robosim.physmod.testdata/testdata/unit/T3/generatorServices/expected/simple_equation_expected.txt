@@ -1,0 +1,6 @@
+# Expected output for simple equation creation test
+# Format: leftSide = rightSide : expectedResult
+x = 5 : SUCCESS
+a = b + c : SUCCESS  
+test = 1 : SUCCESS
+phi[1,1] = I : SUCCESS

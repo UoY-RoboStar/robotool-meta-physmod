@@ -1,0 +1,4 @@
+Generator error: No EObjectDescription could be found in Scope SName.element for PrimitiveType
+Semantic Object: PMPackage'CValsTest'.pmodels[0]->PModel'CValsTest'.links[0]->LocalLink'L1'.joints[0]->LocalJoint'j1'.def->JointDef''._annotation->Annotation.instantiations[0]->AnnotationTemplateInstantiation.instantiations[0]->AnnotationValueInstantiation.value->TupleExp.values[0]->SName
+URI: temp/__eqnComp_working___synthetic0.pm
+EStructuralFeature: physmod::SName.element

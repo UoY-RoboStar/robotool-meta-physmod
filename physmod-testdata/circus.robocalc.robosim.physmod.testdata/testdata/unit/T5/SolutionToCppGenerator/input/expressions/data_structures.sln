@@ -1,0 +1,18 @@
+Solution data_structures {
+    state {
+        vector: vec(4) = [1.0, 2.0, 3.0, 4.0];
+        matrix: mat(3,3) = [1,2,3; 4,5,6; 7,8,9];
+        blockMat: mat(4,4) = [(0,0,2,2)[1,2; 3,4]; (0,2,2,2)[5,6; 7,8]; (2,0,2,2)[9,10; 11,12]; (2,2,2,2)[13,14; 15,16]];
+        sequence: seq(int) = seq(10, 20, 30, 40);
+        element: float = 0.0;
+        subvec: vec(2) = [0.0, 0.0];
+        submat: mat(2,2) = [0,0; 0,0];
+        seqElement: int = 0;
+    }
+    computation {
+        {element = vector[2];}
+        {subvec = subvector(vector)(1, 2);}
+        {submat = submatrix(matrix)(0, 1, 2, 2);}
+        {seqElement = sequence[1];}
+    }
+}

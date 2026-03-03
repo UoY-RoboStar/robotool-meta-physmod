@@ -1,0 +1,82 @@
+SolutionRef {
+	expression Local { name dd_q type "vector(real,2)" }
+	method FEATHERSTONE::ABAForwardDynamics
+	order 1
+	input Local { name q type "vector(real,2)" }
+	input Local { name d_q type "vector(real,2)" }
+	input Local { name tau type "vector(real,2)" }
+	input Local { name damping type "matrix(real,2,2)" }
+	input Local { name XT type "Seq(matrix(real,6,6))" }
+	input Local { name I type "Seq(matrix(real,6,6))" }
+	input Local { name jtype type "Seq(int)" }
+	constraint " (N) [ t == 0] ==2"
+	constraint " (gravity) [ t == 0] ==9.81"
+	constraint " (q) [ t == 0] ==(|1.0,1.0|)"
+	constraint " (d_q) [ t == 0] ==zeroVec(2)"
+	constraint " (tau) [ t == 0] ==zeroVec(2)"
+	constraint " (damping) [ t == 0] ==[|0.1,0.0; 0.0,0.1|]"
+	constraint " (jtype) [ t == 0] ==<-1,-1>"
+	// XT uses the same translation-only convention as SKO's X_T: X = [I,0; -p×, I] with p=[0,0,-offset]
+	constraint " (XT) [ t == 0] ==<[|1,0,0,0,0,0;0,1,0,0,0,0;0,0,1,0,0,0;0,0,0,1,0,0;0,0,0,0,1,0;0,0,0,0,0,1|],[|1,0,0,0,0,0;0,1,0,0,0,0;0,0,1,0,0,0;0,-1.0,0,1,0,0;1.0,0,0,0,1,0;0,0,0,0,0,1|]>"
+	// Spatial inertias include a COM offset cz=-halfHeight (matches SKO_serial.sln convention)
+	constraint " (I) [ t == 0] ==<[|0.333,0.0,0.0,0.0,0.5,0.0;0.0,0.25,0.0,-0.5,0.0,0.0;0.0,0.0,0.0,0.0,0.0,0.0;0.0,-0.5,0.0,1.0,0.0,0.0;0.5,0.0,0.0,0.0,1.0,0.0;0.0,0.0,0.0,0.0,0.0,1.0|],[|1.33,0.0,0.0,0.0,1.0,0.0;0.0,1.0,0.0,-1.0,0.0,0.0;0.0,0.0,0.0,0.0,0.0,0.0;0.0,-1.0,0.0,1.0,0.0,0.0;1.0,0.0,0.0,0.0,1.0,0.0;0.0,0.0,0.0,0.0,0.0,1.0|]>"
+	constraint " (dd_q) [ t == 0] ==zeroVec(2)"
+}
+SolutionRef {
+	expression Local { name d_q type "vector(real,2)" }
+	method FEATHERSTONE::Euler
+	order 2
+	input Local { name dd_q type "vector(real,2)" }
+	input Local { name dt type "real" }
+	constraint " (dt) [ t == 0] ==0.01"
+	constraint " (dd_q) [ t == 0] ==zeroVec(2)"
+	constraint " (d_q) [ t == 0] ==zeroVec(2)"
+}
+SolutionRef {
+	expression Local { name q type "vector(real,2)" }
+	method FEATHERSTONE::Euler
+	order 3
+	input Local { name d_q type "vector(real,2)" }
+	input Local { name dt type "real" }
+	constraint " (dt) [ t == 0] ==0.01"
+	constraint " (d_q) [ t == 0] ==zeroVec(2)"
+	constraint " (q) [ t == 0] ==(|1.0,1.0|)"
+}
+SolutionRef {
+	expression Local { name T_geom type "Seq(matrix(real,4,4))" }
+	method Visual
+	order 4
+	input Local { name B_1 type "matrix(real,4,4)" }
+	input Local { name B_2 type "matrix(real,4,4)" }
+	input Local { name B_3 type "matrix(real,4,4)" }
+	input Local { name B_k type "Seq(matrix(real,4,4))" }
+	input Local { name L1_geom type "Geom" }
+	input Local { name L2_geom type "Geom" }
+	input Local { name L3_geom type "Geom" }
+	input Local { name T_geom type "Seq(matrix(real,4,4))" }
+	input Local { name T_offset type "Seq(matrix(real,4,4))" }
+	input Local { name T_geom_1 type "matrix(real,4,4)" }
+	input Local { name T_geom_2 type "matrix(real,4,4)" }
+	input Local { name T_geom_3 type "matrix(real,4,4)" }
+	input Local { name T_offset_1 type "matrix(real,4,4)" }
+	input Local { name T_offset_2 type "matrix(real,4,4)" }
+	input Local { name T_offset_3 type "matrix(real,4,4)" }
+	constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.15; -0.0,0.0,1.0,0.0; 0,0,0,1|]"
+	constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.0; 0,0,0,1|]"
+	constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.0; 0,0,0,1|]"
+	constraint " (B_k) [ t == 0] ==<B_1, B_2, B_3>"
+	constraint " (T_geom_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-0.4; 0,0,0,1|]"
+	constraint " (T_geom_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-2.15; 0,0,0,1|]"
+	constraint " (T_geom_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-0.1; 0,0,0,1|]"
+	constraint " (T_offset_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-1.05; 0,0,0,1|]"
+	constraint " (T_offset_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-0.55; 0,0,0,1|]"
+	constraint " (T_offset_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-0.1; 0,0,0,1|]"
+	constraint " (T_geom) [ t == 0] ==<T_geom_1, T_geom_2, T_geom_3>"
+	constraint " (T_offset) [ t == 0] ==<T_offset_1, T_offset_2, T_offset_3>"
+	constraint " (L1_geom . geomType) [ t == 0] ==cylinder"
+	constraint " (L1_geom . geomVal) [ t == 0] ==[| 0.05 , 2.1 |]"
+	constraint " (L2_geom . geomType) [ t == 0] ==cylinder"
+	constraint " (L2_geom . geomVal) [ t == 0] ==[| 0.05 , 1.1 |]"
+	constraint " (L3_geom . geomType) [ t == 0] ==box"
+	constraint " (L3_geom . geomVal) [ t == 0] ==[| 0.2 , 0.2 , 0.2 |]"
+}

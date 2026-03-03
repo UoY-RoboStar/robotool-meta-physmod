@@ -1,0 +1,14 @@
+Solution custom_struct {
+    datatypes {
+        Point { x: int; y: int; z: float };
+        Color { red: float; green: float; blue: float }
+    }
+    state {
+        origin: Point = Point{ x = 0, y = 0, z = 0.0 };
+        mainColor: Color = Color{ red = 1.0, green = 0.0, blue = 0.0 };
+    }
+    computation {
+        {origin.x = 10;}
+        {mainColor.green = 0.5;}
+    }
+}

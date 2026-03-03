@@ -1,0 +1,24 @@
+Solution assignments {
+    state {
+        a: int = 5;
+        b: float = 3.14;
+        matrix: mat(2,2) = [1,2; 3,4];
+        vector: vec(3) = [1.0, 2.0, 3.0];
+        temp: int = 0;
+        block: mat(2,2) = [0,0; 0,0];
+    }
+    computation {
+        {a = 42;}
+        {b = a + 7.5;}
+        {matrix[0,1] = 99;}
+        {vector[2] = b * 2.0;}
+        {submatrix(matrix)(0, 0, 1, 2) = [10, 20];}
+        {subvector(vector)(1, 2) = [5.0, 6.0];}
+        {
+            temp: int = 100;
+            temp = temp + a;
+            a = temp;
+        }
+        {skip;}
+    }
+}

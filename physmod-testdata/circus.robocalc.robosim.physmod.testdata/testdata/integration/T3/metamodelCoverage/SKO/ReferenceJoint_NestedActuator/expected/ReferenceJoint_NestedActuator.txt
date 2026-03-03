@@ -1,0 +1,5 @@
+Error while converting value 'physmod::math::cos' for grammar rule 'ID' to string via ValueConverter.
+Caused By: org.eclipse.xtext.conversion.ValueConverterException: ID 'physmod::math::cos' contains invalid characters: ':' (0x3a)
+Semantic Object: PMPackage.pmodels[0]->PModel'ReferenceJoint_NestedActuator'.links[0]->LocalLink'BaseLink'.joints[0]->LocalJoint'revolute_joint'.def->JointDef''.equations[0]->Equals.right->MatrixExp.values[1]->VectorExp.values[1]->CallExp.function->SName
+URI: temp/__eqnComp_working___synthetic0.pm
+EStructuralFeature: physmod::SName.element

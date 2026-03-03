@@ -1,0 +1,57 @@
+SolutionRef {
+	expression Local { name B_k type "Seq(matrix(real,4,4))" }
+	method Visual
+	order 1
+input Local { name B_1 type "matrix(real,4,4)" }
+input Local { name B_2 type "matrix(real,4,4)" }
+input Local { name B_3 type "matrix(real,4,4)" }
+input Local { name L1_geom type "Geom" }
+input Local { name L2_geom type "Geom" }
+input Local { name L3_geom type "Geom" }
+input Local { name T_geom type "Seq(matrix(real,4,4))" }
+input Local { name T_offset type "Seq(matrix(real,4,4))" }
+input Local { name T_geom_1 type "matrix(real,4,4)" }
+input Local { name T_offset_1 type "matrix(real,4,4)" }
+input Local { name T_geom_2 type "matrix(real,4,4)" }
+input Local { name T_offset_2 type "matrix(real,4,4)" }
+input Local { name T_geom_3 type "matrix(real,4,4)" }
+input Local { name T_offset_3 type "matrix(real,4,4)" }
+input Local { name X_J_k type "Seq(matrix(real,6,6))" }
+input Local { name theta type "vector(real,2)" }
+input Local { name H_1 type "matrix(real,1,6)" }
+input Local { name H_2 type "matrix(real,1,6)" }
+input Local { name X_J_1 type "matrix(real,6,6)" }
+input Local { name X_J_2 type "matrix(real,6,6)" }
+input Local { name n type "int" }
+input Local { name H type "matrix(real,2,18)" }
+constraint " (n) [ t == 0] ==3"
+constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,4.75; 0,0,0,1|]"
+constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,2.5; 0,0,0,1|]"
+constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.25; 0,0,0,1|]"
+constraint " (B_k) [ t == 0] ==<B_1, B_2, B_3>"
+constraint " (T_offset_1) [ t == 0] ==zeroMat(4, 4)"
+constraint " (T_offset_2) [ t == 0] ==zeroMat(4, 4)"
+constraint " (T_offset_3) [ t == 0] ==zeroMat(4, 4)"
+constraint " (T_geom_1) [ t == t] ==B_1*T_offset_1"
+constraint " (T_geom_2) [ t == t] ==B_2*T_offset_2"
+constraint " (T_geom_3) [ t == t] ==B_3*T_offset_3"
+constraint " (T_geom) [ t == t] ==<T_geom_1, T_geom_2, T_geom_3>"
+constraint " (T_offset) [ t == 0] ==<T_offset_1, T_offset_2, T_offset_3>"
+constraint " (X_J_k) [ t == 0] ==<X_J_1, X_J_2>"
+constraint " (X_J_k) [ t == t] ==<X_J_1, X_J_2>"
+constraint " (H_1) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
+constraint " (H_2) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
+constraint " (submatrix(H)(0,0,1,6)) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
+constraint " (submatrix(H)(1,6,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
+constraint " (theta) [ t == 0] ==zeroVec(2)"
+constraint " (X_J_1) [ t == 0] ==[|1.0,0.0,0.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0,0.0,0.0; 0.0,0.0,1.0,0.0,0.0,0.0; 0.0,0.0,0.0,1.0,0.0,0.0; 0.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
+constraint " (X_J_1) [ t == t] ==zeroMat(6, 6)"
+constraint " (X_J_2) [ t == 0] ==[|1.0,0.0,0.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0,0.0,0.0; 0.0,0.0,1.0,0.0,0.0,0.0; 0.0,0.0,0.0,1.0,0.0,0.0; 0.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
+constraint " (X_J_2) [ t == t] ==zeroMat(6, 6)"
+constraint " (L1_geom . geomType) [ t == 0] ==box"
+constraint " (L1_geom . geomVal) [ t == 0] ==[| 0.5 , 0.5 , 0.5 |]"
+constraint " (L2_geom . geomType) [ t == 0] ==cylinder"
+constraint " (L2_geom . geomVal) [ t == 0] ==[| 0.25 , 4.0 |]"
+constraint " (L3_geom . geomType) [ t == 0] ==box"
+constraint " (L3_geom . geomVal) [ t == 0] ==[| 1.0 , 1.0 , 0.5 |]"
+}

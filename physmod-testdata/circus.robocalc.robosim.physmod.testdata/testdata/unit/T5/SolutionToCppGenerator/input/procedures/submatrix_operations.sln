@@ -1,0 +1,19 @@
+Solution submatrix_operations {
+    state {
+        matrix: mat(4,4) = [0,0,0,0; 0,0,0,0; 0,0,0,0; 0,0,0,0];
+        vector: vec(6) = [0,0,0,0,0,0];
+    }
+    procedures {
+        procedure setMatrixBlock(val-res target: mat(), val row: int, val col: int, val rows: int, val cols: int, val value: float) {
+            submatrix(target)(row, col, rows, cols) = value;
+        }
+
+        procedure setVectorRange(val-res target: vec(), val start: int, val size: int, val value: float) {
+            subvector(target)(start, size) = value;
+        }
+    }
+    computation {
+        {setMatrixBlock(matrix, 1, 1, 2, 2, 5.0);}
+        {setVectorRange(vector, 2, 3, 3.14);}
+    }
+}

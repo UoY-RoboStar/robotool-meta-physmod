@@ -1,0 +1,4 @@
+Generator error: No EObjectDescription could be found in Scope SName.element for ReferenceLink'my_link'.index->Index'i'
+Semantic Object: PMPackage'LinkRefIndex'.pmodels[0]->PModel'LinkRefIndex'.links[0]->LocalLink'my_link'.pose->Pose.x->UnitExp.exp->ParExp.exp->Mult.right->CallExp.args[0]->Div.left->Mult.left->SName
+URI: temp/__eqnComp_working___synthetic0.pm
+EStructuralFeature: physmod::SName.element

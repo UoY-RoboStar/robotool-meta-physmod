@@ -1,0 +1,178 @@
+SolutionRef {
+	expression Local { name B_k type "Seq(matrix(real,4,4))" }
+	method CGA::ForwardKinematics
+	order 1
+input Local { name theta type "vector(real,2)" }
+input Local { name motor_T type "Seq(vector(real,8))" }
+input Local { name H type "Seq(vector(real,6))" }
+input Local { name l type "vector(real,2)" }
+input Local { name lc type "vector(real,2)" }
+input Local { name n type "int" }
+input Local { name B_1 type "matrix(real,4,4)" }
+input Local { name B_2 type "matrix(real,4,4)" }
+input Local { name B_3 type "matrix(real,4,4)" }
+input Local { name motor_T_3 type "vector(real,8)" }
+input Local { name motor_T_2 type "vector(real,8)" }
+input Local { name motor_T_1 type "vector(real,8)" }
+input Local { name H_2 type "vector(real,6)" }
+input Local { name H_1 type "vector(real,6)" }
+constraint " (n) [ t == 0] ==3"
+constraint " (theta) [ t == 0] ==[| 1.0 , 1.0 |]"
+constraint " (motor_T) [ t == 0] ==<motor_T_3, motor_T_2, motor_T_1>"
+constraint " (H) [ t == 0] ==<H_2, H_1>"
+constraint " (l) [ t == 0] ==(| 1.0 , 2.0 |)"
+constraint " (lc) [ t == 0] ==(| 0.5 , 1.0 |)"
+constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.0; 0.0,0.0,0.0,1.0|]"
+constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.0; 0.0,0.0,0.0,1.0|]"
+constraint " (B_3) [ t == 0] ==identity(4)"
+constraint " (B_k) [ t == 0] ==<B_3, B_2, B_1>"
+}
+SolutionRef {
+	expression Local { name M_mass type "matrix(real,2,2)" }
+	method CGA::CalcMassMatrix
+	order 2
+input Local { name theta type "vector(real,2)" }
+input Local { name m type "vector(real,2)" }
+input Local { name l type "vector(real,2)" }
+input Local { name lc type "vector(real,2)" }
+input Local { name Ic type "vector(real,2)" }
+input Local { name B_k type "Seq(matrix(real,4,4))" }
+input Local { name H type "Seq(vector(real,6))" }
+input Local { name M_spatial type "Seq(matrix(real,6,6))" }
+input Local { name B_1 type "matrix(real,4,4)" }
+input Local { name B_2 type "matrix(real,4,4)" }
+input Local { name B_3 type "matrix(real,4,4)" }
+input Local { name n type "int" }
+input Local { name H_2 type "vector(real,6)" }
+input Local { name H_1 type "vector(real,6)" }
+input Local { name M_3 type "matrix(real,6,6)" }
+input Local { name M_2 type "matrix(real,6,6)" }
+input Local { name M_1 type "matrix(real,6,6)" }
+constraint " (n) [ t == 0] ==3"
+constraint " (theta) [ t == 0] ==[| 1.0 , 1.0 |]"
+constraint " (m) [ t == 0] ==(| 1.0 , 1.0 |)"
+constraint " (l) [ t == 0] ==(| 1.0 , 2.0 |)"
+constraint " (lc) [ t == 0] ==(| 0.5 , 1.0 |)"
+constraint " (Ic) [ t == 0] ==(| 0.083 , 0.33 |)"
+constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.0; 0.0,0.0,0.0,1.0|]"
+constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.0; 0.0,0.0,0.0,1.0|]"
+constraint " (B_3) [ t == 0] ==identity(4)"
+constraint " (B_k) [ t == 0] ==<B_3, B_2, B_1>"
+constraint " (H) [ t == 0] ==<H_2, H_1>"
+constraint " (M_spatial) [ t == 0] ==<M_3, M_2, M_1>"
+constraint " (M_mass) [ t == 0] ==unknown_fun(2, 2)"
+}
+SolutionRef {
+	expression Local { name bias type "vector(real,2)" }
+	method CGA::CalcBiasTerm
+	order 3
+input Local { name theta type "vector(real,2)" }
+input Local { name theta_dot type "vector(real,2)" }
+input Local { name m type "vector(real,2)" }
+input Local { name l type "vector(real,2)" }
+input Local { name lc type "vector(real,2)" }
+input Local { name Ic type "vector(real,2)" }
+input Local { name b type "vector(real,2)" }
+input Local { name gravity type "real" }
+input Local { name B_k type "Seq(matrix(real,4,4))" }
+input Local { name H type "Seq(vector(real,6))" }
+input Local { name M_spatial type "Seq(matrix(real,6,6))" }
+input Local { name B_1 type "matrix(real,4,4)" }
+input Local { name B_2 type "matrix(real,4,4)" }
+input Local { name B_3 type "matrix(real,4,4)" }
+input Local { name n type "int" }
+input Local { name H_2 type "vector(real,6)" }
+input Local { name H_1 type "vector(real,6)" }
+input Local { name M_3 type "matrix(real,6,6)" }
+input Local { name M_2 type "matrix(real,6,6)" }
+input Local { name M_1 type "matrix(real,6,6)" }
+constraint " (n) [ t == 0] ==3"
+constraint " (theta) [ t == 0] ==[| 1.0 , 1.0 |]"
+constraint " (theta_dot) [ t == 0] ==(| 0.0 , 0.0 |)"
+constraint " (m) [ t == 0] ==(| 1.0 , 1.0 |)"
+constraint " (l) [ t == 0] ==(| 1.0 , 2.0 |)"
+constraint " (lc) [ t == 0] ==(| 0.5 , 1.0 |)"
+constraint " (Ic) [ t == 0] ==(| 0.083 , 0.33 |)"
+constraint " (b) [ t == 0] ==(| 0.1 , 0.1 |)"
+constraint " (gravity) [ t == 0] ==9.81"
+constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.0; 0.0,0.0,0.0,1.0|]"
+constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.0; 0.0,0.0,0.0,1.0|]"
+constraint " (B_3) [ t == 0] ==identity(4)"
+constraint " (B_k) [ t == 0] ==<B_3, B_2, B_1>"
+constraint " (H) [ t == 0] ==<H_2, H_1>"
+constraint " (M_spatial) [ t == 0] ==<M_3, M_2, M_1>"
+constraint " (bias) [ t == 0] ==unknown_fun(2)"
+}
+SolutionRef {
+	expression Local { name theta_dotdot type "vector(real,2)" }
+	method CGA::ForwardDynamics
+	order 4
+input Local { name M_mass type "matrix(real,2,2)" }
+input Local { name bias type "vector(real,2)" }
+input Local { name tau type "vector(real,2)" }
+input Local { name n type "int" }
+constraint " (M_mass) [ t == 0] ==unknown_fun(2, 2)"
+constraint " (bias) [ t == 0] ==unknown_fun(2)"
+constraint " (tau) [ t == 0] ==(| 0.0 , 0.0 |)"
+constraint " (theta_dotdot) [ t == 0] ==unknown_fun(2)"
+constraint " (n) [ t == 0] ==3"
+}
+SolutionRef {
+	expression Local { name theta_dot type "vector(real,2)" }
+	method CGA::Euler
+	order 5
+input Local { name d_theta_dot type "vector(real,2)" }
+input Local { name dt type "real" }
+input Local { name theta_dotdot type "vector(real,2)" }
+input Local { name n type "int" }
+constraint " (theta_dotdot) [ t == 0] ==unknown_fun(2)"
+constraint " (dt) [ t == 0] ==0.01"
+constraint " (theta_dot) [ t == 0] ==(| 0.0 , 0.0 |)"
+constraint " (n) [ t == 0] ==3"
+constraint " (d_theta_dot) [ t == 0] ==(| 0.0, 0.0 |)"
+}
+SolutionRef {
+	expression Local { name theta type "vector(real,2)" }
+	method CGA::Euler
+	order 6
+input Local { name d_theta type "vector(real,2)" }
+input Local { name dt type "real" }
+input Local { name theta_dot type "vector(real,2)" }
+input Local { name n type "int" }
+constraint " (theta_dot) [ t == 0] ==(| 0.0 , 0.0 |)"
+constraint " (dt) [ t == 0] ==0.01"
+constraint " (theta) [ t == 0] ==(| 1.0 , 1.0 |)"
+constraint " (n) [ t == 0] ==3"
+constraint " (d_theta) [ t == 0] ==(| 0.0, 0.0 |)"
+}
+SolutionRef {
+	expression Local { name B_k type "Seq(matrix(real,4,4))" }
+	method CGA::Visual
+	order 7
+input Local { name theta type "vector(real,2)" }
+input Local { name l type "vector(real,2)" }
+input Local { name lc type "vector(real,2)" }
+input Local { name n type "int" }
+input Local { name L1_geom type "Geom" }
+input Local { name L2_geom type "Geom" }
+input Local { name L3_geom type "Geom" }
+input Local { name B_1 type "matrix(real,4,4)" }
+input Local { name B_2 type "matrix(real,4,4)" }
+input Local { name B_3 type "matrix(real,4,4)" }
+constraint " (n) [ t == 0] ==3"
+constraint " (theta) [ t == 0] ==(| 1.0 , 1.0 |)"
+constraint " (l) [ t == 0] ==(| 1.0 , 2.0 |)"
+constraint " (lc) [ t == 0] ==(| 0.5 , 1.0 |)"
+constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.0; 0.0,0.0,0.0,1.0|]"
+constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.0; 0.0,0.0,0.0,1.0|]"
+constraint " (B_3) [ t == 0] ==identity(4)"
+constraint " (B_k) [ t == 0] ==<B_3, B_2, B_1>"
+constraint " (L1_geom . geomType) [ t == 0] ==cylinder"
+constraint " (L1_geom . geomVal) [ t == 0] ==[| 0.05 , 1.0 |]"
+constraint " (L2_geom . geomType) [ t == 0] ==cylinder"
+constraint " (L2_geom . geomVal) [ t == 0] ==[| 0.05 , 2.0 |]"
+constraint " (L3_geom . geomType) [ t == 0] ==sphere"
+constraint " (L3_geom . geomVal) [ t == 0] ==[| 0.08 |]"
+}
+
+

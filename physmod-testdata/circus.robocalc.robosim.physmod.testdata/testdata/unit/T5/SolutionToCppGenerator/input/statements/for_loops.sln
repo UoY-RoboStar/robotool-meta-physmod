@@ -1,0 +1,24 @@
+Solution for_loops {
+    state {
+        sum: int = 0;
+        product: int = 1;
+        numbers: vec(5) = [1,2,3,4,5];
+    }
+    computation {
+        {
+            for(i: int in range(0, 4, 1)) {
+                sum = sum + numbers[i];
+                product = product * numbers[i];
+            }
+        }
+        {
+            for(j: int in numbers) {
+                if (j > 3) {
+                    sum = sum + 10;
+                } else {
+                    sum = sum + 1;
+                }
+            }
+        }
+    }
+}

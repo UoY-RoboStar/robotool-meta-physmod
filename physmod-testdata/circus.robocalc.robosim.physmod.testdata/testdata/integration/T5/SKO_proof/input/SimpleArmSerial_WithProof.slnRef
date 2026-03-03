@@ -1,0 +1,336 @@
+SolutionRef {
+	expression Local { name proof_var type "int" }
+	method SKO::proof
+	order 0
+input Local { name N type "real" }
+input Local { name B_k type "Seq(matrix(real,4,4))" }
+input Local { name X_J type "Seq(matrix(real,6,6))" }
+input Local { name X_T type "Seq(matrix(real,6,6))" }
+input Local { name V type "vector(real,18)" }
+input Local { name f type "vector(real,18)" }
+input Local { name a type "vector(real,18)" }
+input Local { name b type "vector(real,18)" }
+input Local { name alpha type "vector(real,18)" }
+input Local { name phi type "matrix(real,18,18)" }
+input Local { name M type "matrix(real,18,18)" }
+input Local { name theta type "vector(real,2)" }
+input Local { name tau type "vector(real,2)" }
+input Local { name C type "vector(real,2)" }
+input Local { name H type "matrix(real,2,18)" }
+input Local { name M_mass type "matrix(real,2,2)" }
+input Local { name H_1 type "matrix(real,1,6)" }
+input Local { name H_2 type "matrix(real,1,6)" }
+input Local { name B_1 type "matrix(real,4,4)" }
+input Local { name X_T_1 type "matrix(real,6,6)" }
+input Local { name M_1 type "matrix(real,6,6)" }
+input Local { name r_v1 type "real" }
+input Local { name T_2_1 type "matrix(real,4,4)" }
+input Local { name B_2 type "matrix(real,4,4)" }
+input Local { name X_T_2 type "matrix(real,6,6)" }
+input Local { name M_2 type "matrix(real,6,6)" }
+input Local { name r_v2 type "real" }
+input Local { name T_3_2 type "matrix(real,4,4)" }
+input Local { name B_3 type "matrix(real,4,4)" }
+input Local { name X_T_3 type "matrix(real,6,6)" }
+input Local { name M_3 type "matrix(real,6,6)" }
+input Local { name X_J_1 type "matrix(real,6,6)" }
+input Local { name X_J_2 type "matrix(real,6,6)" }
+input Local { name n type "int" }
+input Local { name d_theta type "vector(real,2)" }
+input Local { name dd_theta type "vector(real,2)" }
+input Local { name M_inv type "matrix(real,2,2)" }
+input Local { name dt type "real" }
+constraint " (submatrix(phi)(0,0,3,3)) [ t == t ] ==identity(3)"
+constraint " (submatrix(phi)(0,3,3,3)) [ t == t ] ==zeroes(3)"
+constraint " (submatrix(phi)(0,6,3,3)) [ t == t ] ==zeroes(3)"
+constraint " (submatrix(phi)(3,3,3,3)) [ t == t ] ==identity(3)"
+constraint " (submatrix(phi)(3,6,3,3)) [ t == t ] ==zeroes(3)"
+constraint " (submatrix(phi)(3,0,3,3)) [ t == t ] ==Phi(2, 1, B_k)"
+constraint " (submatrix(phi)(6,6,3,3)) [ t == t ] ==identity(3)"
+constraint " (submatrix(phi)(6,0,3,3)) [ t == t ] ==Phi(3, 1, B_k)"
+constraint " (submatrix(phi)(6,3,3,3)) [ t == t ] ==Phi(3, 2, B_k)"
+constraint " (B_k) [ t == t ] ==<B_1, B_2, B_3>"
+constraint " (X_T) [ t == t ] ==<X_T_1, X_T_2, X_T_3>"
+constraint " (X_J) [ t == t ] ==<X_J_1, X_J_2>"
+constraint " (V) [ t == t ] ==adj ( phi )*adj ( H )*derivative(theta)"
+constraint " (alpha) [ t == t ] ==adj ( phi )*adj ( H )*derivative(theta)+a"
+constraint " (f) [ t == t ] ==phi*( M * alpha + b )"
+constraint " (tau) [ t == t ] ==M_mass*derivative(derivative(theta))+C"
+constraint " (M_mass) [ t == t ] ==H*phi*M*adj ( phi )*adj ( H )"
+constraint " (C) [ t == t ] ==H*phi(M*adj ( phi )*a+b)"
+constraint " (B_1) [ t == t ] ==B_3*T_3_2*T_2_1"
+constraint " (B_2) [ t == t ] ==B_3*T_3_2"
+constraint " (N) [ t == t ] ==r_v1+r_v2"
+constraint " (n) [ t == 0] ==3"
+constraint " (tau) [ t == 0] ==zeroVec(2)"
+constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.75; 0,0,0,1|]"
+constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,2.5; 0,0,0,1|]"
+constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.25; 0,0,0,1|]"
+constraint " (B_k) [ t == 0] ==<B_1, B_2, B_3>"
+constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
+constraint " (M_1) [ t == 0] ==zeroMat(6, 6)"
+constraint " (submatrix(M)(0,0,6,6)) [ t == 0] ==[|0.052050002,0.0,0.0,0.0,-0.125,0.0; 0.0,0.052050002,0.0,0.125,0.0,0.0; 0.0,0.0,0.0208,0.0,0.0,0.0; 0.0,0.125,0.0,0.5,0.0,0.0; -0.125,0.0,0.0,0.0,0.5,0.0; 0.0,0.0,0.0,0.0,0.0,0.5|]"
+constraint " (submatrix(H)(0,0,1,6)) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
+constraint " (M_2) [ t == 0] ==zeroMat(6, 6)"
+constraint " (submatrix(M)(6,6,6,6)) [ t == 0] ==[|5.349,0.0,0.0,0.0,-2.0,0.0; 0.0,5.349,0.0,2.0,0.0,0.0; 0.0,0.0,0.0313,0.0,0.0,0.0; 0.0,2.0,0.0,1.0,0.0,0.0; -2.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
+constraint " (submatrix(H)(1,6,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
+constraint " (M_3) [ t == 0] ==zeroMat(6, 6)"
+constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100.0,0.0,0.0; -25.0,0.0,0.0,0.0,100.0,0.0; 0.0,0.0,0.0,0.0,0.0,100.0|]"
+constraint " (C) [ t == 0] ==zeroVec(2)"
+constraint " (N) [ t == 0] ==2"
+constraint " (H) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
+constraint " (theta) [ t == 0] ==zeroVec(2)"
+constraint " (d_theta) [ t == 0] ==zeroVec(2)"
+constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
+constraint " (alpha) [ t == 0] ==zeroVec(18)"
+constraint " (V) [ t == 0] ==zeroVec(18)"
+constraint " (a) [ t == 0] ==zeroVec(18)"
+constraint " (b) [ t == 0] ==zeroVec(18)"
+constraint " (f) [ t == 0] ==zeroVec(18)"
+constraint " (M_mass) [ t == 0] ==zeroMat(2, 2)"
+constraint " (M_inv) [ t == 0] ==zeroMat(2, 2)"
+constraint " (dt) [ t == 0] ==0.01"
+constraint " (d_theta) [ t == 0] ==0"
+constraint " (X_J_1) [ t == 0] ==zeroMat(6, 6)"
+constraint " (X_J_1) [ t == t] ==[|cos(theta(0)),-sin(theta(0)),0,0,0,0; sin(theta(0)),cos(theta(0)),0,0,0,0; 0,0,1,0,0,0; 0,0,0,cos(theta(0)),-sin(theta(0)),0; 0,0,0,sin(theta(0)),cos(theta(0)),0; 0,0,0,0,0,1|]"
+constraint " (X_J_2) [ t == 0] ==zeroMat(6, 6)"
+constraint " (X_J_2) [ t == t] ==[|1,0,0,0,0,0; 0,cos(theta(1)),-sin(theta(1)),0,0,0; 0,sin(theta(1)),cos(theta(1)),0,0,0; 0,0,0,1,0,0; 0,0,0,0,cos(theta(1)),-sin(theta(1)); 0,0,0,0,sin(theta(1)),cos(theta(1))|]"
+constraint " (X_T_1) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,-4.0,0.0,1,0,0; 4.0,0,-0.0,0,1,0; -0.0,0.0,0,0,0,1|]"
+constraint " (X_T_2) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,-0.5,0.0,1,0,0; 0.5,0,-0.0,0,1,0; -0.0,0.0,0,0,0,1|]"
+constraint " (X_T_3) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,0,0,1,0,0; 0,0,0,0,1,0; 0,0,0,0,0,1|]"
+constraint " (X_J) [ t == 0] ==<X_J_1, X_J_2>"
+constraint " (X_T) [ t == 0] ==<X_T_1, X_T_2, X_T_3>"
+constraint " (tau(0)) [ t == t] ==p_mapping.SimpleArmSerial.IntermediateLink.WristJoint.WristActuator.TorqueIn"
+constraint " (tau(1)) [ t == t] ==p_mapping.SimpleArmSerial.BaseLink.ElbowJoint.ElbowActuator.TorqueIn"
+constraint " (BaseLink_BaseSensor_SignalIn) [ t == t] ==BaseLink_BaseSensor_MeasurementOut"
+constraint " (BaseLink_ElbowActuator_TorqueIn) [ t == t] ==BaseLink_ElbowActuator_TorqueOut"
+constraint " (IntermediateLink_WristActuator_TorqueIn) [ t == t] ==IntermediateLink_WristActuator_TorqueOut"
+constraint " (T_geom_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.75; 0,0,0,1|]"
+constraint " (T_geom_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,2.5; 0,0,0,1|]"
+constraint " (T_geom_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.25; 0,0,0,1|]"
+constraint " (T_geom_1) [ t == t] ==B_1*T_offset_1"
+constraint " (T_geom_2) [ t == t] ==B_2*T_offset_2"
+constraint " (T_geom_3) [ t == t] ==B_3*T_offset_3"
+constraint " (T_geom) [ t == t] ==<T_geom_1, T_geom_2, T_geom_3>"
+constraint " (geom_31 . geomType) [ t == 0] ==box"
+constraint " (geom_31 . geomVal) [ t == 0] ==[| 1.0 , 1.0 , 0.5 |]"
+constraint " (geom_21 . geomType) [ t == 0] ==cylinder"
+constraint " (geom_21 . geomVal) [ t == 0] ==[| 0.25 , 4.0 |]"
+constraint " (geom_11 . geomType) [ t == 0] ==box"
+constraint " (geom_11 . geomVal) [ t == 0] ==[| 0.5 , 0.5 , 0.5 |]"
+}
+SolutionRef {
+	expression Local { name tau type "vector(real,2)" }
+	method SKO::PlatformMapping
+	order 1
+input Local { name n type "int" }
+constraint " (n) [ t == 0] ==3"
+constraint " (tau) [ t == 0] ==zeroVec(2)"
+constraint " (tau(0)) [ t == t] ==p_mapping.SimpleArmSerial.IntermediateLink.WristJoint.WristActuator.TorqueIn"
+constraint " (tau(1)) [ t == t] ==p_mapping.SimpleArmSerial.BaseLink.ElbowJoint.ElbowActuator.TorqueIn"
+}
+SolutionRef {
+	expression Local { name B_k type "Seq(matrix(real,4,4))" }
+	method SKO::ForwardKinematics
+	order 2
+input Local { name X_J type "Seq(matrix(real,6,6))" }
+input Local { name X_T type "Seq(matrix(real,6,6))" }
+input Local { name n type "int" }
+input Local { name theta type "vector(real,2)" }
+input Local { name B_1 type "matrix(real,4,4)" }
+input Local { name B_2 type "matrix(real,4,4)" }
+input Local { name B_3 type "matrix(real,4,4)" }
+input Local { name X_J_1 type "matrix(real,6,6)" }
+input Local { name X_J_2 type "matrix(real,6,6)" }
+input Local { name X_T_1 type "matrix(real,6,6)" }
+input Local { name X_T_2 type "matrix(real,6,6)" }
+input Local { name X_T_3 type "matrix(real,6,6)" }
+constraint " (n) [ t == 0] ==3"
+constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.75; 0,0,0,1|]"
+constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,2.5; 0,0,0,1|]"
+constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.25; 0,0,0,1|]"
+constraint " (X_J_1) [ t == 0] ==zeroMat(6, 6)"
+constraint " (X_J_1) [ t == t] ==[|cos(theta(0)),-sin(theta(0)),0,0,0,0; sin(theta(0)),cos(theta(0)),0,0,0,0; 0,0,1,0,0,0; 0,0,0,cos(theta(0)),-sin(theta(0)),0; 0,0,0,sin(theta(0)),cos(theta(0)),0; 0,0,0,0,0,1|]"
+constraint " (X_J_2) [ t == 0] ==zeroMat(6, 6)"
+constraint " (X_J_2) [ t == t] ==[|1,0,0,0,0,0; 0,cos(theta(1)),-sin(theta(1)),0,0,0; 0,sin(theta(1)),cos(theta(1)),0,0,0; 0,0,0,1,0,0; 0,0,0,0,cos(theta(1)),-sin(theta(1)); 0,0,0,0,sin(theta(1)),cos(theta(1))|]"
+constraint " (X_T_1) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,-4.0,0.0,1,0,0; 4.0,0,-0.0,0,1,0; -0.0,0.0,0,0,0,1|]"
+constraint " (X_T_2) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,-0.5,0.0,1,0,0; 0.5,0,-0.0,0,1,0; -0.0,0.0,0,0,0,1|]"
+constraint " (X_T_3) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,0,0,1,0,0; 0,0,0,0,1,0; 0,0,0,0,0,1|]"
+constraint " (B_k) [ t == 0] ==<B_1, B_2, B_3>"
+constraint " (X_J) [ t == 0] ==<X_J_1, X_J_2>"
+constraint " (X_J) [ t == t] ==<X_J_1, X_J_2>"
+constraint " (X_T) [ t == 0] ==<X_T_1, X_T_2, X_T_3>"
+}
+SolutionRef {
+	expression Local { name phi type "matrix(real,18,18)" }
+	method SKO::Eval
+	order 3
+input Local { name B_1 type "matrix(real,4,4)" }
+input Local { name B_2 type "matrix(real,4,4)" }
+input Local { name B_3 type "matrix(real,4,4)" }
+input Local { name B_k type "Seq(matrix(real,4,4))" }
+input Local { name n type "int" }
+constraint " (n) [ t == 0] ==3"
+constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.75; 0,0,0,1|]"
+constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,2.5; 0,0,0,1|]"
+constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.25; 0,0,0,1|]"
+constraint " (B_k) [ t == 0] ==<B_1, B_2, B_3>"
+constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
+}
+SolutionRef {
+	expression Local { name C type "vector(real,2)" }
+	method SKO::NewtonEulerInverseDynamics
+	order 4
+input Local { name M_1 type "matrix(real,6,6)" }
+input Local { name M_2 type "matrix(real,6,6)" }
+input Local { name M_3 type "matrix(real,6,6)" }
+input Local { name n type "int" }
+input Local { name theta type "vector(real,2)" }
+input Local { name phi type "matrix(real,18,18)" }
+input Local { name H type "matrix(real,2,18)" }
+input Local { name d_theta type "vector(real,2)" }
+input Local { name dd_theta type "vector(real,2)" }
+input Local { name alpha type "vector(real,18)" }
+input Local { name V type "vector(real,18)" }
+input Local { name a type "vector(real,18)" }
+input Local { name b type "vector(real,18)" }
+input Local { name f type "vector(real,18)" }
+input Local { name M type "matrix(real,18,18)" }
+input Local { name N type "real" }
+constraint " (n) [ t == 0] ==3"
+constraint " (M_1) [ t == 0] ==zeroMat(6, 6)"
+constraint " (submatrix(M)(0,0,6,6)) [ t == 0] ==[|0.052050002,0.0,0.0,0.0,-0.125,0.0; 0.0,0.052050002,0.0,0.125,0.0,0.0; 0.0,0.0,0.0208,0.0,0.0,0.0; 0.0,0.125,0.0,0.5,0.0,0.0; -0.125,0.0,0.0,0.0,0.5,0.0; 0.0,0.0,0.0,0.0,0.0,0.5|]"
+constraint " (submatrix(H)(0,0,1,6)) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
+constraint " (M_2) [ t == 0] ==zeroMat(6, 6)"
+constraint " (submatrix(M)(6,6,6,6)) [ t == 0] ==[|5.349,0.0,0.0,0.0,-2.0,0.0; 0.0,5.349,0.0,2.0,0.0,0.0; 0.0,0.0,0.0313,0.0,0.0,0.0; 0.0,2.0,0.0,1.0,0.0,0.0; -2.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
+constraint " (submatrix(H)(1,6,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
+constraint " (M_3) [ t == 0] ==zeroMat(6, 6)"
+constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100.0,0.0,0.0; -25.0,0.0,0.0,0.0,100.0,0.0; 0.0,0.0,0.0,0.0,0.0,100.0|]"
+constraint " (C) [ t == 0] ==zeroVec(2)"
+constraint " (N) [ t == 0] ==2"
+constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
+constraint " (H) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
+constraint " (theta) [ t == 0] ==zeroVec(2)"
+constraint " (d_theta) [ t == 0] ==zeroVec(2)"
+constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
+constraint " (alpha) [ t == 0] ==zeroVec(18)"
+constraint " (V) [ t == 0] ==zeroVec(18)"
+constraint " (a) [ t == 0] ==zeroVec(18)"
+constraint " (b) [ t == 0] ==zeroVec(18)"
+constraint " (f) [ t == 0] ==zeroVec(18)"
+}
+SolutionRef {
+	expression Local { name M_mass type "matrix(real,2,2)" }
+	method SKO::CompositeBodyAlgorithm
+	order 5
+input Local { name M_1 type "matrix(real,6,6)" }
+input Local { name M_2 type "matrix(real,6,6)" }
+input Local { name M_3 type "matrix(real,6,6)" }
+input Local { name H type "matrix(real,2,18)" }
+input Local { name phi type "matrix(real,18,18)" }
+input Local { name n type "int" }
+input Local { name M type "matrix(real,18,18)" }
+constraint " (n) [ t == 0] ==3"
+constraint " (M_1) [ t == 0] ==zeroMat(6, 6)"
+constraint " (submatrix(M)(0,0,6,6)) [ t == 0] ==[|0.052050002,0.0,0.0,0.0,-0.125,0.0; 0.0,0.052050002,0.0,0.125,0.0,0.0; 0.0,0.0,0.0208,0.0,0.0,0.0; 0.0,0.125,0.0,0.5,0.0,0.0; -0.125,0.0,0.0,0.0,0.5,0.0; 0.0,0.0,0.0,0.0,0.0,0.5|]"
+constraint " (submatrix(H)(0,0,1,6)) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
+constraint " (M_2) [ t == 0] ==zeroMat(6, 6)"
+constraint " (submatrix(M)(6,6,6,6)) [ t == 0] ==[|5.349,0.0,0.0,0.0,-2.0,0.0; 0.0,5.349,0.0,2.0,0.0,0.0; 0.0,0.0,0.0313,0.0,0.0,0.0; 0.0,2.0,0.0,1.0,0.0,0.0; -2.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
+constraint " (submatrix(H)(1,6,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
+constraint " (M_3) [ t == 0] ==zeroMat(6, 6)"
+constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100.0,0.0,0.0; -25.0,0.0,0.0,0.0,100.0,0.0; 0.0,0.0,0.0,0.0,0.0,100.0|]"
+constraint " (M_mass) [ t == 0] ==zeroMat(2, 2)"
+constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
+constraint " (H) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
+}
+SolutionRef {
+	expression Local { name M_inv type "matrix(real,2,2)" }
+	method SKO::CholeskyAlgorithm
+	order 6
+input Local { name M_mass type "matrix(real,2,2)" }
+input Local { name N type "real" }
+input Local { name n type "int" }
+constraint " (n) [ t == 0] ==3"
+constraint " (N) [ t == 0] ==2"
+constraint " (M_mass) [ t == 0] ==zeroMat(2, 2)"
+constraint " (M_inv) [ t == 0] ==zeroMat(2, 2)"
+}
+SolutionRef {
+	expression Local { name dd_theta type "vector(real,2)" }
+	method SKO::DirectForwardDynamics
+	order 7
+input Local { name n type "int" }
+input Local { name tau type "vector(real,2)" }
+input Local { name M_inv type "matrix(real,2,2)" }
+input Local { name C type "vector(real,2)" }
+constraint " (n) [ t == 0] ==3"
+constraint " (M_inv) [ t == 0] ==zeroMat(2, 2)"
+constraint " (tau) [ t == 0] ==zeroVec(2)"
+constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
+constraint " (C) [ t == 0] ==zeroVec(2)"
+}
+SolutionRef {
+	expression Local { name d_theta type "vector(real,2)" }
+	method SKO::Euler
+	order 8
+input Local { name dd_theta type "vector(real,2)" }
+input Local { name dt type "real" }
+input Local { name n type "int" }
+constraint " (n) [ t == 0] ==3"
+constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
+constraint " (dt) [ t == 0] ==0.01"
+constraint " (d_theta) [ t == 0] ==zeroVec(2)"
+}
+SolutionRef {
+	expression Local { name theta type "vector(real,2)" }
+	method SKO::Euler
+	order 9
+input Local { name d_theta type "vector(real,2)" }
+input Local { name dt type "real" }
+input Local { name n type "int" }
+constraint " (n) [ t == 0] ==3"
+constraint " (d_theta) [ t == 0] ==0"
+constraint " (dt) [ t == 0] ==0.01"
+constraint " (theta) [ t == 0] ==zeroVec(2)"
+}
+SolutionRef {
+	expression Local { name sensor_outputs type "real" }
+	method SKO::SensorOutputMapping
+	order 10
+constraint " (BaseLink_BaseSensor_SignalIn) [ t == t] ==BaseLink_BaseSensor_MeasurementOut"
+}
+
+SolutionRef {
+	expression Local { name T_geom type "Seq(matrix(real,4,4))" }
+	method Visualisation
+	order 11
+input Local { name B_k type "Seq(matrix(real,4,4))" }
+input Local { name T_offset type "Seq(matrix(real,4,4))" }
+input Local { name B_1 type "matrix(real,4,4)" }
+input Local { name T_offset_1 type "matrix(real,4,4)" }
+input Local { name B_2 type "matrix(real,4,4)" }
+input Local { name T_offset_2 type "matrix(real,4,4)" }
+input Local { name B_3 type "matrix(real,4,4)" }
+input Local { name T_offset_3 type "matrix(real,4,4)" }
+input Local { name geom_31 type "Geom" }
+input Local { name geom_21 type "Geom" }
+input Local { name geom_11 type "Geom" }
+input Local { name n type "int" }
+input Local { name T_geom_1 type "matrix(real,4,4)" }
+input Local { name T_geom_2 type "matrix(real,4,4)" }
+input Local { name T_geom_3 type "matrix(real,4,4)" }
+constraint " (n) [ t == 0] ==3"
+constraint " (T_geom_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.75; 0,0,0,1|]"
+constraint " (T_geom_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,2.5; 0,0,0,1|]"
+constraint " (T_geom_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.25; 0,0,0,1|]"
+constraint " (T_geom_1) [ t == t] ==B_1*T_offset_1"
+constraint " (T_geom_2) [ t == t] ==B_2*T_offset_2"
+constraint " (T_geom_3) [ t == t] ==B_3*T_offset_3"
+constraint " (T_geom) [ t == t] ==<T_geom_1, T_geom_2, T_geom_3>"
+constraint " (geom_31 . geomType) [ t == 0] ==box"
+constraint " (geom_31 . geomVal) [ t == 0] ==[| 1.0 , 1.0 , 0.5 |]"
+constraint " (geom_21 . geomType) [ t == 0] ==cylinder"
+constraint " (geom_21 . geomVal) [ t == 0] ==[| 0.25 , 4.0 |]"
+constraint " (geom_11 . geomType) [ t == 0] ==box"
+constraint " (geom_11 . geomVal) [ t == 0] ==[| 0.5 , 0.5 , 0.5 |]"
+}

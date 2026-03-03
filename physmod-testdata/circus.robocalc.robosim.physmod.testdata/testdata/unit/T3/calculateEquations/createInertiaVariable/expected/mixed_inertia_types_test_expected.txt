@@ -1,0 +1,8 @@
+# Expected behavior for mixed inertia types test
+# The test should successfully:
+# 1. Parse the model with mixed integer and float values
+# 2. Handle both IntegerExp and FloatExp in the same model
+# 3. Create inertia variables using createInertiaVariable() without errors
+# 4. Demonstrate that the fixed casting issues work correctly
+
+Test should handle mixed numeric types and create proper inertia matrix variables.

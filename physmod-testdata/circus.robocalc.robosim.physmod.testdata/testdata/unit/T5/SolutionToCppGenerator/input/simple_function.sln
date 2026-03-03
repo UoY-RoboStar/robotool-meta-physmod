@@ -1,0 +1,13 @@
+Solution simple_function {
+    state {
+        result : int = 0;
+    }
+    functions {
+        function add(a: int, b: int): int {
+            add == a + b
+        }
+    }
+    computation {
+        {result = add(5, 3);}
+    }
+}

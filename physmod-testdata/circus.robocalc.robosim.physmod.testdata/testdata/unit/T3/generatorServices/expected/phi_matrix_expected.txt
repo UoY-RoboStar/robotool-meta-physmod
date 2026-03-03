@@ -1,0 +1,10 @@
+# Expected output for phi matrix equation creation
+# Format: matrixName[row,col] = value : expectedRightSideValue
+phi[1,1] = I : 1
+phi[1,2] = I : 0  
+phi[2,1] = I : 0
+phi[2,2] = I : 1
+phi[3,3] = I : 1
+phi[1,2] = 0 : 0
+phi[2,1] = 0 : 0
+phi[3,1] = 0 : 0

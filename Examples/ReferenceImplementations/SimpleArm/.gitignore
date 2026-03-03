@@ -1,0 +1,19 @@
+# Build artifacts (use build/ directory for out-of-source builds)
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.a
+*.o
+integration_test
+visualization_server
+cpp_pid
+
+# Log files
+*.log
+*.csv
+
+# Test outputs
+test_output/
+

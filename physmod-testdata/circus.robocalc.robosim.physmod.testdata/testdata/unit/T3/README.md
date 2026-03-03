@@ -1,0 +1,49 @@
+# T3 eqnComp unit test data
+
+[Back to Test Data Overview](../../../README.md)
+
+This document summarizes the unit-level test data used by the eqnComp (T3) generator tests.
+
+See [method_index.md](method_index.md) for the test method to data directory mapping.
+
+## Coverage and traceability
+
+| Step | Algorithm | Count | Test Method(s) |
+| --- | --- | --- | --- |
+| Main | `eqnComp` | 2 | [testEqnCompMainSKO][EqnCompMainTest], [testEqnCompMainNullModel][EqnCompMainTest] |
+| S1 | `calculateFormulations` | 14 | [testMixedFormulations][CalculateFormulationsTest], [testEmptyMaps][CalculateFormulationsTest], [testSKOLocalJoint][CalculateFormulationsTest], [testSKOReferenceJoint][CalculateFormulationsTest], [testFeatherstoneLocalJoint][CalculateFormulationsTest], [testFeatherstoneReferenceJoint][CalculateFormulationsTest], [testTESTFormulation][CalculateFormulationsTest], [testNoJoints][CalculateFormulationsTest], [testTrivialSensor][CalculateFormulationsTest], [testTrivialSensorLibraryImport][CalculateFormulationsTest], [testUnknownSensor][CalculateFormulationsTest], [testTrivialActuator][CalculateFormulationsTest], [testTrivialActuatorLibraryImport][CalculateFormulationsTest], [testUnknownActuator][CalculateFormulationsTest] |
+| S1a | `findDynFormulation` | 6 | [testSKOLocalJoint][CalculateFormulationsTest], [testSKOReferenceJoint][CalculateFormulationsTest], [testFeatherstoneLocalJoint][CalculateFormulationsTest], [testFeatherstoneReferenceJoint][CalculateFormulationsTest], [testTESTFormulation][CalculateFormulationsTest], [testNoJoints][CalculateFormulationsTest] |
+| S1b | `findSensorFormulations` | 3 | [testTrivialSensor][CalculateFormulationsTest], [testTrivialSensorLibraryImport][CalculateFormulationsTest], [testUnknownSensor][CalculateFormulationsTest] |
+| S1c | `findActuatorFormulations` | 3 | [testTrivialActuator][CalculateFormulationsTest], [testTrivialActuatorLibraryImport][CalculateFormulationsTest], [testUnknownActuator][CalculateFormulationsTest] |
+| S2 | `localiseRefs` | 13 | [testConvertRefJoints][LocaliseRefsTest], [testConvertRefLinks][LocaliseRefsTest], [testConvertRefSensors][LocaliseRefsTest], [testConvertRefSensorsJointScope][LocaliseRefsTest], [testConvertRefActuators][LocaliseRefsTest], [testConvertRefActuatorsLinkScope][LocaliseRefsTest], [testConvertRefBodies][LocaliseRefsTest], [testCreateLocalJoint][LocaliseRefsTest], [testCreateLocalJointPreservesNestedActuators][LocaliseRefsTest], [testCreateLocalJointPreservesNestedSensors][LocaliseRefsTest], [testConvertSingleRefJoint][LocaliseRefsTest], [testConvertMixedJoints][LocaliseRefsTest], [testConvertReferenceJointsToLocalWithNoReferenceJoints][LocaliseRefsTest] |
+| S2a | `convertRefJoints` | 3 | [testConvertRefJoints][LocaliseRefsTest], [testConvertSingleRefJoint][LocaliseRefsTest], [testConvertMixedJoints][LocaliseRefsTest] |
+| S2a | `convertRefLinks` | 1 | [testConvertRefLinks][LocaliseRefsTest] |
+| S2a | `convertRefSensors` | 2 | [testConvertRefSensors][LocaliseRefsTest], [testConvertRefSensorsJointScope][LocaliseRefsTest] |
+| S2a | `convertRefActuators` | 2 | [testConvertRefActuators][LocaliseRefsTest], [testConvertRefActuatorsLinkScope][LocaliseRefsTest] |
+| S2a | `convertRefBodies` | 1 | [testConvertRefBodies][LocaliseRefsTest] |
+| S2b | `createLocalJoint` | 3 | [testCreateLocalJoint][LocaliseRefsTest], [testCreateLocalJointPreservesNestedActuators][LocaliseRefsTest], [testCreateLocalJointPreservesNestedSensors][LocaliseRefsTest] |
+| S2b | `createLocalLink` | Indirect | via [testConvertRefLinks][LocaliseRefsTest] |
+| S2b | `createLocalSensor` | Indirect | via [testConvertRefSensors][LocaliseRefsTest] |
+| S2b | `createLocalActuator` | Indirect | via [testConvertRefActuators][LocaliseRefsTest] |
+| S2b | `createLocalBody` | Indirect | via [testConvertRefBodies][LocaliseRefsTest] |
+| S3 | `validate` | 7 | [testValidPModel][ValidateTest], [testValidFeatherstoneModel][ValidateTest], [testMissingPose][ValidateTest], [testMissingInertia][ValidateTest], [testEmptyPModel][ValidateTest], [testMixedValidity][ValidateTest], [testNonSKO][ValidateTest] |
+| S4 | `calculateTopology` | 4 | [testSerialChainTwoLink][CalculateTopologyTest], [testSerialChainThreeLink][CalculateTopologyTest], [testTreeTopology][CalculateTopologyTest], [testClosedChain][CalculateTopologyTest] |
+| S5 | `assignNumbering` | 17 | [testTwoLinkSKO][AssignNumberingTest], [testTwoLinkFeatherstone][AssignNumberingTest], [testThreeLinkChainSKO][AssignNumberingTest], [testThreeLinkChainFeatherstone][AssignNumberingTest], [testTreeTopologySKO][AssignNumberingTest], [testClosedChainSKO][AssignNumberingTest], [testOrderedLinksBasic][AssignNumberingTest], [testOrderedLinksFourLinks][AssignNumberingTest], [testOrderedLinksSingleLink][AssignNumberingTest], [testGetBaseLinkSerialChain][AssignNumberingTest], [testGetBaseLinkThreeLinkChain][AssignNumberingTest], [testGetBaseLinkTreeTopology][AssignNumberingTest], [testGetBaseLinkClosedChain][AssignNumberingTest], [testGetChildLinksSerialChain][AssignNumberingTest], [testGetChildLinksLeafLink][AssignNumberingTest], [testGetChildLinksTreeTopology][AssignNumberingTest], [testGetChildLinksClosedChain][AssignNumberingTest] |
+| S5a | `orderPmodel` | 3 | [testOrderedLinksBasic][AssignNumberingTest], [testOrderedLinksFourLinks][AssignNumberingTest], [testOrderedLinksSingleLink][AssignNumberingTest] |
+| S5b | `getBaseLink` | 4 | [testGetBaseLinkSerialChain][AssignNumberingTest], [testGetBaseLinkThreeLinkChain][AssignNumberingTest], [testGetBaseLinkTreeTopology][AssignNumberingTest], [testGetBaseLinkClosedChain][AssignNumberingTest] |
+| S5c | `getChildLinks` | 4 | [testGetChildLinksSerialChain][AssignNumberingTest], [testGetChildLinksLeafLink][AssignNumberingTest], [testGetChildLinksTreeTopology][AssignNumberingTest], [testGetChildLinksClosedChain][AssignNumberingTest] |
+| S6 | `calculateEquations` | 24 | [testCreateInertiaVariableWithMixedTypes][CalculateEquationsTest], [testCreateInertiaVariableWithRealData][CalculateEquationsTest], [testClassCastExceptionFix][CalculateEquationsTest], [testCreateGeometryVariable][CalculateEquationsTest], [testCreateGeometryVariableErrorHandling][CalculateEquationsTest], [testFindSensorValidFQN][CalculateEquationsTest], [testFindSensorDifferentLink][CalculateEquationsTest], [testFindSensorInvalidFQN][CalculateEquationsTest], [testFindSensorNonExistentLink][CalculateEquationsTest], [testFindSensorNonExistentSensor][CalculateEquationsTest], [testFindActuatorValidFQN][CalculateEquationsTest], [testFindActuatorDifferentLink][CalculateEquationsTest], [testFindActuatorInvalidFQN][CalculateEquationsTest], [testFindActuatorNonExistentLink][CalculateEquationsTest], [testFindActuatorNonExistentActuator][CalculateEquationsTest], [testTrivialSensorHasEquation][CalculateEquationsTest], [testMultipleSensors][CalculateEquationsTest], [testNoSensors][CalculateEquationsTest], [testTrivialActuatorHasEquation][CalculateEquationsTest], [testMultipleActuators][CalculateEquationsTest], [testNoActuators][CalculateEquationsTest], [testFullPipelineWithSensorsActuatorsDynamics][CalculateEquationsTest], [testDynamicsOnlyNoSensorsActuators][CalculateEquationsTest], [testSensorsActuatorsOnlyNoDynamics][CalculateEquationsTest] |
+| S6 | `calculateEquations` (SKO) | 4 | [testPhiEqnsN1][CalculateEquationsTest], [testPhiEqnsN2][CalculateEquationsTest], [testPhiEqnsN3][CalculateEquationsTest], [testPhiEqnsEdgeCases][CalculateEquationsTest] |
+| Utility | `eqnCompUtils` | 9 | [testToFloatExpWithFloatExp][EqnCompUtilsTest], [testToFloatExpWithIntegerExp][EqnCompUtilsTest], [testGetNumericValueWithFloatExp][EqnCompUtilsTest], [testGetNumericValueWithIntegerExp][EqnCompUtilsTest], [testHelperFunctionErrorHandling][EqnCompUtilsTest], [testSpecificClassCastExceptionScenario][EqnCompUtilsTest], [testToFloatExpWithFloats][EqnCompUtilsTest], [testToFloatExpWithIntegers][EqnCompUtilsTest], [testGetNumericValueMixed][EqnCompUtilsTest] |
+
+Total counts distinct tests; some tests exercise multiple steps, so row totals are not additive.
+
+<!-- Unit test source files -->
+[AssignNumberingTest]: ../../../../../physmod-eqnComp/circus.robocalc.robosim.physmod.generator.eqnComp.tests/src/circus/robocalc/robosim/physmod/generator/eqnComp/tests/unitTests/assignNumbering/AssignNumberingTest.java
+[CalculateEquationsTest]: ../../../../../physmod-eqnComp/circus.robocalc.robosim.physmod.generator.eqnComp.tests/src/circus/robocalc/robosim/physmod/generator/eqnComp/tests/unitTests/calculateEquations/CalculateEquationsTest.java
+[CalculateFormulationsTest]: ../../../../../physmod-eqnComp/circus.robocalc.robosim.physmod.generator.eqnComp.tests/src/circus/robocalc/robosim/physmod/generator/eqnComp/tests/unitTests/calculateFormulations/CalculateFormulationsTest.java
+[CalculateTopologyTest]: ../../../../../physmod-eqnComp/circus.robocalc.robosim.physmod.generator.eqnComp.tests/src/circus/robocalc/robosim/physmod/generator/eqnComp/tests/unitTests/calculateTopology/CalculateTopologyTest.java
+[EqnCompMainTest]: ../../../../../physmod-eqnComp/circus.robocalc.robosim.physmod.generator.eqnComp.tests/src/circus/robocalc/robosim/physmod/generator/eqnComp/tests/unitTests/eqnCompMain/EqnCompMainTest.java
+[EqnCompUtilsTest]: ../../../../../physmod-eqnComp/circus.robocalc.robosim.physmod.generator.eqnComp.tests/src/circus/robocalc/robosim/physmod/generator/eqnComp/tests/unitTests/eqnCompUtils/EqnCompUtilsTest.java
+[LocaliseRefsTest]: ../../../../../physmod-eqnComp/circus.robocalc.robosim.physmod.generator.eqnComp.tests/src/circus/robocalc/robosim/physmod/generator/eqnComp/tests/unitTests/localiseRefs/LocaliseRefsTest.java
+[ValidateTest]: ../../../../../physmod-eqnComp/circus.robocalc.robosim.physmod.generator.eqnComp.tests/src/circus/robocalc/robosim/physmod/generator/eqnComp/tests/unitTests/validate/ValidateTest.java

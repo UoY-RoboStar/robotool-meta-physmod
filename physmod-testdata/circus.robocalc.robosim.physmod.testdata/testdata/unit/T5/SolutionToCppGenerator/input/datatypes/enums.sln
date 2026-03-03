@@ -1,0 +1,14 @@
+Solution enums {
+    datatypes {
+        Status { Idle, Running, Error };
+        Priority { Low, Medium, High }
+    }
+    state {
+        currentStatus: Status;
+        taskPriority: Priority;
+        dummy: int = 0;
+    }
+    computation {
+        {skip;}
+    }
+}

@@ -1,0 +1,146 @@
+SolutionRef {
+	expression Local { name proof_var type "int" }
+	method SKO::proof
+	order 10
+	input Local { name N type "real" }
+	input Local { name B_k type "Seq(matrix(real,4,4))" }
+	input Local { name X_J type "Seq(matrix(real,6,6))" }
+	input Local { name X_T type "Seq(matrix(real,6,6))" }
+	input Local { name V type "vector(real,18)" }
+	input Local { name f type "vector(real,18)" }
+	input Local { name a type "vector(real,18)" }
+	input Local { name b type "vector(real,18)" }
+	input Local { name alpha type "vector(real,18)" }
+	input Local { name phi type "matrix(real,18,18)" }
+	input Local { name M type "matrix(real,18,18)" }
+	input Local { name theta type "vector(real,2)" }
+	input Local { name tau type "vector(real,2)" }
+	input Local { name C type "vector(real,2)" }
+	input Local { name H type "matrix(real,2,18)" }
+	input Local { name M_mass type "matrix(real,2,2)" }
+	input Local { name H_1 type "matrix(real,1,6)" }
+	input Local { name H_2 type "matrix(real,1,6)" }
+	input Local { name B_1 type "matrix(real,4,4)" }
+	input Local { name X_T_1 type "matrix(real,6,6)" }
+	input Local { name M_1 type "matrix(real,6,6)" }
+	input Local { name r_v1 type "real" }
+	input Local { name T_2_1 type "matrix(real,4,4)" }
+	input Local { name B_2 type "matrix(real,4,4)" }
+	input Local { name X_T_2 type "matrix(real,6,6)" }
+	input Local { name M_2 type "matrix(real,6,6)" }
+	input Local { name r_v2 type "real" }
+	input Local { name T_3_2 type "matrix(real,4,4)" }
+	input Local { name B_3 type "matrix(real,4,4)" }
+	input Local { name X_T_3 type "matrix(real,6,6)" }
+	input Local { name M_3 type "matrix(real,6,6)" }
+	input Local { name X_J_1 type "matrix(real,6,6)" }
+	input Local { name X_J_2 type "matrix(real,6,6)" }
+	input Local { name B_ctrl type "matrix(real,2,1)" }
+	input Local { name u type "vector(real,1)" }
+	// System-level geometric transforms
+	input Local { name T_geom type "Seq(matrix(real,4,4))" }
+	input Local { name T_offset type "Seq(matrix(real,4,4))" }
+	input Local { name T_geom_1 type "matrix(real,4,4)" }
+	input Local { name T_geom_2 type "matrix(real,4,4)" }
+	input Local { name T_geom_3 type "matrix(real,4,4)" }
+	input Local { name T_offset_1 type "matrix(real,4,4)" }
+	input Local { name T_offset_2 type "matrix(real,4,4)" }
+	input Local { name T_offset_3 type "matrix(real,4,4)" }
+	// Link geometry specifications
+	input Local { name L_k_geom type "Seq(Geom)" }
+	input Local { name L1_geom type "Geom" }
+	input Local { name L2_geom type "Geom" }
+	input Local { name L3_geom type "Geom" }
+	// Structural equalities for phi block matrices
+	constraint " (submatrix(phi)(0,0,3,3)) [ t == t ] ==identity(3)"
+	constraint " (submatrix(phi)(0,3,3,3)) [ t == t ] ==zeroes(3)"
+	constraint " (submatrix(phi)(0,6,3,3)) [ t == t ] ==zeroes(3)"
+	constraint " (submatrix(phi)(3,3,3,3)) [ t == t ] ==identity(3)"
+	constraint " (submatrix(phi)(3,6,3,3)) [ t == t ] ==zeroes(3)"
+	constraint " (submatrix(phi)(3,0,3,3)) [ t == t ] ==Phi(2, 1, B_k)"
+	constraint " (submatrix(phi)(6,6,3,3)) [ t == t ] ==identity(3)"
+	constraint " (submatrix(phi)(6,0,3,3)) [ t == t ] ==Phi(3, 1, B_k)"
+	constraint " (submatrix(phi)(6,3,3,3)) [ t == t ] ==Phi(3, 2, B_k)"
+	// Sequence assembly
+	constraint " (B_k) [ t == t ] ==<B_1, B_2, B_3>"
+	constraint " (X_T) [ t == t ] ==<X_T_1, X_T_2, X_T_3>"
+	constraint " (X_J) [ t == t ] ==<X_J_1, X_J_2>"
+	// System-level geometric transforms (T_geom_k = B_k * T_offset_k)
+	constraint " (T_geom_1) [ t == t ] ==B_1*T_offset_1"
+	constraint " (T_geom_2) [ t == t ] ==B_2*T_offset_2"
+	constraint " (T_geom_3) [ t == t ] ==B_3*T_offset_3"
+	constraint " (T_geom) [ t == t ] ==<T_geom_1, T_geom_2, T_geom_3>"
+	constraint " (T_offset) [ t == t ] ==<T_offset_1, T_offset_2, T_offset_3>"
+	// Link geometry sequence assembly
+	constraint " (L_k_geom) [ t == t ] ==<L1_geom, L2_geom, L3_geom>"
+	// Kinematics/dynamics relations
+	constraint " (V) [ t == t ] ==adj ( phi )*adj ( H )*derivative(theta)"
+	constraint " (alpha) [ t == t ] ==adj ( phi )*adj ( H )*derivative(theta)+a"
+	constraint " (f) [ t == t ] ==phi*( M * alpha + b )"
+	constraint " (tau) [ t == t ] ==M_mass*derivative(derivative(theta))+C"
+	constraint " (M_mass) [ t == t ] ==H*phi*M*adj ( phi )*adj ( H )"
+	constraint " (C) [ t == t ] ==H*phi(M*adj ( phi )*a+b)"
+	constraint " (B_1) [ t == t ] ==B_3*T_3_2*T_2_1"
+	constraint " (B_2) [ t == t ] ==B_3*T_3_2"
+	constraint " (N) [ t == t ] ==r_v1+r_v2"
+	// Actuator equation (B_ctrl maps control input to joint torques)
+	constraint " (B_ctrl) [ t == 0] ==[|1.0; 0.0|]"
+	constraint " (tau) [ t == t ] ==B_ctrl*u"
+	// Initial values and constants (AcrobotControlled-specific)
+	constraint " (n) [ t == 0] ==3"
+	constraint " (tau) [ t == 0] ==zeroVec(2)"
+	constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
+	constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.15; -0.0,0.0,1.0,0.0; 0,0,0,1|]"
+	constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.0; 0,0,0,1|]"
+	constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.0; 0,0,0,1|]"
+	constraint " (B_k) [ t == 0] ==<B_1, B_2, B_3>"
+	constraint " (M_1) [ t == 0] ==zeroMat(6, 6)"
+	constraint " (submatrix(M)(0,0,6,6)) [ t == 0] ==[|1.33,0.0,0.0,0.0,1.0,0.0; 0.0,1.0,0.0,-1.0,0.0,0.0; 0.0,0.0,0.0,0.0,0.0,0.0; 0.0,-1.0,0.0,1.0,0.0,0.0; 1.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
+	constraint " (submatrix(H)(0,0,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
+	constraint " (M_2) [ t == 0] ==zeroMat(6, 6)"
+	constraint " (submatrix(M)(6,6,6,6)) [ t == 0] ==[|0.333,0.0,0.0,0.0,0.5,0.0; 0.0,0.25,0.0,-0.5,0.0,0.0; 0.0,0.0,0.0,0.0,0.0,0.0; 0.0,-0.5,0.0,1.0,0.0,0.0; 0.5,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
+	constraint " (submatrix(H)(1,6,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
+	constraint " (M_3) [ t == 0] ==zeroMat(6, 6)"
+	constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|0.0,0.0,0.0,0.0,0.0,0.0; 0.0,0.0,0.0,0.0,0.0,0.0; 0.0,0.0,0.0,0.0,0.0,0.0; 0.0,0.0,0.0,0.0,0.0,0.0; 0.0,0.0,0.0,0.0,0.0,0.0; 0.0,0.0,0.0,0.0,0.0,0.0|]"
+	constraint " (C) [ t == 0] ==zeroVec(2)"
+	constraint " (N) [ t == 0] ==2"
+	constraint " (H) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
+	constraint " (theta) [ t == 0] ==zeroVec(2)"
+	constraint " (d_theta) [ t == 0] ==zeroVec(2)"
+	constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
+	constraint " (alpha) [ t == 0] ==zeroVec(18)"
+	constraint " (V) [ t == 0] ==zeroVec(18)"
+	constraint " (a) [ t == 0] ==zeroVec(18)"
+	constraint " (b) [ t == 0] ==zeroVec(18)"
+	constraint " (f) [ t == 0] ==zeroVec(18)"
+	constraint " (M_mass) [ t == 0] ==zeroMat(2, 2)"
+	constraint " (M_inv) [ t == 0] ==zeroMat(2, 2)"
+	constraint " (dt) [ t == 0] ==0.01"
+	constraint " (u) [ t == 0] ==zeroVec(1)"
+	constraint " (X_J_1) [ t == 0] ==zeroMat(6, 6)"
+	constraint " (X_J_1) [ t == t] ==[|1,0,0,0,0,0; 0,cos(theta(0)),-sin(theta(0)),0,0,0; 0,sin(theta(0)),cos(theta(0)),0,0,0; 0,0,0,1,0,0; 0,0,0,0,cos(theta(0)),-sin(theta(0)); 0,0,0,0,sin(theta(0)),cos(theta(0))|]"
+	constraint " (X_J_2) [ t == 0] ==zeroMat(6, 6)"
+	constraint " (X_J_2) [ t == t] ==[|1,0,0,0,0,0; 0,cos(theta(1)),-sin(theta(1)),0,0,0; 0,sin(theta(1)),cos(theta(1)),0,0,0; 0,0,0,1,0,0; 0,0,0,0,cos(theta(1)),-sin(theta(1)); 0,0,0,0,sin(theta(1)),cos(theta(1))|]"
+	constraint " (X_T_1) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,-1.0,0,1,0,0; 1.0,0,0,0,1,0; 0,0,0,0,0,1|]"
+	constraint " (X_T_2) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,0,0,1,0,0; 0,0,0,0,1,0; 0,0,0,0,0,1|]"
+	constraint " (X_T_3) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,0,0,1,0,0; 0,0,0,0,1,0; 0,0,0,0,0,1|]"
+	constraint " (X_J) [ t == 0] ==<X_J_1, X_J_2>"
+	constraint " (X_T) [ t == 0] ==<X_T_1, X_T_2, X_T_3>"
+	// T_offset initial values (fixed link-to-geometry offsets)
+	constraint " (T_offset_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,1.0; 0,0,0,1|]"
+	constraint " (T_offset_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.5; 0,0,0,1|]"
+	constraint " (T_offset_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.1; 0,0,0,1|]"
+	constraint " (T_offset) [ t == 0] ==<T_offset_1, T_offset_2, T_offset_3>"
+	constraint " (T_geom_1) [ t == 0] ==zeroMat(4, 4)"
+	constraint " (T_geom_2) [ t == 0] ==zeroMat(4, 4)"
+	constraint " (T_geom_3) [ t == 0] ==zeroMat(4, 4)"
+	constraint " (T_geom) [ t == 0] ==<T_geom_1, T_geom_2, T_geom_3>"
+	// Link geometry initial values (fixed geometry specifications)
+	constraint " (L1_geom . geomType) [ t == 0] ==cylinder"
+	constraint " (L1_geom . geomVal) [ t == 0] ==[| 0.05 , 2.0 |]"
+	constraint " (L2_geom . geomType) [ t == 0] ==cylinder"
+	constraint " (L2_geom . geomVal) [ t == 0] ==[| 0.05 , 1.0 |]"
+	constraint " (L3_geom . geomType) [ t == 0] ==box"
+	constraint " (L3_geom . geomVal) [ t == 0] ==[| 0.2 , 0.2 , 0.2 |]"
+	constraint " (L_k_geom) [ t == 0] ==<L1_geom, L2_geom, L3_geom>"
+}

@@ -1,0 +1,57 @@
+pmodel PhiEquationsTestN3 {
+    local phi: matrix(real,9,9)
+    
+    local B_k: matrix(real,4,4)
+    
+    local link Link1 {
+        def {
+            const number: nat = 1
+            local B_1: matrix(real,4,4)
+            local V_1: vector(real,6)
+            local alpha_1: vector(real,6)
+        }
+        local body Body1 {
+            def {
+                box(length=0.1, width=0.1, height=0.1)
+            }
+        }
+    }
+    local link Link2 {
+        def {
+            const number: nat = 2
+            local B_2: matrix(real,4,4)
+            local V_2: vector(real,6)
+            local alpha_2: vector(real,6)
+        }
+        local body Body2 {
+            def {
+                box(length=0.2, width=0.2, height=0.2)
+            }
+        }
+    }
+    local link Link3 {
+        def {
+            const number: nat = 3
+            local B_3: matrix(real,4,4)
+            local V_3: vector(real,6)
+            local alpha_3: vector(real,6)
+        }
+        local body Body3 {
+            def {
+                box(length=0.3, width=0.3, height=0.3)
+            }
+        }
+    }
+    
+    equations {
+        submatrix(phi)(0,0,3,3) == identity(3)
+        submatrix(phi)(0,3,3,3) == zeroes(3)
+        submatrix(phi)(0,6,3,3) == zeroes(3)
+        submatrix(phi)(3,3,3,3) == identity(3)
+        submatrix(phi)(3,6,3,3) == zeroes(3)
+        submatrix(phi)(3,0,3,3) == Phi(2,1,B_k)
+        submatrix(phi)(6,6,3,3) == identity(3)
+        submatrix(phi)(6,0,3,3) == Phi(3,1,B_k)
+        submatrix(phi)(6,3,3,3) == Phi(3,2,B_k)
+    }
+}

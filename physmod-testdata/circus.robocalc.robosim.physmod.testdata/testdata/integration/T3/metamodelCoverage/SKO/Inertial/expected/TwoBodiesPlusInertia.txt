@@ -1,0 +1,1 @@
+ERROR L2: The link realisation Tip  contains inertial information and one or more of its bodies also contain inertial information.

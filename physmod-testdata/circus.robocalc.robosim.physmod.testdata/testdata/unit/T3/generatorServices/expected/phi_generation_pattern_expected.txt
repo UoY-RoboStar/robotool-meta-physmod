@@ -1,0 +1,8 @@
+# Expected pattern for phi matrix generation
+# n=1: 1 diagonal block (3x3), 0 above-diagonal, 0 below-diagonal = 9 equations
+# n=2: 2 diagonal blocks (6x6), 1 above-diagonal (3x3), 1 below-diagonal (3x3) = 36 equations  
+# n=3: 3 diagonal blocks (9x9), 3 above-diagonal (3x3 each), 3 below-diagonal (3x3 each) = 81 equations
+
+n=1 : 9
+n=2 : 36
+n=3 : 81

@@ -1,0 +1,383 @@
+Solution physics {
+    datatypes {
+    }
+    state {
+        tau : vec(2) = zeroVec(2);
+        p_mapping_SimpleArm_IntermediateLink_WristJoint_WristActuator_TorqueIn : float = 0.0;
+        p_mapping_SimpleArm_BaseLink_ElbowJoint_ElbowActuator_TorqueIn : float = 0.0;
+        phi : mat(18,18) = zeroMat(18, 18);
+        B_1 : mat(4,4) = [1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.75; 0,0,0,1];
+        B_2 : mat(4,4) = [1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,2.5; 0,0,0,1];
+        B_3 : mat(4,4) = [1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.25; 0,0,0,1];
+        B_k : seq(mat(4,4)) = seq(B_1, B_2, B_3);
+        n : int = 3;
+        C : vec(2) = zeroVec(2);
+        theta : vec(2) = zeroVec(2);
+        H : mat(2,18) = [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0; 0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0];
+        d_theta : vec(2) = zeroVec(2);
+        dd_theta : vec(2) = zeroVec(2);
+        alpha : vec(18) = zeroVec(18);
+        V : vec(18) = zeroVec(18);
+        a : vec(18) = zeroVec(18);
+        b : vec(18) = zeroVec(18);
+        f : vec(18) = zeroVec(18);
+        M : mat(18,18) = [0.052050002,0.0,0.0,0.0,-0.125,0.0,0,0,0,0,0,0,0,0,0,0,0,0; 0.0,0.052050002,0.0,0.125,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0; 0.0,0.0,0.0208,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0; 0.0,0.125,0.0,0.5,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0; -0.125,0.0,0.0,0.0,0.5,0.0,0,0,0,0,0,0,0,0,0,0,0,0; 0.0,0.0,0.0,0.0,0.0,0.5,0,0,0,0,0,0,0,0,0,0,0,0; 0,0,0,0,0,0,5.349,0.0,0.0,0.0,-2.0,0.0,0,0,0,0,0,0; 0,0,0,0,0,0,0.0,5.349,0.0,2.0,0.0,0.0,0,0,0,0,0,0; 0,0,0,0,0,0,0.0,0.0,0.0313,0.0,0.0,0.0,0,0,0,0,0,0; 0,0,0,0,0,0,0.0,2.0,0.0,1.0,0.0,0.0,0,0,0,0,0,0; 0,0,0,0,0,0,-2.0,0.0,0.0,0.0,1.0,0.0,0,0,0,0,0,0; 0,0,0,0,0,0,0.0,0.0,0.0,0.0,0.0,1.0,0,0,0,0,0,0; 0,0,0,0,0,0,0,0,0,0,0,0,16.667,0.0,0.0,0.0,-25.0,0.0; 0,0,0,0,0,0,0,0,0,0,0,0,0.0,22.917,0.0,25.0,0.0,0.0; 0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,10.417,0.0,0.0,0.0; 0,0,0,0,0,0,0,0,0,0,0,0,0.0,25.0,0.0,100.0,0.0,0.0; 0,0,0,0,0,0,0,0,0,0,0,0,-25.0,0.0,0.0,0.0,100.0,0.0; 0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,0.0,100.0];
+        M_mass : mat(2,2) = zeroMat(2, 2);
+        M_inv : mat(2,2) = zeroMat(2, 2);
+        N : float = 2;
+        
+        dt : float = 0.01;
+        
+        X_J : seq(mat(6,6)) = seq(X_J_1, X_J_2);
+        X_T : seq(mat(6,6)) = seq(X_T_1, X_T_2, X_T_3);
+        X_J_1 : mat(6,6) = zeroMat(6, 6);
+        X_J_2 : mat(6,6) = zeroMat(6, 6);
+        X_J_3 : mat(6,6) = zeroMat(6, 6);
+        X_T_1 : mat(6,6) = [1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,-4.0,0.0,1,0,0; 4.0,0,-0.0,0,1,0; -0.0,0.0,0,0,0,1];
+        X_T_2 : mat(6,6) = [1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,-0.5,0.0,1,0,0; 0.5,0,-0.0,0,1,0; -0.0,0.0,0,0,0,1];
+        X_T_3 : mat(6,6) = [1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,0,0,1,0,0; 0,0,0,0,1,0; 0,0,0,0,0,1];
+    }
+    procedures {
+        procedure T_from_X(val X: mat(6,6), res result: mat(4,4)) {
+        			R: mat(3,3);
+        			BL: mat(3,3);
+        			S: mat(3,3);
+        			p: vec(3);
+        
+        			// R = X[0:3,0:3]
+        			for (i: int in range(0, 3, 1)) {
+        				for (j: int in range(0, 3, 1)) {
+        					R[i,j] = X[i,j];
+        				}
+        			}
+        
+        			// BL = X[3:6,0:3]
+        			for (i: int in range(0, 3, 1)) {
+        				for (j: int in range(0, 3, 1)) {
+        					BL[i,j] = X[i+3,j];
+        				}
+        			}
+        
+        			// S = BL * R^T -> S = skew(p)
+        			for (i: int in range(0, 3, 1)) {
+        				for (j: int in range(0, 3, 1)) {
+        					S[i,j] = 0;
+        					for (k: int in range(0, 3, 1)) {
+        						S[i,j] = S[i,j] + BL[i,k] * R[j,k];
+        					}
+        				}
+        			}
+        
+        			// p from S = skew(p)
+        			p[0] = S[2,1];
+        			p[1] = S[0,2];
+        			p[2] = S[1,0];
+        
+        			// Build 4x4 homogeneous transform [R|p; 0|1]
+        			for (i: int in range(0, 3, 1)) {
+        				for (j: int in range(0, 3, 1)) {
+        					result[i,j] = R[i,j];
+        				}
+        			}
+        			for (i: int in range(0, 3, 1)) {
+        				result[i,3] = p[i];
+        			}
+        			result[3,0] = 0;
+        			result[3,1] = 0;
+        			result[3,2] = 0;
+        			result[3,3] = 1;
+        		}
+        procedure SKOm_set(val-res modifier: mat(), val x: int, val y: int, val input: mat(6,6)) {
+        			    submatrix(modifier)(6 * x, 6 * y, 6, 6) = input;
+        			}
+        procedure CalcPhiStar_proc(val i: int, val j: int, val B_k: seq(mat(4,4)), val-res result: mat(6,6)) {
+        		    R_i: mat(3,3) = submatrix(B_k[i - 1])(0, 0, 3, 3);
+        		    R_j: mat(3,3) = submatrix(B_k[j - 1])(0, 0, 3, 3);
+        		    R_ij: mat(3,3) = adjoint(R_i) * R_j;
+        		    p_i: vec(3) = submatrix(B_k[i - 1])(0, 3, 3, 1);
+        		    p_j: vec(3) = submatrix(B_k[j - 1])(0, 3, 3, 1);
+        		    p_ij_i: vec(3) = adjoint(R_i) * (p_j - p_i);
+        		    skew_p: mat(3,3) = skewSymmetric(p_ij_i);
+        		    neg_R_skew: mat(3,3) = -R_ij * skew_p;
+        
+        		    // Build 6x6 spatial motion transform: [R_ij, 0; -R_ij*skew(p_ij_i), R_ij]
+        		    for(row: int in range(0, 3, 1)) {
+        		        for(col: int in range(0, 3, 1)) {
+        		            submatrix(result)(row, col, 1, 1) = submatrix(R_ij)(row, col, 1, 1);
+        		        }
+        		    }
+        		    for(row: int in range(0, 3, 1)) {
+        		        for(col: int in range(3, 6, 1)) {
+        		            submatrix(result)(row, col, 1, 1) = 0.0;
+        		        }
+        		    }
+        		    for(row: int in range(3, 6, 1)) {
+        		        for(col: int in range(0, 3, 1)) {
+        		            submatrix(result)(row, col, 1, 1) = submatrix(neg_R_skew)(row - 3, col, 1, 1);
+        		        }
+        		    }
+        		    for(row: int in range(3, 6, 1)) {
+        		        for(col: int in range(3, 6, 1)) {
+        		            submatrix(result)(row, col, 1, 1) = submatrix(R_ij)(row - 3, col - 3, 1, 1);
+        		        }
+        		    }
+        		}
+        procedure SKOv_set(val-res modifier: vec(), val x: int, val input: vec(6)) {
+        			    subvector(modifier)(6 * x, 6) = input;
+        			}
+        procedure CalcPhi_proc(val i: int, val j: int, val B_k: seq(mat(4,4)), val-res result: mat(6,6)) {
+        		    R_i: mat(3,3) = submatrix(B_k[i - 1])(0, 0, 3, 3);
+        		    R_j: mat(3,3) = submatrix(B_k[j - 1])(0, 0, 3, 3);
+        		    R_ij: mat(3,3) = adjoint(R_i) * R_j;
+        		    p_i: vec(3) = submatrix(B_k[i - 1])(0, 3, 3, 1);
+        		    p_j: vec(3) = submatrix(B_k[j - 1])(0, 3, 3, 1);
+        		    p_ij_i: vec(3) = adjoint(R_i) * (p_j - p_i);
+        		    skew_p: mat(3,3) = skewSymmetric(p_ij_i);
+        
+        		    // Build 6x6 spatial force transform: [R_ij, skew(p_ij_i)*R_ij; 0, R_ij]
+        		    for(row: int in range(0, 3, 1)) {
+        		        for(col: int in range(0, 3, 1)) {
+        		            submatrix(result)(row, col, 1, 1) = submatrix(R_ij)(row, col, 1, 1);
+        		        }
+        		    }
+        		    for(row: int in range(0, 3, 1)) {
+        		        for(col: int in range(3, 6, 1)) {
+        		            submatrix(result)(row, col, 1, 1) = submatrix(skew_p * R_ij)(row, col - 3, 1, 1);
+        		        }
+        		    }
+        		    for(row: int in range(3, 6, 1)) {
+        		        for(col: int in range(0, 3, 1)) {
+        		            submatrix(result)(row, col, 1, 1) = 0.0;
+        		        }
+        		    }
+        		    for(row: int in range(3, 6, 1)) {
+        		        for(col: int in range(3, 6, 1)) {
+        		            submatrix(result)(row, col, 1, 1) = submatrix(R_ij)(row - 3, col - 3, 1, 1);
+        		        }
+        		    }
+        		}
+    }
+    functions {
+        function Identity(n: int): mat() {
+        }
+        function lx(x: vec(3), y: vec(3)): mat(3,3) {
+        lx[0,0] == 0 /\
+                				lx[0,1] == -l(x,y)[2]/\
+                				lx[0,2] == l(x,y)[1]/\
+                				lx[1,0] == l(x,y)[2]/\
+                				lx[1,1] == 0 /\
+                				lx[1,2] == -l(x,y)[0]/\
+                				lx[2,0] == -l(x,y)[1]/\
+                				lx[2,1] == l(x,y)[0]/\
+                				lx[2,2] == 0
+        }
+        function skewSymmetric(v: vec(3)): mat(3,3) {
+        skewSymmetric[0,0] == 0 /\
+        				skewSymmetric[0,1] == -v[2] /\
+        				skewSymmetric[0,2] == v[1] /\
+        				skewSymmetric[1,0] == v[2] /\
+        				skewSymmetric[1,1] == 0 /\
+        				skewSymmetric[1,2] == -v[0] /\
+        				skewSymmetric[2,0] == -v[1] /\
+        				skewSymmetric[2,1] == v[0] /\
+        				skewSymmetric[2,2] == 0
+        }
+        function SKO_cross_force(v: vec(6)): mat(6,6) {
+        // Top-left: ω×
+        for (i: int in range(0, 3, 1)) {
+        			        for (j: int in range(0, 3, 1)) {
+        			            SKO_cross_force[i,j] == skewSymmetric(subvector(v)(0, 3))[i,j]
+        			        }
+        			    } /\
+        			    // Top-right: v_lin×
+        			    for (i: int in range(0, 3, 1)) {
+        			        for (j: int in range(3, 6, 1)) {
+        			            SKO_cross_force[i,j] == skewSymmetric(subvector(v)(3, 3))[i, j - 3]
+        			        }
+        			    } /\
+        			    // Bottom-left zeros
+        			    for (i: int in range(3, 6, 1)) {
+        			        for (j: int in range(0, 3, 1)) {
+        			            SKO_cross_force[i,j] == 0
+        			        }
+        			    } /\
+        			    // Bottom-right: ω×
+        			    for (i: int in range(3, 6, 1)) {
+        			        for (j: int in range(3, 6, 1)) {
+        			            SKO_cross_force[i,j] == skewSymmetric(subvector(v)(0, 3))[i - 3, j - 3]
+        			        }
+        			    }
+        }
+        function SKOv(systemVector: vec(), x: int): vec(6) {
+        SKOv == subvector(systemVector)(6 * x, 6)
+        }
+        function l(Pose1: vec(3), Pose2: vec(3)): vec(3) {
+        }
+        function getFramePosition(frame: int, B_k: seq(mat(4,4))): vec(3) {
+        getFramePosition == submatrix(B_k[frame - 1])(0, 3, 3, 1)
+        }
+        function SKO_cross(v: vec(6)): mat(6,6) {
+        // Top-left 3x3 block: skew-symmetric of angular part (ω×)
+        for (i: int in range(0, 3, 1)) {
+        			        for (j: int in range(0, 3, 1)) {
+        			            SKO_cross[i,j] == skewSymmetric(subvector(v)(0, 3))[i,j]
+        			        }
+        			    } /\
+        			    // Top-right 3x3 block: zeros
+        			    for (i: int in range(0, 3, 1)) {
+        			        for (j: int in range(3, 6, 1)) {
+        			            SKO_cross[i,j] == 0
+        			        }
+        			    } /\
+        			    // Bottom-left 3x3 block: skew-symmetric of linear part (v_lin×)
+        			    for (i: int in range(3, 6, 1)) {
+        			        for (j: int in range(0, 3, 1)) {
+        			            SKO_cross[i,j] == skewSymmetric(subvector(v)(3, 3))[i - 3, j]
+        			        }
+        			    } /\
+        			    // Bottom-right 3x3 block: skew-symmetric of angular part (ω×)
+        			    for (i: int in range(3, 6, 1)) {
+        			        for (j: int in range(3, 6, 1)) {
+        			            SKO_cross[i,j] == skewSymmetric(subvector(v)(0, 3))[i - 3, j - 3]
+        			        }
+        			    }
+        }
+        function cos(x: float): float {
+        }
+        function LDLT(matIn:mat()):mat(){
+        }
+        function zeroMat(rows: int, cols: int):mat() {
+        for (i: int in range(0, rows, 1)) {
+                        for (j: int in range(0, cols, 1)) {
+                            zeroMat[i,j] == 0
+                        }
+                    }
+        }
+        function sin(x: float): float {
+        }
+        function zeroVec(size: int):vec() {
+        for (i: int in range(0, size, 1)) {
+                        zeroVec[i] == 0
+                    }
+        }
+        function SKOm(systemMatrix: mat(), x: int, y: int): mat(6,6) {
+        SKOm == submatrix(systemMatrix)(6 * x, 6 * y, 6, 6)
+        }
+        function CalcPhiStar(i: int, j: int, B_k: seq(mat(4,4))): mat(6,6) {
+        }
+        function Identity(n: int, m: int): mat() {
+        }
+        function adjoint(m: mat()): mat() {
+        }
+    }
+    computation {
+        {
+        subvector(tau)(0,1) = p_mapping_SimpleArm_IntermediateLink_WristJoint_WristActuator_TorqueIn;
+        subvector(tau)(1,1) = p_mapping_SimpleArm_BaseLink_ElbowJoint_ElbowActuator_TorqueIn;
+        }
+         {
+        SKOm_set(phi, 0, 0, Identity(6));
+        temp_1_0: mat(6,6) = zeroMat(6, 6);
+        {CalcPhi_proc(2, 1, B_k, temp_1_0);}
+        SKOm_set(phi, 1, 0, temp_1_0);
+        SKOm_set(phi, 1, 1, Identity(6));
+        temp_2_0: mat(6,6) = zeroMat(6, 6);
+        {CalcPhi_proc(3, 1, B_k, temp_2_0);}
+        SKOm_set(phi, 2, 0, temp_2_0);
+        temp_2_1: mat(6,6) = zeroMat(6, 6);
+        {CalcPhi_proc(3, 2, B_k, temp_2_1);}
+        SKOm_set(phi, 2, 1, temp_2_1);
+        SKOm_set(phi, 2, 2, Identity(6));
+        }
+        {
+        v_delta: vec(18) = zeroVec(6 * n);
+        f_zero: vec(6) = zeroVec(6);
+        d_theta_loc: vec(3) = [d_theta, 0.0];
+        // Mass matrix M is provided as a full 18x18 input; do not overwrite its blocks here
+        for (k: int in range(n - 2, 0, -1)) {
+        			SKOv_set(V, k, adjoint(SKOm(phi, k + 1, k)) * SKOv(V, k + 1) + adjoint(submatrix(H)(k,6*k,1,6)) * subvector(d_theta_loc)(k,1));
+        			SKOv_set(v_delta, k, adjoint(submatrix(H)(k,6*k,1,6)) * subvector(d_theta_loc)(k,1));
+        			SKOv_set(a, k, SKO_cross(SKOv(V, k)) * SKOv(v_delta, k));
+        			SKOv_set(alpha, k, adjoint(SKOm(phi, k + 1, k)) * SKOv(alpha, k + 1) + SKOv(a, k));
+        		}
+        k: int = 0;
+        SKOv_set(b, k, SKO_cross_force(SKOv(V, k)) * SKOm(M, k, k) * SKOv(V, k));
+        SKOv_set(f, k, adjoint(SKOm(phi, k + 1, k)) * f_zero + SKOm(M, k, k) * SKOv(alpha, k) + SKOv(b, k));
+        subvector(C)(k,1) = submatrix(submatrix(H)(0,6*0,1,6) * SKOv(f, k))(0,0,1,1);
+        for (k: int in range(1, n-2, 1)) {
+        			SKOv_set(b, k, SKO_cross_force(SKOv(V, k)) * SKOm(M, k, k) * SKOv(V, k)); 
+        			SKOv_set(f, k, adjoint(SKOm(phi, k + 1, k)) * SKOv(f, k - 1) + SKOm(M, k, k) * SKOv(alpha, k) + SKOv(b, k));
+        			subvector(C)(k,1) = submatrix(submatrix(H)(k,6*k,1,6) * SKOv(f, k))(0,0,1,1);
+        		}
+        }
+        {
+        M_mass = zeroMat(N, N);
+        R: mat(18, 18) = zeroMat(6*n, 6*n);
+        X: vec(18) = zeroVec(6*n);
+        // First loop: Compute all R matrices
+        for (k: int in range(0, n - 1, 1)){
+        				if (k == 0) {
+        					SKOm_set(R, k, k, SKOm(M, k, k));
+        				} else {
+        					SKOm_set(R, k, k, SKOm(phi, k, k-1) * SKOm(R, k-1, k-1) * adjoint(SKOm(phi, k, k-1)) + SKOm(M, k, k));
+        				}
+        		}
+        // Second loop: Compute M_mass using completed R matrices
+        for (k: int in range(0, n - 1, 1)){
+        				SKOv_set(X, k, SKOm(R, k, k) * adjoint(submatrix(H)(k,6*k,1,6)));
+        				submatrix(M_mass)(k, k,1,1) = submatrix(submatrix(H)(k,6*k,1,6) * SKOv(X, k))(0, 0,1,1);
+        
+        				for (j: int in range(k+1,n - 1,1)) {
+        					SKOv_set(X, j, SKOm(phi, j, j-1) * SKOv(X, j-1));
+        					submatrix(M_mass)(j, k,1,1) = submatrix(submatrix(H)(j,6*j,1,6) * SKOv(X, j))(0, 0,1,1);
+        					submatrix(M_mass)(k, j,1,1) = submatrix(M_mass)(j, k,1,1);
+        
+        				}
+        
+        		}
+        }
+        {
+        M_inv = LDLT(M_mass);
+        }
+        {
+        dd_theta = M_inv * (tau - C);
+        }
+        {
+        d_theta = d_theta + dt * dd_theta;
+        }
+        {
+        theta = theta + dt * d_theta;
+        }
+         {
+        // Update X_J from joint coordinates (theta)
+        c0: float = cos(theta[0]);
+        s0: float = sin(theta[0]);
+        c1: float = cos(theta[1]);
+        s1: float = sin(theta[1]);
+        X_J_1 = [c0, -s0, 0, 0, 0, 0;
+                                 s0,  c0, 0, 0, 0, 0;
+                                 0, 0, 1, 0, 0, 0;
+                                 0, 0, 0, c0, -s0, 0;
+                                 0, 0, 0, s0,  c0, 0;
+                                 0, 0, 0, 0, 0, 1];
+        X_J_2 = [1, 0, 0, 0, 0, 0;
+                                 0, c1, -s1, 0, 0, 0;
+                                 0, s1,  c1, 0, 0, 0;
+                                 0, 0, 0, 1, 0, 0;
+                                 0, 0, 0, 0, c1, -s1;
+                                 0, 0, 0, 0, s1,  c1];
+        X_J[0] = X_J_1;
+        X_J[1] = X_J_2;
+        T_XT: mat(4,4);
+        T_XJ: mat(4,4);
+        // Forward kinematics: compute B_k[i] for i=0..n-2 from base frame B_k[n-1]
+        // B_k[n-1] remains unchanged (base frame)
+        T_from_X(X_T[1], T_XT);
+        T_from_X(X_J[1], T_XJ);
+        B_k[1] = B_k[2] * T_XT * T_XJ;
+        T_from_X(X_T[0], T_XT);
+        T_from_X(X_J[0], T_XJ);
+        B_k[0] = B_k[1] * T_XT * T_XJ;
+        }
+    }
+}

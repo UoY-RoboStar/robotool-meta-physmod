@@ -1,0 +1,112 @@
+Solution proof_solution {
+    state {
+        proof_var : int = 0;
+        N : float = 2;
+        B_k : seq(mat(4,4)) = seq(B_1, B_2, B_3);
+        X_J : seq(mat(6,6)) = seq(X_J_1, X_J_2);
+        X_T : seq(mat(6,6)) = seq(X_T_1, X_T_2, X_T_3);
+        V : vec(18) = zeroVec(18);
+        f : vec(18) = zeroVec(18);
+        a : vec(18) = zeroVec(18);
+        b : vec(18) = zeroVec(18);
+        alpha : vec(18) = zeroVec(18);
+        phi : mat(18,18) = zeroMat(18, 18);
+        M : mat(18,18) = zeroMat(18, 18);
+        theta : vec(2) = zeroVec(2);
+        tau : vec(2) = zeroVec(2);
+        C : vec(2) = zeroVec(2);
+        H : mat(2,18) = [ 0 , 0 , 1 , 0 , 0 , 0 ];
+        M_mass : mat(2,2) = zeroMat(2, 2);
+        H_1 : mat(1,6) = zeroMat(1, 6);
+        H_2 : mat(1,6) = zeroMat(1, 6);
+        B_1 : mat(4,4) = [1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,4.75; 0,0,0,1];
+        X_T_1 : mat(6,6) = [1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,-4.0,0.0,1,0,0; 4.0,0,0.0,0,1,0; 0.0,0.0,0,0,0,1];
+        M_1 : mat(6,6) = [0.052050002,0.0,0.0,0.0,-0.125,0.0; 0.0,0.052050002,0.0,0.125,0.0,0.0; 0.0,0.0,0.0208,0.0,0.0,0.0; 0.0,0.125,0.0,0.5,0.0,0.0; -0.125,0.0,0.0,0.0,0.5,0.0; 0.0,0.0,0.0,0.0,0.0,0.5];
+        r_v1 : float = 0;
+        T_2_1 : mat(4,4) = zeroMat(4, 4);
+        B_2 : mat(4,4) = [1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,2.5; 0,0,0,1];
+        X_T_2 : mat(6,6) = [1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,-0.5,0.0,1,0,0; 0.5,0,0.0,0,1,0; 0.0,0.0,0,0,0,1];
+        M_2 : mat(6,6) = [5.349,0.0,0.0,0.0,-2.0,0.0; 0.0,5.349,0.0,2.0,0.0,0.0; 0.0,0.0,0.0313,0.0,0.0,0.0; 0.0,2.0,0.0,1.0,0.0,0.0; -2.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0];
+        r_v2 : float = 0;
+        T_3_2 : mat(4,4) = zeroMat(4, 4);
+        B_3 : mat(4,4) = [1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.25; 0,0,0,1];
+        X_T_3 : mat(6,6) = [1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,0,0,1,0,0; 0,0,0,0,1,0; 0,0,0,0,0,1];
+        M_3 : mat(6,6) = [16.667,0.0,0.0,0.0,-25.0,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100.0,0.0,0.0; -25.0,0.0,0.0,0.0,100.0,0.0; 0.0,0.0,0.0,0.0,0.0,100.0];
+        X_J_1 : mat(6,6) = zeroMat(6, 6);
+        X_J_2 : mat(6,6) = zeroMat(6, 6);
+        n : int = 3;
+        d_theta : vec(2) = zeroVec(2);
+        dd_theta : vec(2) = zeroVec(2);
+        M_inv : mat(2,2) = zeroMat(2, 2);
+        dt : float = 0.01;
+        sensor_outputs : float = 0;
+        T_geom : seq(mat(4,4));
+        T_offset : seq(mat(4,4));
+        T_offset_1 : mat(4,4) = zeroMat(4, 4);
+        T_offset_2 : mat(4,4) = zeroMat(4, 4);
+        T_offset_3 : mat(4,4) = zeroMat(4, 4);
+        geom_31 : Geom = Geom { geomType = "box", geomVal = [1.0 , 1.0 , 0.5], meshUri = "", meshScale = [1.0] };
+        geom_21 : Geom = Geom { geomType = "cylinder", geomVal = [0.25 , 4.0], meshUri = "", meshScale = [1.0] };
+        geom_11 : Geom = Geom { geomType = "box", geomVal = [0.5 , 0.5 , 0.5], meshUri = "", meshScale = [1.0] };
+        T_geom_1 : mat(4,4) = [1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,4.75; 0,0,0,1];
+        T_geom_2 : mat(4,4) = [1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,2.5; 0,0,0,1];
+        T_geom_3 : mat(4,4) = [1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.25; 0,0,0,1];
+        BaseLink_BaseSensor_SignalIn : float;
+        BaseLink_BaseSensor_MeasurementOut : float;
+        BaseLink_ElbowActuator_TorqueIn : float;
+        BaseLink_ElbowActuator_TorqueOut : float;
+        IntermediateLink_WristActuator_TorqueIn : float;
+        IntermediateLink_WristActuator_TorqueOut : float;
+    }
+
+    functions {
+        function adj(m : mat()) : mat() {}
+        function derivative(v : vec()) : vec() {}
+        function zeroMat(r : int, c : int) : mat() {}
+        function zeroVec(n : int) : vec() {}
+        function identity(n : int) : mat() {}
+        function zeroes(n : int) : mat() {}
+        function Phi(i : int, j : int, B : seq(mat())) : mat() {}
+        function sqrt(x : real) : real {}
+        function pow(base : real, exp : real) : real {}
+        function integral(x : real, lower : real, upper : real) : real {}
+        function ind(z : real, lower : real, upper : real) : real {}
+    }
+
+    computation {
+        skip;
+    }
+
+    proof {
+        // Algebraic constraints [t==t]
+                B_k == seq(B_1, B_2, B_3);
+                X_T == seq(X_T_1, X_T_2, X_T_3);
+                X_J == seq(X_J_1, X_J_2);
+                V == adj ( phi )*adj ( H )*derivative(theta);
+                alpha == adj ( phi )*adj ( H )*derivative(theta)+a;
+                f == phi*( M * alpha + b );
+                tau == M_mass*derivative(derivative(theta))+C;
+                M_mass == H*phi*M*adj ( phi )*adj ( H );
+                C == H*phi(M*adj ( phi )*a+b);
+                B_1 == B_3*T_3_2*T_2_1;
+                B_2 == B_3*T_3_2;
+                N == r_v1+r_v2;
+                X_J_1 == [cos(theta(0)),-sin(theta(0)),0,0,0,0; sin(theta(0)),cos(theta(0)),0,0,0,0; 0,0,1,0,0,0; 0,0,0,cos(theta(0)),-sin(theta(0)),0; 0,0,0,sin(theta(0)),cos(theta(0)),0; 0,0,0,0,0,1];
+                X_J_2 == [1,0,0,0,0,0; 0,cos(theta(1)),-sin(theta(1)),0,0,0; 0,sin(theta(1)),cos(theta(1)),0,0,0; 0,0,0,1,0,0; 0,0,0,0,cos(theta(1)),-sin(theta(1)); 0,0,0,0,sin(theta(1)),cos(theta(1))];
+                BaseLink_BaseSensor_SignalIn == BaseLink_BaseSensor_MeasurementOut;
+                BaseLink_ElbowActuator_TorqueIn == BaseLink_ElbowActuator_TorqueOut;
+                IntermediateLink_WristActuator_TorqueIn == IntermediateLink_WristActuator_TorqueOut;
+                T_geom_1 == B_1*T_offset_1;
+                T_geom_2 == B_2*T_offset_2;
+                T_geom_3 == B_3*T_offset_3;
+                T_geom == seq(T_geom_1, T_geom_2, T_geom_3);
+                X_J_1 == [cos(theta(0)),-sin(theta(0)),0,0,0,0; sin(theta(0)),cos(theta(0)),0,0,0,0; 0,0,1,0,0,0; 0,0,0,cos(theta(0)),-sin(theta(0)),0; 0,0,0,sin(theta(0)),cos(theta(0)),0; 0,0,0,0,0,1];
+                X_J_2 == [1,0,0,0,0,0; 0,cos(theta(1)),-sin(theta(1)),0,0,0; 0,sin(theta(1)),cos(theta(1)),0,0,0; 0,0,0,1,0,0; 0,0,0,0,cos(theta(1)),-sin(theta(1)); 0,0,0,0,sin(theta(1)),cos(theta(1))];
+                X_J == seq(X_J_1, X_J_2);
+                BaseLink_BaseSensor_SignalIn == BaseLink_BaseSensor_MeasurementOut;
+                T_geom_1 == B_1*T_offset_1;
+                T_geom_2 == B_2*T_offset_2;
+                T_geom_3 == B_3*T_offset_3;
+                T_geom == seq(T_geom_1, T_geom_2, T_geom_3);
+    }
+}

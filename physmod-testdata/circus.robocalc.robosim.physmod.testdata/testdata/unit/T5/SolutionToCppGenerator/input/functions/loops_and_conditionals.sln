@@ -1,0 +1,19 @@
+Solution loops_and_conditionals {
+    state {
+        result: int = 0;
+        doubled: int = 0;
+    }
+    functions {
+        function double_value(n: int): int {
+            double_value == n * 2
+        }
+
+        function add_values(a: int, b: int): int {
+            add_values == a + b
+        }
+    }
+    computation {
+        {result = double_value(5);}
+        {doubled = add_values(result, 10);}
+    }
+}

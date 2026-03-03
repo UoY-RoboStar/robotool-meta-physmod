@@ -1,0 +1,235 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+		<model name="SimpleArm">
+			<self_collide>true</self_collide>
+			<pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+			<!-- Start of parts of the pmodel SimpleArm -->
+			<!-- End of parts of the pmodel SimpleArm -->
+			
+			<!-- Start of links of the pmodel SimpleArm -->
+			<!-- link full name is SimpleArm::BaseLink -->
+			<link name="1-BaseLink">
+					<pose>0.0 0.0 0.25 0.0 0.0 0.0</pose>
+					<inertial>
+						<pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+						<inertia>
+							<ixx>1.0</ixx>
+							<ixy>0.0</ixy>
+							<ixz>0.0</ixz>
+							<iyy>1.0</iyy>
+							<iyz>0.0</iyz>
+							<izz>1.0</izz>
+						</inertia>
+						<mass>1.0</mass>
+					</inertial>
+					<!-- body full name is SimpleArm::BaseLink::BaseLink -->
+					<collision name="1--BaseLink">
+						<laser_retro>0.0</laser_retro>
+						<pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+						<geometry>
+							<box> 
+								<size>1 1 0.5</size>
+							</box>
+						</geometry>
+						<surface>
+							<bounce>
+								<restitution_coefficient>0.0</restitution_coefficient>
+								<threshold>100000.0</threshold>
+							</bounce>
+							<friction>
+								<ode>
+									<mu>1.0</mu>
+									<mu2>1.0</mu2>
+									<fdir1>0.0 0.0 0.0</fdir1>
+									<slip1>0.0</slip1>
+									<slip2>0.0</slip2>
+								</ode>
+								<torsional>
+									<coefficient>1.0</coefficient>
+									<surface_radius>0.0</surface_radius>
+								</torsional>
+							</friction>
+						</surface>
+					</collision>
+					<visual name="1--BaseLink">
+						<laser_retro>0.0</laser_retro>
+						<pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+						<geometry>
+							<box> 
+								<size>1 1 0.5</size>
+							</box>
+						</geometry>
+					</visual>
+					<!-- WARNING: Annotation not found for the sensor BaseSensor. The SDF generator relies on annotations to specify aspects of the 
+					  	 sensor that are accounted for in the equations. --> If you wish to reflect these aspects in SDF,
+					     please add an appropriate annotation to the sensor. --> 
+			</link>	
+			<!-- link full name is SimpleArm::IntermediateLink -->
+			<link name="2-IntermediateLink">
+					<pose>0.0 0.0 2.5 0.0 0.0 0.0</pose>
+					<inertial>
+						<pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+						<inertia>
+							<ixx>1.0</ixx>
+							<ixy>0.0</ixy>
+							<ixz>0.0</ixz>
+							<iyy>1.0</iyy>
+							<iyz>0.0</iyz>
+							<izz>1.0</izz>
+						</inertia>
+						<mass>1.0</mass>
+					</inertial>
+					<!-- body full name is SimpleArm::IntermediateLink::IntermediateLink -->
+					<collision name="2--IntermediateLink">
+						<laser_retro>0.0</laser_retro>
+						<pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+						<geometry>
+							<cylinder>
+								<radius>0.25</radius>
+								<length>4</length>
+							</cylinder>
+						</geometry>
+						<surface>
+							<bounce>
+								<restitution_coefficient>0.0</restitution_coefficient>
+								<threshold>100000.0</threshold>
+							</bounce>
+							<friction>
+								<ode>
+									<mu>1.0</mu>
+									<mu2>1.0</mu2>
+									<fdir1>0.0 0.0 0.0</fdir1>
+									<slip1>0.0</slip1>
+									<slip2>0.0</slip2>
+								</ode>
+								<torsional>
+									<coefficient>1.0</coefficient>
+									<surface_radius>0.0</surface_radius>
+								</torsional>
+							</friction>
+						</surface>
+					</collision>
+					<visual name="2--IntermediateLink">
+						<laser_retro>0.0</laser_retro>
+						<pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+						<geometry>
+							<cylinder>
+								<radius>0.25</radius>
+								<length>4</length>
+							</cylinder>
+						</geometry>
+					</visual>
+			</link>	
+			<!-- link full name is SimpleArm::Gripper -->
+			<link name="3-Gripper">
+					<pose>0.0 0.0 4.75 0.0 0.0 0.0</pose>
+					<inertial>
+						<pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+						<inertia>
+							<ixx>1.0</ixx>
+							<ixy>0.0</ixy>
+							<ixz>0.0</ixz>
+							<iyy>1.0</iyy>
+							<iyz>0.0</iyz>
+							<izz>1.0</izz>
+						</inertia>
+						<mass>1.0</mass>
+					</inertial>
+					<!-- body full name is SimpleArm::Gripper::Gripper -->
+					<collision name="3--Gripper">
+						<laser_retro>0.0</laser_retro>
+						<pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+						<geometry>
+							<box> 
+								<size>0.5 0.5 0.5</size>
+							</box>
+						</geometry>
+						<surface>
+							<bounce>
+								<restitution_coefficient>0.0</restitution_coefficient>
+								<threshold>100000.0</threshold>
+							</bounce>
+							<friction>
+								<ode>
+									<mu>1.0</mu>
+									<mu2>1.0</mu2>
+									<fdir1>0.0 0.0 0.0</fdir1>
+									<slip1>0.0</slip1>
+									<slip2>0.0</slip2>
+								</ode>
+								<torsional>
+									<coefficient>1.0</coefficient>
+									<surface_radius>0.0</surface_radius>
+								</torsional>
+							</friction>
+						</surface>
+					</collision>
+					<visual name="3--Gripper">
+						<laser_retro>0.0</laser_retro>
+						<pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+						<geometry>
+							<box> 
+								<size>0.5 0.5 0.5</size>
+							</box>
+						</geometry>
+					</visual>
+			</link>	
+			<!-- End of links of the pmodel SimpleArm -->
+			
+			<!-- Start of joints of the pmodel SimpleArm -->
+			<!-- Full name of joint: SimpleArm::IntermediateLink::WristJoint from SimpleArm::IntermediateLink to SimpleArm::Gripper-->
+			<joint name="4-WristJoint" type="revolute">
+				<pose>0.0 0.0 -0.25 0.0 -0.0 0.0</pose>
+				<parent>2-IntermediateLink</parent>
+				<child>3-Gripper</child>
+				<!-- WARNING: The SDF generator relies on annotations of the joint 4-WristJoint to specify in SDF aspects of the joint that are
+					 accounted for in the equations. -->
+				<axis>
+					<xyz>0 0 1</xyz>
+					<dynamics>
+						<damping>0</damping>
+						<friction>0</friction>
+						<spring_reference>0</spring_reference>
+						<spring_stiffness>0</spring_stiffness>
+					</dynamics>
+					<limit>
+						<lower>-6.2831854820251465</lower>
+						<upper>6.2831854820251465</upper>
+						<velocity>5</velocity>
+					</limit>
+				</axis>
+				<!-- WARNING: Annotation not found for the actuator WristMotor. RoboSim actuators have no explicit counterparts in SDF, 
+					 so the generator must rely on annotations to produce something meaningful in SDF. If you wish to reflect these aspects in SDF,
+					 please add an appropriate annotation to the actuator. -->
+			</joint>
+			<!-- Full name of joint: SimpleArm::BaseLink::ElbowJoint from SimpleArm::BaseLink to SimpleArm::IntermediateLink-->
+			<joint name="5-ElbowJoint" type="revolute">
+				<pose>0.0 0.0 -2.0 0.0 -0.0 0.0</pose>
+				<parent>1-BaseLink</parent>
+				<child>2-IntermediateLink</child>
+				<!-- WARNING: The SDF generator relies on annotations of the joint 5-ElbowJoint to specify in SDF aspects of the joint that are
+					 accounted for in the equations. -->
+				<axis>
+					<xyz>1 0 0</xyz>
+					<dynamics>
+						<damping>0</damping>
+						<friction>0</friction>
+						<spring_reference>0</spring_reference>
+						<spring_stiffness>0</spring_stiffness>
+					</dynamics>
+					<limit>
+						<lower>-1.5707963705062866</lower>
+						<upper>1.5707963705062866</upper>
+						<velocity>5</velocity>
+					</limit>
+				</axis>
+				<!-- WARNING: Annotation not found for the actuator ElbowMotor. RoboSim actuators have no explicit counterparts in SDF, 
+					 so the generator must rely on annotations to produce something meaningful in SDF. If you wish to reflect these aspects in SDF,
+					 please add an appropriate annotation to the actuator. -->
+			</joint>
+			<!-- End of joints of the pmodel SimpleArm -->
+			
+			<!-- Start of fixed connections of the pmodel SimpleArm -->
+			<!-- End of fixed connections of the pmodel SimpleArm -->
+		</model>
+</sdf>

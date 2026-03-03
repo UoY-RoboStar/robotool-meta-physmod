@@ -1,0 +1,4 @@
+Generator error: No EObjectDescription could be found in Scope FixedConnection.part for Part'TEST'
+Semantic Object: PMPackage'testvar'.pmodels[0]->PModel'testvar'.links[0]->LocalLink'Core'.fixed[0]->FixedConnection
+URI: temp/__eqnComp_working___synthetic0.pm
+EStructuralFeature: physmod::FixedConnection.part

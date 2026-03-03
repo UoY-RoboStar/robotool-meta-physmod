@@ -1,0 +1,11 @@
+Generator validation error: SKO formulation validation failed:
+
+  - No pose found for component 'L1'
+  - No pose found for component 'L2'
+  - Link 'L1' has no valid inertia definition (neither direct inertia nor body with inertia)
+  - Link 'L2' has no valid inertia definition (neither direct inertia nor body with inertia)
+
+For SKO formulation, please ensure your model has:
+  1. At least one properly named link with pose information
+  2. Valid inertia definitions (either direct or through bodies)
+  3. Proper model structure for code generation

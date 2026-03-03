@@ -1,0 +1,765 @@
+// Platform1 Physics Engine - Generated from Solution DSL
+// Generation Mode: FULL_SIMULATION_VISUALISATION
+// Structure: Includes → State → Procedures → Functions → Computation → API
+
+#pragma region includes
+#include <iostream>
+#include <Eigen/Dense>
+#include <vector>
+#include <memory>
+#include <thread>
+#include <chrono>
+#include <cmath>
+#include <fstream>
+#include <iomanip>
+#include <cstring>
+#include "platform1_state.hpp"
+
+// FULL_SIMULATION_VISUALISATION MODE: Full orchestrator integration with visualisation
+#include "interfaces.hpp"
+#include "platform_mapping.h"
+#include "world_mapping.h"
+#include "utils.h"
+// Visualization support (generated when solution name indicates visualization)
+#include "visualization_client.h"
+#pragma endregion includes
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE (SolutionDSL: state { ... })
+// ═══════════════════════════════════════════════════════════════════════════
+#pragma region state
+
+// Platform state (consolidated physics state)
+static platform1::State state;
+
+// Reference bindings for backward compatibility with existing code
+static Eigen::VectorXd& tau = state.tau;
+static Eigen::MatrixXd& phi = state.phi;
+static Eigen::MatrixXd& B_1 = state.B_1;
+static Eigen::MatrixXd& B_2 = state.B_2;
+static Eigen::MatrixXd& B_3 = state.B_3;
+static std::vector<Eigen::MatrixXd>& B_k = state.B_k;
+static int& n = state.n;
+static Eigen::VectorXd& C = state.C;
+static Eigen::VectorXd& theta = state.theta;
+static Eigen::MatrixXd& H = state.H;
+static Eigen::VectorXd& d_theta = state.d_theta;
+static Eigen::VectorXd& dd_theta = state.dd_theta;
+static Eigen::VectorXd& alpha = state.alpha;
+static Eigen::VectorXd& V = state.V;
+static Eigen::VectorXd& a = state.a;
+static Eigen::VectorXd& b = state.b;
+static Eigen::VectorXd& f = state.f;
+static Eigen::MatrixXd& M = state.M;
+static Eigen::MatrixXd& M_mass = state.M_mass;
+static Eigen::MatrixXd& M_inv = state.M_inv;
+static double& N = state.N;
+static double& dt = state.dt;
+static Eigen::MatrixXd& X_J_1 = state.X_J_1;
+static Eigen::MatrixXd& X_J_2 = state.X_J_2;
+static Eigen::MatrixXd& X_J_3 = state.X_J_3;
+static Eigen::MatrixXd& X_T_1 = state.X_T_1;
+static Eigen::MatrixXd& X_T_2 = state.X_T_2;
+static Eigen::MatrixXd& X_T_3 = state.X_T_3;
+static std::vector<Eigen::MatrixXd>& X_J = state.X_J;
+static std::vector<Eigen::MatrixXd>& X_T = state.X_T;
+
+// Additional state variables
+static double t = 0.0;
+// Note: dt is already available from state.dt
+
+// Geom struct declarations for visualization
+// Geometry datatypes
+struct Geom { const char* geomType; int valCount; double geomVal[3]; };
+static const Geom L1_geom = { "box", 3, {0.5, 0.5, 0.5} };  // gripper
+static const Geom L2_geom = { "cylinder", 2, {0.25, 4.0, 0.0} };  // intermediate
+static const Geom L3_geom = { "box", 3, {1.0, 1.0, 0.5} };  // base
+// Default Geom structs generated (no Geom records found in Solution DSL)
+
+// Visualization runtime state (metadata extracted from Geom records in Solution DSL)
+struct VisualLinkSpec {
+    const char* name;
+    int shape;       // 0=box, 1=cylinder, 2=sphere, 3=mesh
+    double dims[3];  // Shape dimensions (interpretation depends on shape)
+};
+
+static bool visualization_enabled = true;
+static std::unique_ptr<VisualizationClient> viz_client = nullptr;
+static const VisualLinkSpec ROBOT_VISUAL_LINKS[] = {
+    {"robot/gripper", 0, {0.5, 0.5, 0.5}},
+    {"robot/intermediate", 1, {0.25, 4.0, 0.0}},
+    {"robot/base", 0, {1.0, 1.0, 0.5}}
+};
+
+// Logging state
+static std::ofstream transform_log_file;
+static bool transform_logging_enabled = false;
+static std::ofstream torque_log_file;
+static bool torque_logging_enabled = false;
+// Logging variables declared in utils.cpp - use extern to access the shared globals
+extern std::ofstream high_freq_log_file;
+extern bool high_freq_logging_enabled;
+extern int log_counter;
+extern const double HIGH_FREQ_LOG_PERIOD;
+extern std::ofstream velocity_log_file;
+extern bool velocity_logging_enabled;
+
+// Platform and world mapping globals
+//
+// Design rationale for global state:
+// 1. C bridge requirement: d-model (C code) needs stable ABI to access platform mapping
+// 2. extern "C" prevents name mangling, ensuring PickPlace.c can link against p_mapping
+// 3. Alternative considered: heap allocation with C API getters/setters
+//    - Rejected: adds indirection, increases coupling, complicates generated d-model code
+// 4. Current approach: global state with clear ownership
+//    - p_mapping: Written by d-model (via registerWrite), read by platform engine
+//    - w_mapping: Written by world mapping (sensor computation), read by platform mapping
+// 5. Thread safety: orchestrator.cpp manages all mutations via mutexes on cycle boundaries
+// 6. This pattern matches RoboSim semantics: platform and world are separate processes
+//    communicating via shared "channels" (here realized as global structs)
+extern "C" {
+mapping_state_t p_mapping = {};  // Platform mapping (d-model ↔ platform engine)
+}
+mapping_state_t w_mapping = {};  // World mapping (world engine → platform sensors)
+
+#pragma endregion state
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FUNCTION FORWARD DECLARATIONS
+// ═══════════════════════════════════════════════════════════════════════════
+Eigen::MatrixXd lx(Eigen::VectorXd x, Eigen::VectorXd y);
+Eigen::MatrixXd skewSymmetric(Eigen::VectorXd v);
+Eigen::MatrixXd SKO_cross_force(Eigen::VectorXd v);
+Eigen::VectorXd SKOv(Eigen::VectorXd systemVector, int x);
+Eigen::VectorXd l(Eigen::VectorXd Pose1, Eigen::VectorXd Pose2);
+Eigen::VectorXd getFramePosition(int frame, std::vector<Eigen::MatrixXd> B_k);
+Eigen::MatrixXd SKO_cross(Eigen::VectorXd v);
+Eigen::MatrixXd LDLT(Eigen::MatrixXd matIn);
+Eigen::MatrixXd zeroMat(int rows, int cols);
+Eigen::VectorXd zeroVec(int size);
+Eigen::MatrixXd SKOm(Eigen::MatrixXd systemMatrix, int x, int y);
+Eigen::MatrixXd CalcPhiStar(int i, int j, std::vector<Eigen::MatrixXd> B_k);
+Eigen::MatrixXd Identity(int n, int m);
+Eigen::MatrixXd adjoint(Eigen::MatrixXd m);
+
+void initVisualization();
+void updateRobotVisualization();
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PROCEDURES (SolutionDSL: procedures { ... })
+// ═══════════════════════════════════════════════════════════════════════════
+#pragma region procedures
+
+void T_from_X(Eigen::MatrixXd X, Eigen::MatrixXd &result) {
+    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(3, 3);
+        Eigen::MatrixXd BL = Eigen::MatrixXd::Zero(3, 3);
+        Eigen::MatrixXd S = Eigen::MatrixXd::Zero(3, 3);
+        Eigen::VectorXd p = Eigen::VectorXd::Zero(3);
+        for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            R(i,j) = X(i,j);
+        }
+    }
+        for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            BL(i,j) = X((i + 3),j);
+        }
+    }
+        for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            S(i,j) = 0;
+            for (int k = 0; k < 3; k++) {
+                S(i,j) = (S(i,j) + (BL(i,k) * R(j,k)));
+            }
+        }
+    }
+        p(0) = S(2,1);
+        p(1) = S(0,2);
+        p(2) = S(1,0);
+        for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            result(i,j) = R(i,j);
+        }
+    }
+        for (int i = 0; i < 3; i++) {
+        result(i,3) = p(i);
+    }
+        result(3,0) = 0;
+        result(3,1) = 0;
+        result(3,2) = 0;
+        result(3,3) = 1;
+}
+
+
+void SKOm_set(Eigen::MatrixXd &modifier, int x, int y, Eigen::MatrixXd input) {
+    modifier.block((6 * x), (6 * y), 6, 6) = input;
+}
+
+
+void CalcPhiStar_proc(int i, int j, std::vector<Eigen::MatrixXd> B_k, Eigen::MatrixXd &result) {
+    Eigen::MatrixXd R_i = B_k[(i - 1)].block(0, 0, 3, 3);
+        Eigen::MatrixXd R_j = B_k[(j - 1)].block(0, 0, 3, 3);
+        Eigen::MatrixXd R_ij = (R_i.adjoint() * R_j);
+        Eigen::VectorXd p_i; // TODO: Dimension not provided for vector p_i
+    p_i=B_k[(i - 1)].block(0, 3, 3, 1);
+        Eigen::VectorXd p_j; // TODO: Dimension not provided for vector p_j
+    p_j=B_k[(j - 1)].block(0, 3, 3, 1);
+        Eigen::VectorXd p_ij_i; // TODO: Dimension not provided for vector p_ij_i
+    p_ij_i=(R_i.adjoint() * (p_j - p_i));
+        Eigen::MatrixXd skew_p = skewSymmetric(p_ij_i);
+        Eigen::MatrixXd neg_R_skew = (-R_ij * skew_p);
+        for (int row = 0; row < 3; row++) {
+        for (int col = 0; col < 3; col++) {
+            result(row, col) = R_ij(row, col);
+        }
+    }
+        for (int row = 0; row < 3; row++) {
+        for (int col = 3; col < 6; col++) {
+            result(row, col) = 0.0;
+        }
+    }
+        for (int row = 3; row < 6; row++) {
+        for (int col = 0; col < 3; col++) {
+            result(row, col) = neg_R_skew((row - 3), col);
+        }
+    }
+        for (int row = 3; row < 6; row++) {
+        for (int col = 3; col < 6; col++) {
+            result(row, col) = R_ij((row - 3), (col - 3));
+        }
+    }
+}
+
+
+void SKOv_set(Eigen::VectorXd &modifier, int x, Eigen::VectorXd input) {
+    modifier.segment((6 * x), 6) = input;
+}
+
+
+void CalcPhi_proc(int i, int j, std::vector<Eigen::MatrixXd> B_k, Eigen::MatrixXd &result) {
+    Eigen::MatrixXd R_i = B_k[(i - 1)].block(0, 0, 3, 3);
+        Eigen::MatrixXd R_j = B_k[(j - 1)].block(0, 0, 3, 3);
+        Eigen::MatrixXd R_ij = (R_i.adjoint() * R_j);
+        Eigen::VectorXd p_i; // TODO: Dimension not provided for vector p_i
+    p_i=B_k[(i - 1)].block(0, 3, 3, 1);
+        Eigen::VectorXd p_j; // TODO: Dimension not provided for vector p_j
+    p_j=B_k[(j - 1)].block(0, 3, 3, 1);
+        Eigen::VectorXd p_ij_i; // TODO: Dimension not provided for vector p_ij_i
+    p_ij_i=(R_i.adjoint() * (p_j - p_i));
+        Eigen::MatrixXd skew_p = skewSymmetric(p_ij_i);
+        for (int row = 0; row < 3; row++) {
+        for (int col = 0; col < 3; col++) {
+            result(row, col) = R_ij(row, col);
+        }
+    }
+        for (int row = 0; row < 3; row++) {
+        for (int col = 3; col < 6; col++) {
+            result(row, col) = (skew_p * R_ij)(row, (col - 3));
+        }
+    }
+        for (int row = 3; row < 6; row++) {
+        for (int col = 0; col < 3; col++) {
+            result(row, col) = 0.0;
+        }
+    }
+        for (int row = 3; row < 6; row++) {
+        for (int col = 3; col < 6; col++) {
+            result(row, col) = R_ij((row - 3), (col - 3));
+        }
+    }
+}
+
+
+void setBlock(int column, Eigen::MatrixXd block, Eigen::MatrixXd &result) {
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 6; j++) {
+            result(i, (column + j)) = block(i, j);
+        }
+    }
+}
+
+
+
+#pragma endregion procedures
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FUNCTIONS (SolutionDSL: functions { ... })
+// ═══════════════════════════════════════════════════════════════════════════
+#pragma region functions
+
+Eigen::MatrixXd lx(Eigen::VectorXd x, Eigen::VectorXd y) {
+    Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 3);
+    result(0,0) = 0;
+    result(0,1) = -l(x, y)(2);
+    result(0,2) = l(x, y)(1);
+    result(1,0) = l(x, y)(2);
+    result(1,1) = 0;
+    result(1,2) = -l(x, y)(0);
+    result(2,0) = -l(x, y)(1);
+    result(2,1) = l(x, y)(0);
+    result(2,2) = 0;
+    return result;
+}
+
+
+Eigen::MatrixXd skewSymmetric(Eigen::VectorXd v) {
+    Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 3);
+    result(0,0) = 0;
+    result(0,1) = -v(2);
+    result(0,2) = v(1);
+    result(1,0) = v(2);
+    result(1,1) = 0;
+    result(1,2) = -v(0);
+    result(2,0) = -v(1);
+    result(2,1) = v(0);
+    result(2,2) = 0;
+    return result;
+}
+
+
+Eigen::MatrixXd SKO_cross_force(Eigen::VectorXd v) {
+    Eigen::MatrixXd result = Eigen::MatrixXd::Zero(6, 6);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+        result(i,j) = skewSymmetric(v.segment(0, 3))(i,j);
+    }
+    }
+    for (int i = 0; i < 3; i++) {
+        for (int j = 3; j < 6; j++) {
+        result(i,j) = skewSymmetric(v.segment(3, 3))(i,(j - 3));
+    }
+    }
+    for (int i = 3; i < 6; i++) {
+        for (int j = 0; j < 3; j++) {
+        result(i,j) = 0;
+    }
+    }
+    for (int i = 3; i < 6; i++) {
+        for (int j = 3; j < 6; j++) {
+        result(i,j) = skewSymmetric(v.segment(0, 3))((i - 3),(j - 3));
+    }
+    }
+    return result;
+}
+
+
+Eigen::VectorXd SKOv(Eigen::VectorXd systemVector, int x) {
+    Eigen::VectorXd result = Eigen::VectorXd::Zero(6);
+    result = systemVector.segment((6 * x), 6);
+    return result;
+}
+
+
+Eigen::VectorXd l(Eigen::VectorXd Pose1, Eigen::VectorXd Pose2) {
+    Eigen::VectorXd result = Eigen::VectorXd::Zero(3);
+    return result;
+}
+
+
+Eigen::VectorXd getFramePosition(int frame, std::vector<Eigen::MatrixXd> B_k) {
+    Eigen::VectorXd result = Eigen::VectorXd::Zero(3);
+    result = B_k[(frame - 1)].block(0, 3, 3, 1);
+    return result;
+}
+
+
+Eigen::MatrixXd SKO_cross(Eigen::VectorXd v) {
+    Eigen::MatrixXd result = Eigen::MatrixXd::Zero(6, 6);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+        result(i,j) = skewSymmetric(v.segment(0, 3))(i,j);
+    }
+    }
+    for (int i = 0; i < 3; i++) {
+        for (int j = 3; j < 6; j++) {
+        result(i,j) = 0;
+    }
+    }
+    for (int i = 3; i < 6; i++) {
+        for (int j = 0; j < 3; j++) {
+        result(i,j) = skewSymmetric(v.segment(3, 3))((i - 3),j);
+    }
+    }
+    for (int i = 3; i < 6; i++) {
+        for (int j = 3; j < 6; j++) {
+        result(i,j) = skewSymmetric(v.segment(0, 3))((i - 3),(j - 3));
+    }
+    }
+    return result;
+}
+
+
+Eigen::MatrixXd LDLT(const Eigen::MatrixXd& matIn) {
+    return matIn.ldlt().solve(Eigen::MatrixXd::Identity(matIn.rows(), matIn.cols()));
+}
+
+
+Eigen::MatrixXd zeroMat(int rows, int cols) {
+    return Eigen::MatrixXd::Zero(rows, cols);
+}
+
+
+Eigen::VectorXd zeroVec(int size) {
+	    return Eigen::VectorXd::Zero(size);
+	}
+
+
+Eigen::MatrixXd SKOm(Eigen::MatrixXd systemMatrix, int x, int y) {
+    Eigen::MatrixXd result = Eigen::MatrixXd::Zero(6, 6);
+    result = systemMatrix.block((6 * x), (6 * y), 6, 6);
+    return result;
+}
+
+
+Eigen::MatrixXd CalcPhiStar(int i, int j, std::vector<Eigen::MatrixXd> B_k) {
+    Eigen::MatrixXd result = Eigen::MatrixXd::Zero(6, 6);
+    return result;
+}
+
+
+Eigen::MatrixXd Identity(int n, int m) {
+    return Eigen::MatrixXd::Identity(n, m);
+}
+
+
+Eigen::MatrixXd adjoint(Eigen::MatrixXd m) {
+    return m.transpose();
+}
+
+
+
+#pragma endregion functions
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INITIALIZATION (SolutionDSL: state { ... } with initial values)
+// ═══════════════════════════════════════════════════════════════════════════
+#pragma region initialization
+
+void initGlobals() {
+        tau = Eigen::VectorXd::Zero(2);
+        phi = Eigen::MatrixXd::Zero(18, 18);
+        B_1.resize(4, 4);
+        B_1 << 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -0.0, 0.0, 1.0, 4.0, 0, 0, 0, 1;
+        B_2.resize(4, 4);
+        B_2 << 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -0.0, 0.0, 1.0, 0.0, 0, 0, 0, 1;
+        B_3.resize(4, 4);
+        B_3 << 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -0.0, 0.0, 1.0, 0.0, 0, 0, 0, 1;
+        B_k = std::vector<typename std::remove_reference<decltype(B_1)>::type>({ B_1, B_2, B_3 });
+        n = 3;
+        C = Eigen::VectorXd::Zero(2);
+        theta = Eigen::VectorXd::Zero(2);
+        H.resize(2, 18);
+        H << 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+        d_theta = Eigen::VectorXd::Zero(2);
+        dd_theta = Eigen::VectorXd::Zero(2);
+        alpha = Eigen::VectorXd::Zero(18);
+        V = Eigen::VectorXd::Zero(18);
+        a = Eigen::VectorXd::Zero(18);
+        b = Eigen::VectorXd::Zero(18);
+        f = Eigen::VectorXd::Zero(18);
+        M.resize(18, 18);
+        M << 0.052050002, 0.0, 0.0, 0.0, -0.125, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0.052050002, 0.0, 0.125, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0208, 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0.125, 0.0, 0.5, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.125, 0.0, 0.0, 0.0, 0.5, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5.349, 0.0, 0.0, 0.0, -2.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 5.349, 0.0, 2.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0313, 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 2.0, 0.0, 1.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16.667, 0.0, 0.0, 0.0, -25.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 22.917, 0.0, 25.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 10.417, 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 25.0, 0.0, 100.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -25.0, 0.0, 0.0, 0.0, 100.0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 100.0;
+        M_mass = Eigen::MatrixXd::Zero(2, 2);
+        M_inv = Eigen::MatrixXd::Zero(2, 2);
+        N = 2;
+        dt = 0.01;
+        X_J_1 = Eigen::MatrixXd::Zero(6, 6);
+        X_J_2 = Eigen::MatrixXd::Zero(6, 6);
+        X_J_3 = Eigen::MatrixXd::Zero(6, 6);
+        X_T_1.resize(6, 6);
+        X_T_1 << 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 4.0, 0.0, 1, 0, 0, -4.0, 0, -0.0, 0, 1, 0, -0.0, 0.0, 0, 0, 0, 1;
+        X_T_2.resize(6, 6);
+        X_T_2 << 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1;
+        X_T_3.resize(6, 6);
+        X_T_3 << 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1;
+        X_J = std::vector<typename std::remove_reference<decltype(X_J_1)>::type>({ X_J_1, X_J_2 });
+        X_T = std::vector<typename std::remove_reference<decltype(X_T_1)>::type>({ X_T_1, X_T_2, X_T_3 });
+
+    std::cout << "Physics globals initialized" << std::endl;
+    visualization_enabled = true;
+}
+
+#pragma endregion initialization
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COMPUTATION (SolutionDSL: computation { ... })
+// ═══════════════════════════════════════════════════════════════════════════
+#pragma region computation
+
+void physics_update() {
+        {
+        tau(0) = 0.0;
+        tau(1) = p_mapping.SimpleArm.BaseLink.ElbowJoint.ElbowJointMotor.TorqueIn;
+    }
+        {
+        SKOm_set(phi, 0, 0, Eigen::MatrixXd::Identity(6, 6));
+        Eigen::MatrixXd temp_1_0 = Eigen::MatrixXd::Zero(6, 6);
+        {
+            CalcPhi_proc(2, 1, B_k, temp_1_0);
+        }
+        SKOm_set(phi, 1, 0, temp_1_0);
+        SKOm_set(phi, 1, 1, Eigen::MatrixXd::Identity(6, 6));
+        Eigen::MatrixXd temp_2_0 = Eigen::MatrixXd::Zero(6, 6);
+        {
+            CalcPhi_proc(3, 1, B_k, temp_2_0);
+        }
+        SKOm_set(phi, 2, 0, temp_2_0);
+        Eigen::MatrixXd temp_2_1 = Eigen::MatrixXd::Zero(6, 6);
+        {
+            CalcPhi_proc(3, 2, B_k, temp_2_1);
+        }
+        SKOm_set(phi, 2, 1, temp_2_1);
+        SKOm_set(phi, 2, 2, Eigen::MatrixXd::Identity(6, 6));
+    }
+        {
+        Eigen::VectorXd v_delta; // TODO: Dimension not provided for vector v_delta
+        v_delta=Eigen::VectorXd::Zero((6 * n));
+        Eigen::VectorXd f_zero; // TODO: Dimension not provided for vector f_zero
+        f_zero=Eigen::VectorXd::Zero(6);
+        Eigen::VectorXd d_theta_loc = Eigen::VectorXd::Zero(3);
+        d_theta_loc<<d_theta, 0.0;
+        for (int k = (n - 2); k >= 0; k += -1) {
+            SKOv_set(V, k, ((SKOm(phi, (k + 1), k).adjoint() * SKOv(V, (k + 1))) + (H.block(k, (6 * k), 1, 6).adjoint() * d_theta_loc.segment(k, 1))));
+            SKOv_set(v_delta, k, (H.block(k, (6 * k), 1, 6).adjoint() * d_theta_loc.segment(k, 1)));
+            SKOv_set(a, k, (SKO_cross(SKOv(V, k)) * SKOv(v_delta, k)));
+            SKOv_set(alpha, k, ((SKOm(phi, (k + 1), k).adjoint() * SKOv(alpha, (k + 1))) + SKOv(a, k)));
+        }
+        int k = 0;
+        SKOv_set(b, k, ((SKO_cross_force(SKOv(V, k)) * SKOm(M, k, k)) * SKOv(V, k)));
+        SKOv_set(f, k, (((SKOm(phi, (k + 1), k).adjoint() * f_zero) + (SKOm(M, k, k) * SKOv(alpha, k))) + SKOv(b, k)));
+        C(k) = (H.block(0, (6 * 0), 1, 6) * SKOv(f, k))(0, 0);
+        for (int k = 1; k <= (n - 2); k++) {
+            SKOv_set(b, k, ((SKO_cross_force(SKOv(V, k)) * SKOm(M, k, k)) * SKOv(V, k)));
+            SKOv_set(f, k, (((SKOm(phi, (k + 1), k).adjoint() * SKOv(f, (k - 1))) + (SKOm(M, k, k) * SKOv(alpha, k))) + SKOv(b, k)));
+            C(k) = (H.block(k, (6 * k), 1, 6) * SKOv(f, k))(0, 0);
+        }
+    }
+        {
+        Eigen::MatrixXd R = Eigen::MatrixXd::Zero((6 * n), (6 * n));
+        Eigen::VectorXd X; // TODO: Dimension not provided for vector X
+        X=Eigen::VectorXd::Zero((6 * n));
+        for (int k = 0; k < (n - 1); k++) {
+            if (k == 0) {
+                SKOm_set(R, k, k, SKOm(M, k, k));
+            } else {
+                SKOm_set(R, k, k, (((SKOm(phi, k, (k - 1)) * SKOm(R, (k - 1), (k - 1))) * SKOm(phi, k, (k - 1)).adjoint()) + SKOm(M, k, k)));
+            }
+            SKOv_set(X, k, (SKOm(R, k, k) * H.block(k, (6 * k), 1, 6).adjoint()));
+            M_mass(k, k) = (H.block(k, (6 * k), 1, 6) * SKOv(X, k))(0, 0);
+            for (int j = (k + 1); j < (n - 1); j++) {
+                SKOv_set(X, j, (SKOm(phi, j, (j - 1)) * SKOv(X, (j - 1))));
+                M_mass(j, k) = (H.block(j, (6 * j), 1, 6) * SKOv(X, j))(0, 0);
+                M_mass(k, j) = M_mass(j, k);
+            }
+        }
+    }
+        {
+        M_inv = M_mass.ldlt().solve(Eigen::MatrixXd::Identity(M_mass.rows(),M_mass.cols()));
+    }
+        {
+        dd_theta = (M_inv * (tau - C));
+    }
+        {
+        d_theta = (d_theta + (dt * dd_theta));
+    }
+        {
+        theta = (theta + (dt * d_theta));
+    }
+        {
+        double c0 = std::cos(theta(0));
+        double s0 = std::sin(theta(0));
+        double c1 = std::cos(theta(1));
+        double s1 = std::sin(theta(1));
+        X_J_1 << c0, -s0, 0, 0, 0, 0, s0, c0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, c0, -s0, 0, 0, 0, 0, s0, c0, 0, 0, 0, 0, 0, 0, 1;
+        X_J_2 << 1, 0, 0, 0, 0, 0, 0, c1, -s1, 0, 0, 0, 0, s1, c1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, c1, -s1, 0, 0, 0, 0, s1, c1;
+        X_J[0] = X_J_1;
+        X_J[1] = X_J_2;
+        Eigen::MatrixXd T_XT = Eigen::MatrixXd::Zero(4, 4);
+        Eigen::MatrixXd T_XJ = Eigen::MatrixXd::Zero(4, 4);
+        T_from_X(X_T[1], T_XT);
+        T_from_X(X_J[1], T_XJ);
+        B_k[1] = ((B_k[2] * T_XT) * T_XJ);
+        T_from_X(X_T[0], T_XT);
+        T_from_X(X_J[0], T_XJ);
+        B_k[0] = ((B_k[1] * T_XT) * T_XJ);
+    }
+        {
+    
+    }
+        
+        // Update time for next iteration
+        t += dt;
+    if (visualization_enabled) {
+        updateRobotVisualization();
+    }
+}
+
+#pragma endregion computation
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VISUALIZATION SUPPORT
+// ═══════════════════════════════════════════════════════════════════════════
+#pragma region visualization
+
+void updateRobotVisualization() {
+    if (!viz_client || !viz_client->isConnected()) {
+        return;
+    }
+    const std::size_t linkCount = sizeof(ROBOT_VISUAL_LINKS) / sizeof(ROBOT_VISUAL_LINKS[0]);
+
+    // Construct Bk vector from individual B matrices
+    // Check if Bk exists in state, otherwise construct from B_1, B_2, B_3
+    std::vector<Eigen::MatrixXd> Bk_vec;
+    // B_k exists in state
+    Bk_vec = state.B_k;
+
+    std::size_t limit = Bk_vec.size();
+    if (limit > linkCount) {
+        limit = linkCount;
+    }
+
+    // Apply geometry-specific offset transforms to center visuals on links
+    for (std::size_t idx = 0; idx < limit; ++idx) {
+        const Eigen::MatrixXd& frame = Bk_vec[idx];
+        if (frame.rows() == 4 && frame.cols() == 4) {
+            Eigen::Matrix4d transform = frame;
+
+            // Apply link-center offset based on geometry type from ROBOT_VISUAL_LINKS
+            // Base link (last link) typically has no offset
+            const bool isBaseLink = (idx == limit - 1);
+
+            if (!isBaseLink && idx < linkCount) {
+                const VisualLinkSpec& linkSpec = ROBOT_VISUAL_LINKS[idx];
+                const int shape = linkSpec.shape;
+                const double* dims = linkSpec.dims;
+
+                if (shape == 0) {
+                    // Box: offset Z by height/2 (dims[2])
+                    Eigen::Matrix4d offset = Eigen::Matrix4d::Identity();
+                    offset(2, 3) = dims[2] / 2.0;
+                    transform = transform * offset;
+                } else if (shape == 1) {
+                    // Cylinder: offset Z by length/2 (dims[1]) and rotate 90° around X
+                    Eigen::Matrix4d offset = Eigen::Matrix4d::Identity();
+                    offset(2, 3) = dims[1] / 2.0;
+                    Eigen::Matrix4d rotation = Eigen::Matrix4d::Identity();
+                    rotation(1, 1) = std::cos(M_PI / 2.0);
+                    rotation(1, 2) = -std::sin(M_PI / 2.0);
+                    rotation(2, 1) = std::sin(M_PI / 2.0);
+                    rotation(2, 2) = std::cos(M_PI / 2.0);
+                    transform = transform * offset * rotation;
+                } else if (shape == 2) {
+                    // Sphere: offset Z by radius (dims[0])
+                    Eigen::Matrix4d offset = Eigen::Matrix4d::Identity();
+                    offset(2, 3) = dims[0];
+                    transform = transform * offset;
+                }
+                // Mesh shapes (shape == 3) typically don't need automatic offset
+            }
+
+            viz_client->sendTransform(ROBOT_VISUAL_LINKS[idx].name, transform, false);
+        }
+    }
+}
+
+void initVisualization() {
+    visualization_enabled = true;
+    if (viz_client) {
+        return;  // Early return if already initialized
+    }
+
+    viz_client = std::make_unique<VisualizationClient>();
+
+    if (viz_client->connect("127.0.0.1", 9999)) {
+        std::cout << "[Robot] Connected to visualization server" << std::endl;
+
+        // Create visualization objects from Geom structs (matching manual implementation pattern)
+        const int grey[3] = {128, 128, 128};
+
+        auto shape_from = [](const Geom& g) -> int {
+            const char c = g.geomType[0];
+            return (c == 'b' ? 0 : (c == 'c' ? 1 : (c == 's' ? 2 : 0)));
+        };
+
+
+        const Geom geoms[] = { L1_geom, L2_geom, L3_geom };
+        const char* names[] = { "robot/gripper", "robot/intermediate", "robot/base" };
+        const int count = static_cast<int>(std::min<std::size_t>(state.B_k.size(), 3));
+
+        for (int k = 0; k < count; ++k) {
+            const Geom& g = geoms[k];
+            const int shape = shape_from(g);
+            double dims[3] = {0.0, 0.0, 0.0};
+            const int m = std::min(g.valCount, 3);
+            for (int i = 0; i < m; ++i) dims[i] = g.geomVal[i];
+            viz_client->createObject(names[k], shape, dims, grey);
+        }
+
+        updateRobotVisualization();
+    } else {
+        std::cerr << "[Robot] Failed to connect to visualization server" << std::endl;
+        viz_client.reset();
+        visualization_enabled = false;
+    }
+}
+
+#pragma endregion visualization
+
+// ═══════════════════════════════════════════════════════════════════════════
+// API (FULL_SIMULATION_VISUALISATION Mode)
+// ═══════════════════════════════════════════════════════════════════════════
+#pragma region api
+
+// FULL_SIMULATION MODE: Full API with Platform and PlatformEngineImpl classes
+class Platform1 : public Platform {
+public:
+    Platform1() : Platform("Platform1", 0) {}
+
+    IEntityState& getState() override { return ::state; }
+    const IEntityState& getState() const override { return ::state; }
+};
+
+class PlatformEngineImpl : public IPlatformEngine {
+    Platform1 platform_entity;
+
+public:
+    PlatformEngineImpl() {}
+
+    void initialise() override {
+        initGlobals();
+        world_initialize();
+        initVisualization();
+        std::cout << "Starting simulation with visualization" << std::endl;
+        std::cout << "Open the visualization server link (check server console) to view the robot." << std::endl;
+    }
+
+    void update() override {
+        physics_update();
+        platform_entity.advanceTime(dt);
+    }
+
+    double getTime() const override { return t; }
+
+    Platform& getPlatform() override { return platform_entity; }
+    const Platform& getPlatform() const override { return platform_entity; }
+};
+
+static PlatformEngineImpl platform_engine_instance;
+IPlatformEngine* get_platform_engine() { return &platform_engine_instance; }
+
+#pragma endregion api
+
+#pragma region logging
+
+// All logging functions removed - now centralized in utils.cpp to avoid code duplication
+// Use the following functions from utils.h:
+//   - enable_torque_logging() / disable_torque_logging()
+//   - enable_high_freq_logging() / disable_high_freq_logging()
+//   - enable_velocity_logging() / disable_velocity_logging()
+//   - enable_transform_logging() / disable_transform_logging()
+//   - enable_mapping_debug_logging() / disable_mapping_debug_logging()
+
+#pragma endregion logging
+
+// Note: STANDALONE mode now generates a separate orchestrator.cpp with main()
+// The physics engine file no longer contains a main() function

@@ -1,0 +1,28 @@
+<mujoco model="fourbar_mj">
+  <compiler angle="radian" inertiafromgeom="false"/>
+  <option timestep="0.001" gravity="0 0 -9.81" integrator="implicitfast" solver="Newton" iterations="100"/>
+
+  <worldbody>
+    <body name="linkA" pos="0 0 0" euler="0 1.8234765819 0">
+      <joint name="joint_WA" type="hinge" axis="0 1 0" ref="1.8234765819" damping="0"/>
+      <inertial pos="2 0 0" mass="20" diaginertia="0.0833333333 26.6666666667 26.6666666667"/>
+      <geom name="geomA" type="box" pos="2 0 0" size="2 0.05 0.1" contype="0" conaffinity="0" rgba="1 0 0 1"/>
+
+      <body name="linkB" pos="4 0 0" euler="0 -1.8234765819 0">
+        <joint name="joint_AB" type="hinge" axis="0 1 0" ref="-1.8234765819" damping="0"/>
+        <inertial pos="2 0 0" mass="20" diaginertia="0.0833333333 26.6666666667 26.6666666667"/>
+        <geom name="geomB" type="box" pos="2 0 0" size="2 0.05 0.1" contype="0" conaffinity="0" rgba="0 0 1 1"/>
+      </body>
+    </body>
+
+    <body name="linkC" pos="2 0 0" euler="0 1.3181160717 0">
+      <joint name="joint_WC" type="hinge" axis="0 1 0" ref="1.3181160717" damping="0"/>
+      <inertial pos="2 0 0" mass="20" diaginertia="0.0833333333 26.6666666667 26.6666666667"/>
+      <geom name="geomC" type="box" pos="2 0 0" size="2 0.05 0.1" contype="0" conaffinity="0" rgba="1 1 0 1"/>
+    </body>
+  </worldbody>
+
+  <equality>
+    <connect name="bc_connect" body1="linkB" body2="linkC" anchor="4 0 0" solimp="0.99 0.999 0.001" solref="0.002 1"/>
+  </equality>
+</mujoco>
