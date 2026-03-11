@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin
-   id="robostar.robotool.customization"
-   name="RoboTool"
+   id="robostar.robotool.physmod.customization"
+   name="RoboTool PhysMod"
    version="1.0.0"
    provider-name="RoboStar">
    <extension
@@ -11,11 +11,11 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            description="RoboTool"
-            name="RoboTool">
+            description="RoboTool PhysMod"
+            name="RoboTool PhysMod">
          <property
          		name="appName"
-         		value="RoboTool"/>
+         		value="RoboTool PhysMod"/>
          <property
                name="preferenceCustomization"
                value="plugin_customization.ini"/>
@@ -33,7 +33,7 @@
                value="7,244,320,20"/>
          <property
                name="introTitle"
-               value="Welcome to RoboTool"/>
+               value="Welcome to RoboTool PhysMod"/>
          <property
                name="aboutImage"
                value="RoboStar-banner.png">

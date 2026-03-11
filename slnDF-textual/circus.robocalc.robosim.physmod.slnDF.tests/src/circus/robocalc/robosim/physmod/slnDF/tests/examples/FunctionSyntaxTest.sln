@@ -1,0 +1,50 @@
+Solution {
+    datatypes {
+        Point {
+            x: float;
+            y: float
+        }
+    }
+    
+    state {
+        position: Point = Point{x=0.0, y=0.0};
+        velocity: Point = Point{x=1.0, y=0.5};
+        time: float = 0.0;
+        result_value: float = 0.0
+    }
+    
+    functions {
+        // Test new conditional syntax: if...then...else instead of ifthen
+        function max_value(a: float, b: float): float {
+            result == if (a > b) then a else b
+        }
+        
+        function min_value(a: float, b: float): float {
+            result == if (a < b) then a else b
+        }
+        
+        // Test new loop syntax: for instead of for all (∀)
+        function sum_range(start: int, end: int): float {
+            for (i: int in range(start, end, 1)) {
+                result == result + i
+            }
+        }
+        
+        // Complex function combining both new syntaxes
+        function conditional_sum(limit: int, threshold: float): float {
+            for (i: int in range(0, limit, 1)) {
+                result == if (i > threshold) then result + i else result
+            }
+        }
+    }
+    
+    computation {
+        // Test function calls with new syntax
+        result_value = max_value(position.x, position.y);
+        result_value = min_value(velocity.x, velocity.y);
+        result_value = sum_range(1, 10);
+        result_value = conditional_sum(20, 5.0);
+        
+        time = time + 1.0;
+    }
+}

@@ -1,0 +1,8 @@
+Solution TEST_Generator {
+    state {
+    }
+
+    computation {
+        skip;
+    }
+}

@@ -1,0 +1,443 @@
+Solution CGA_serial {
+
+    datatypes {
+        PModel { links: seq(Link); joints: seq(Joint); name: String };
+        Link { name: String; index: int; bodies: seq(Body); actuators: seq(Actuator); def: LinkDef; joints: seq(Joint); pose: Pose };
+        LinkDef { inertial: Inertial };
+        Joint { name: String; geometry: Geom; axis: vec(3); def: JointDef };
+        JointDef { locals: seq(VariableList) };
+        Body { name: String; def: BodyDef };
+        BodyDef { inertial: Inertial; geometry: Geometry };
+        Actuator { name: String; def: ActuatorDef };
+        ActuatorDef { constants: seq(VariableList); name: String };
+        VariableList { vars: seq(Variable) };
+        Variable { name: String };
+        Inertial { mass: real; inertia: Inertia; pose: Pose };
+        Inertia { ixx: real; ixy: real; ixz: real; iyy: real; iyz: real; izz: real };
+        Pose { x: real; y: real; z: real; roll: real; pitch: real; yaw: real };
+        Geometry { length: real; radius: real; x: real; y: real; z: real };
+        Geom { R: mat(3,3); p: vec(3) }
+    }
+
+    state {
+
+        pmodel: PModel;
+
+        n: int;
+        N: int;
+
+        // Link / joint data extracted from the physical model
+        linkListNum: int;
+        linkList: seq(Link);
+
+        jointListNum: int;
+        jointList: seq(Joint);
+
+        currentLink: Link;
+        linkNum: int;
+
+        jointDef: Joint;
+        jointNum: int;
+
+        currentBody: Body;
+        currentBodyDef: BodyDef;
+        currentInertial: Inertial;
+        currentInertia: Inertia;
+        numBodies: int;
+
+        // Geometric proxy for link length (half-height of the first geometry)
+        halfHeight: real;
+        parentHalfHeight: real;
+        geomRadius: real;
+        geomTypeStr: String;
+        geomVarName: String;
+        geomVal: seq(real);
+
+        // Aggregate equation string builders
+        bkSeqStr: String;
+        motorSeqStr: String;
+        motorJointSeqStr: String;
+        motorTSeqStr: String;
+
+        axisRotSeqStr: String;
+        axisLinSeqStr: String;
+        jointTypeSeqStr: String;
+
+        massSeqStr: String;
+        comSeqStr: String;
+        inertiaSeqStr: String;
+
+        tGeomSeqStr: String;
+        tOffsetSeqStr: String;
+
+        // Inertial scalars/vectors (per link)
+        massVal: real;
+        ixxVal: real;
+        ixyVal: real;
+        ixzVal: real;
+        iyyVal: real;
+        iyzVal: real;
+        izzVal: real;
+
+        cxVal: real;
+        cyVal: real;
+        czVal: real;
+
+        // Joint axis
+        axisRotVal: String;
+        axisLinVal: String;
+        jointTypeVal: int;
+    }
+
+    procedures {
+
+        // Compute halfHeight from geometry type and values
+        procedure computeHalfHeight(val gType: String, val gVal: seq(real)) {
+            if (gType == "box") {
+                halfHeight = gVal[2] / 2.0;
+                geomRadius = 0.0;
+            } else {
+                if (gType == "cylinder") {
+                    halfHeight = gVal[1] / 2.0;
+                    geomRadius = gVal[0];
+                } else {
+                    if (gType == "sphere") {
+                        halfHeight = gVal[0];
+                        geomRadius = 0.0;
+                    } else {
+                        halfHeight = 0.0;
+                        geomRadius = 0.0;
+                    };
+                };
+            };
+        }
+
+        // B_k initial condition: set base link to identity; others use Pose
+        procedure createBConstraint(val linkName: String, val linkNum: int) {
+            createConstraint(pmodel, "(B_" + linkNum + ")[t==0] == identity(4)");
+        }
+
+        procedure createTGeomConstraint(val linkName: String, val linkNum: int) {
+            createConstraint(pmodel, "(T_geom_" + linkNum + ")[t==0] == B_" + linkNum + " * T_offset_" + linkNum);
+        }
+
+        procedure createTOffsetConstraint(val linkName: String, val linkNum: int, val xOffset: real, val yOffset: real, val zOffset: real) {
+            createConstraint(pmodel, "(T_offset_" + linkNum + ")[t==0] == [|1.0,0.0,0.0," + xOffset + ";0.0,1.0,0.0," + yOffset + ";0.0,0.0,1.0," + zOffset + ";0.0,0.0,0.0,1.0|]");
+        }
+
+        // Motor constants as literals (our internal motor layout matches the platform engine):
+        //   motor = [ s, e12, e13, e23, e1i, e2i, e3i, e123i ]
+        // For a pure translation along Z by d: motor = 1 - (d/2) * e3i
+        procedure createMotorTConstraint(val linkNum: int, val transZ: real) {
+            e3iCoeff: real = 0.0 - (0.5 * transZ);
+            createConstraint(pmodel, "(motor_T_" + linkNum + ")[t==0] == [|1.0,0.0,0.0,0.0,0.0,0.0," + e3iCoeff + ",0.0|]");
+        }
+
+        procedure createMotorIdentityConstraint(val varName: String) {
+            createConstraint(pmodel, "(" + varName + ")[t==0] == [|1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0|]");
+        }
+    }
+
+    functions {
+        // EMF Model Modification
+        function createVariable(ctx: PModel, name: String, type: String, initial: String): int {}
+        function createConstant(ctx: PModel, name: String, value: String): int {}
+        function createEquation(ctx: PModel, expr: String): int {}
+        function createConstraint(ctx: PModel, expr: String): int {}
+        function createRelation(ctx: PModel, expr: String): int {}
+        function createFlexiRelation(ctx: PModel, expr: String): int {}
+        function addInOut(ctx: PModel, name: String, type: String): int {}
+        function addInput(ctx: PModel, name: String, type: String): int {}
+        function addGeomVariable(ctx: Link, name: String, body: Body): int {}
+        function createDatatype(ctx: PModel, name: String, fields: String): int {}
+        function createFunction(ctx: PModel, name: String, params: String, retType: String): int {}
+
+        // Collection utilities
+        function length(items: seq(Link)): int {}
+        function length(items: seq(Joint)): int {}
+        function length(items: seq(Body)): int {}
+
+        // EMF Data Accessors
+        function getVariable(ctx: Link, name: String): real {}
+        function getVariable(ctx: Joint, name: String): real {}
+        function evaluateExpression(expr: real): real {}
+    }
+
+    computation {
+        // Serial-chain size (n links incl. base; N = n-1 DOF)
+        n = length(pmodel.links);
+        N = n - 1;
+
+        // Basic datatype + math helpers
+        createDatatype(pmodel, "Geom", "geomType: string; geomVal: vec(); meshUri: string; meshScale: vec()");
+        createFunction(pmodel, "identity", "size: real", "mat(4,4)");
+        createFunction(pmodel, "transl", "R: mat(3,3), p: vec(3)", "mat(4,4)");
+        createFunction(pmodel, "eulZYX", "z: real, y: real, x: real", "mat(3,3)");
+        createFunction(pmodel, "sin", "v: real", "real");
+        createFunction(pmodel, "cos", "v: real", "real");
+        createFunction(pmodel, "motorProduct", "m1: vec(8), m2: vec(8)", "vec(8)");
+
+        // System variables
+
+        addInOut(pmodel, "n", "int");
+        addInOut(pmodel, "N", "int");
+        addInOut(pmodel, "dt", "real");
+
+        addInOut(pmodel, "theta", "vec(" + N + ")");
+        addInOut(pmodel, "d_theta", "vec(" + N + ")");
+        addInOut(pmodel, "dd_theta", "vec(" + N + ")");
+        addInOut(pmodel, "tau", "vec(" + N + ")");
+        addInOut(pmodel, "damping", "mat(" + N + "," + N + ")");
+        addInOut(pmodel, "gravity", "real");
+
+        // Kinematics (motor-based)
+        addInOut(pmodel, "B_k", "Seq(mat(4,4))");
+        addInOut(pmodel, "motor_T", "Seq(vec(8))");
+        addInOut(pmodel, "motor_k", "Seq(vec(8))");
+        addInOut(pmodel, "motor_joint", "Seq(vec(8))");
+
+        // Joint data
+        addInOut(pmodel, "axis_rot", "Seq(vec(3))");
+        addInOut(pmodel, "axis_lin", "Seq(vec(3))");
+        addInOut(pmodel, "joint_type", "Seq(int)");
+
+        // Inertial parameters (per moving link; excludes base link n)
+        addInOut(pmodel, "mass_k", "Seq(real)");
+        addInOut(pmodel, "com_k", "Seq(vec(3))");
+        addInOut(pmodel, "inertia_k", "Seq(mat(3,3))");
+
+        // Geometry placement helpers
+        addInOut(pmodel, "T_geom", "Seq(mat(4,4))");
+        addInOut(pmodel, "T_offset", "Seq(mat(4,4))");
+
+        // Per-link variables and constraints
+
+        // Allocate per-link variables
+        for (j: int in range(1, n + 1, 1)) {
+            addInOut(pmodel, "B_" + j, "mat(4,4)");
+            addInOut(pmodel, "motor_T_" + j, "vec(8)");
+            addInOut(pmodel, "motor_" + j, "vec(8)");
+
+            addInOut(pmodel, "T_geom_" + j, "mat(4,4)");
+            addInOut(pmodel, "T_offset_" + j, "mat(4,4)");
+
+            // Inertial parameters per link (kept explicit as primitives)
+            addInOut(pmodel, "m_" + j, "real");
+            addInOut(pmodel, "com_" + j, "vec(3)");
+            addInOut(pmodel, "Icom_" + j, "mat(3,3)");
+        }
+
+        // Allocate per-joint variables (no joint for base link n)
+        for (j: int in range(1, n, 1)) {
+            addInOut(pmodel, "motor_joint_" + j, "vec(8)");
+
+            addInOut(pmodel, "axis_rot_" + j, "vec(3)");
+            addInOut(pmodel, "axis_lin_" + j, "vec(3)");
+            addInOut(pmodel, "joint_type_" + j, "int");
+        }
+
+        // Extract inertial and geometry data per link
+
+        linkListNum = length(pmodel.links);
+        linkList = pmodel.links;
+        parentHalfHeight = 0.0;
+
+        for (idx: int in range(0, linkListNum, 1)) {
+            currentLink = linkList[idx];
+            linkNum = getVariable(currentLink, "number");
+
+            // Defaults
+            massVal = 1.0;
+            ixxVal = 0.0;
+            ixyVal = 0.0;
+            ixzVal = 0.0;
+            iyyVal = 0.0;
+            iyzVal = 0.0;
+            izzVal = 0.0;
+
+            cxVal = 0.0;
+            cyVal = 0.0;
+            czVal = 0.0;
+
+            numBodies = length(currentLink.bodies);
+            if (numBodies > 0) {
+                currentBody = currentLink.bodies[0];
+                currentBodyDef = currentBody.def;
+                currentInertial = currentBodyDef.inertial;
+                currentInertia = currentInertial.inertia;
+
+                massVal = evaluateExpression(currentInertial.mass);
+                ixxVal = evaluateExpression(currentInertia.ixx);
+                ixyVal = evaluateExpression(currentInertia.ixy);
+                ixzVal = evaluateExpression(currentInertia.ixz);
+                iyyVal = evaluateExpression(currentInertia.iyy);
+                iyzVal = evaluateExpression(currentInertia.iyz);
+                izzVal = evaluateExpression(currentInertia.izz);
+
+                // Create geometry variable and compute halfHeight
+                geomVarName = "geom_" + linkNum + "1";
+                addGeomVariable(currentLink, geomVarName, currentBody);
+                geomTypeStr = getVariable(currentLink, geomVarName + ".geomType");
+                geomVal = getVariable(currentLink, geomVarName + ".geomVal");
+                computeHalfHeight(geomTypeStr, geomVal);
+            } else {
+                halfHeight = 0.0;
+                geomRadius = 0.0;
+            };
+
+            // COM offset along Z (hanging link convention)
+            czVal = 0.0 - halfHeight;
+
+            // Set inertial constants explicitly
+            createConstraint(pmodel, "(m_" + linkNum + ")[t==0]==" + massVal);
+            createConstraint(pmodel, "(com_" + linkNum + ")[t==0]==[|" + cxVal + "," + cyVal + "," + czVal + "|]");
+            createConstraint(pmodel, "(Icom_" + linkNum + ")[t==0]==[|" +
+                ixxVal + "," + ixyVal + "," + ixzVal + ";" +
+                ixyVal + "," + iyyVal + "," + iyzVal + ";" +
+                ixzVal + "," + iyzVal + "," + izzVal + "|]");
+
+            // Initial pose and geometry
+            createBConstraint(currentLink.name, linkNum);
+
+            // Identity for per-link motors and motor_T (will be overwritten where appropriate)
+            createMotorIdentityConstraint("motor_" + linkNum);
+
+            // motor_T: fixed transform from parent to this link
+            if (linkNum == n) {
+                // base: allow a fixed offset from world (use base half-height)
+                transZ: real = 0.0 - halfHeight;
+                createMotorTConstraint(linkNum, transZ);
+            } else {
+                // translate along -Z by parent link length (hinge-to-hinge)
+                transZ: real = 0.0;
+                if (parentHalfHeight != 0.0) {
+                    transZ = 0.0 - (2.0 * parentHalfHeight);
+                };
+                createMotorTConstraint(linkNum, transZ);
+            }
+
+            // T_offset and T_geom for visualisation/geometry placement
+            if (linkNum == n) {
+                createTOffsetConstraint(currentLink.name, linkNum, 0.0, 0.0, 0.0);
+            } else {
+                createTOffsetConstraint(currentLink.name, linkNum, 0.0, 0.0, -halfHeight);
+            }
+            createTGeomConstraint(currentLink.name, linkNum);
+
+            parentHalfHeight = halfHeight;
+        }
+
+        // Joint axis data
+
+        jointListNum = length(pmodel.joints);
+        jointList = pmodel.joints;
+
+        for (jIdx: int in range(0, jointListNum, 1)) {
+            jointDef = jointList[jIdx];
+            jointNum = getVariable(jointDef, "number");
+
+            // defaults: revolute
+            axVal: real = jointDef.axis[0];
+            ayVal: real = jointDef.axis[1];
+            azVal: real = jointDef.axis[2];
+            if (axVal == 0.0 && ayVal == 0.0 && azVal == 0.0) {
+                axisRotVal = "[|0.0,1.0,0.0|]";
+                axisLinVal = "[|0.0,0.0,0.0|]";
+            } else {
+                axisRotVal = "[|" + azVal + "," + ayVal + "," + axVal + "|]";
+                axisLinVal = "[|" + axVal + "," + ayVal + "," + azVal + "|]";
+            }
+            jointTypeVal = 0;
+
+            createConstraint(pmodel, "(axis_rot_" + jointNum + ")[t==0]==" + axisRotVal);
+            createConstraint(pmodel, "(axis_lin_" + jointNum + ")[t==0]==" + axisLinVal);
+            createConstraint(pmodel, "(joint_type_" + jointNum + ")[t==0]==" + jointTypeVal);
+        }
+
+        // Collect per-link variables into sequences
+
+        bkSeqStr = "<";
+        motorSeqStr = "<";
+        motorTSeqStr = "<";
+        tGeomSeqStr = "<";
+        tOffsetSeqStr = "<";
+
+        for (k: int in range(1, n + 1, 1)) {
+            if (k == 1) {
+                bkSeqStr = bkSeqStr + "B_" + k;
+                motorSeqStr = motorSeqStr + "motor_" + k;
+                motorTSeqStr = motorTSeqStr + "motor_T_" + k;
+                tGeomSeqStr = tGeomSeqStr + "T_geom_" + k;
+                tOffsetSeqStr = tOffsetSeqStr + "T_offset_" + k;
+            } else {
+                bkSeqStr = bkSeqStr + ",B_" + k;
+                motorSeqStr = motorSeqStr + ",motor_" + k;
+                motorTSeqStr = motorTSeqStr + ",motor_T_" + k;
+                tGeomSeqStr = tGeomSeqStr + ",T_geom_" + k;
+                tOffsetSeqStr = tOffsetSeqStr + ",T_offset_" + k;
+            };
+        }
+
+        bkSeqStr = bkSeqStr + ">";
+        motorSeqStr = motorSeqStr + ">";
+        motorTSeqStr = motorTSeqStr + ">";
+        tGeomSeqStr = tGeomSeqStr + ">";
+        tOffsetSeqStr = tOffsetSeqStr + ">";
+
+        motorJointSeqStr = "<";
+        axisRotSeqStr = "<";
+        axisLinSeqStr = "<";
+        jointTypeSeqStr = "<";
+        massSeqStr = "<";
+        comSeqStr = "<";
+        inertiaSeqStr = "<";
+
+        for (k: int in range(1, n, 1)) {
+            if (k == 1) {
+                motorJointSeqStr = motorJointSeqStr + "motor_joint_" + k;
+                axisRotSeqStr = axisRotSeqStr + "axis_rot_" + k;
+                axisLinSeqStr = axisLinSeqStr + "axis_lin_" + k;
+                jointTypeSeqStr = jointTypeSeqStr + "joint_type_" + k;
+                massSeqStr = massSeqStr + "m_" + k;
+                comSeqStr = comSeqStr + "com_" + k;
+                inertiaSeqStr = inertiaSeqStr + "Icom_" + k;
+            } else {
+                motorJointSeqStr = motorJointSeqStr + ",motor_joint_" + k;
+                axisRotSeqStr = axisRotSeqStr + ",axis_rot_" + k;
+                axisLinSeqStr = axisLinSeqStr + ",axis_lin_" + k;
+                jointTypeSeqStr = jointTypeSeqStr + ",joint_type_" + k;
+                massSeqStr = massSeqStr + ",m_" + k;
+                comSeqStr = comSeqStr + ",com_" + k;
+                inertiaSeqStr = inertiaSeqStr + ",Icom_" + k;
+            };
+        }
+
+        motorJointSeqStr = motorJointSeqStr + ">";
+        axisRotSeqStr = axisRotSeqStr + ">";
+        axisLinSeqStr = axisLinSeqStr + ">";
+        jointTypeSeqStr = jointTypeSeqStr + ">";
+        massSeqStr = massSeqStr + ">";
+        comSeqStr = comSeqStr + ">";
+        inertiaSeqStr = inertiaSeqStr + ">";
+
+        // Bind sequences to system variables
+        createEquation(pmodel, "B_k == " + bkSeqStr);
+        createEquation(pmodel, "motor_k == " + motorSeqStr);
+        createEquation(pmodel, "motor_T == " + motorTSeqStr);
+        createEquation(pmodel, "motor_joint == " + motorJointSeqStr);
+
+        createEquation(pmodel, "axis_rot == " + axisRotSeqStr);
+        createEquation(pmodel, "axis_lin == " + axisLinSeqStr);
+        createEquation(pmodel, "joint_type == " + jointTypeSeqStr);
+
+        createEquation(pmodel, "mass_k == " + massSeqStr);
+        createEquation(pmodel, "com_k == " + comSeqStr);
+        createEquation(pmodel, "inertia_k == " + inertiaSeqStr);
+
+        createEquation(pmodel, "T_geom == " + tGeomSeqStr);
+        createEquation(pmodel, "T_offset == " + tOffsetSeqStr);
+
+        // Default scalars
+        createConstraint(pmodel, "(gravity)[t==0]==9.81");
+    }
+}

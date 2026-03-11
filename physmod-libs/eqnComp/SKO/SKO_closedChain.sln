@@ -1,0 +1,531 @@
+Solution SKO_Generator_ClosedChain {
+    datatypes {
+        PModel { links: seq(Link); joints: seq(Joint); name: String };
+        Link { joints: seq(Joint); flexible: Flexible; geometry: Geometry; location: Location; size: Size; material: Material; inertial: Inertial; actuator: Actuator; name: String; number: int; def: LinkDef };
+        LinkDef { locals: seq(VariableList); inputs: seq(VariableList); outputs: seq(VariableList); inOuts: seq(VariableList); constants: seq(VariableList) };
+        Joint { axis: vec(3); flexible: Flexible; geometry: Geometry; location: Location; size: Size; name: String; number: int; def: JointDef };
+        JointDef { locals: seq(VariableList); inputs: seq(VariableList); outputs: seq(VariableList); inOuts: seq(VariableList); constants: seq(VariableList) };
+        VariableList { vars: seq(Variable) };
+        Variable { name: String };
+        Flexible { link: Link };
+        Geometry { type: String; values: seq(real) };
+        Location { x: real; y: real; z: real };
+        Size { x: real; y: real; z: real };
+        Material { density: real };
+        Inertial { mass: real; Ixx: real; Iyy: real; Izz: real; Ixy: real; Iyz: real; Ixz: real };
+        Actuator { name: String; Fmax: real; t0: real; tf: real }
+    }
+
+    state {
+        pmodel: PModel;
+
+        // Sizes (computed in computation block)
+        n: int = 0;              // number of links
+        nTree: int = 0;          // number of spanning-tree joints (= n-1)
+        nJoints: int = 0;        // total joints (tree + loop)
+        nLoop: int = 0;          // number of loop joints (= nJoints - nTree)
+
+        nv: int = 0;             // 6*n
+        nc: int = 0;             // # scalar loop constraints (here: 6*nLoop for rigid loop constraints)
+        nd: int = 0;             // 12*nLoop (two 6D nodes per loop constraint)
+
+        // Helpers
+        bAggStr: String = "";
+        xjAggStr: String = "";
+        poseVec: seq(real);
+        parentPoseVec: seq(real);
+        poseX: real = 0.0;
+        poseY: real = 0.0;
+        poseZ: real = 0.0;
+        parentX: real = 0.0;
+        parentY: real = 0.0;
+        parentZ: real = 0.0;
+        dx: real = 0.0;
+        dy: real = 0.0;
+        dz: real = 0.0;
+
+        bMatStr: String = "";
+        tOffsetStr: String = "";
+        xtStr: String = "";
+        xParentStr: String = "";
+    }
+
+    procedures {
+        // Component variable creation (system + component I/O)
+        procedure createLinkVariables(val pmodel: PModel, val link: Link) {
+            linkNum: int = getVariable(link, "number");
+
+            // System-level variables
+            addInOut(pmodel, "B_" + linkNum, "mat(4,4)");
+            addInOut(pmodel, "M_" + linkNum, "mat(6,6)");
+            addInOut(pmodel, "b_" + linkNum, "vec(6)");
+            addInOut(pmodel, "X_T_" + linkNum, "mat(6,6)");
+            addInOut(pmodel, "T_geom_" + linkNum, "mat(4,4)");
+            addInOut(pmodel, "T_offset_" + linkNum, "mat(4,4)");
+
+            // Component-level variables (match component interface)
+            addInOut(link, "B_" + linkNum, "mat(4,4)");
+            addInOut(link, "M_" + linkNum, "mat(6,6)");
+            addInOut(link, "b_" + linkNum, "vec(6)");
+        }
+
+        // Tree-joint variables are keyed by joint number (unique 1..n-1 for spanning tree)
+        procedure createTreeJointVariables(val pmodel: PModel, val joint: Joint) {
+            jNum: int = getVariable(joint, "number");
+
+            // System-level
+            addInOut(pmodel, "H_" + jNum, "mat(1,6)");
+            addInOut(pmodel, "T_" + (jNum + 1) + "_" + jNum, "mat(4,4)");
+            addInOut(pmodel, "X_J_" + jNum, "mat(6,6)");
+
+            // Component-level (match component interface)
+            addInOut(joint, "H_" + jNum, "mat(1,6)");
+            addInOut(joint, "T_" + (jNum + 1) + "_" + jNum, "mat(4,4)");
+            addInOut(joint, "theta_" + jNum, "real"); // joint coordinate (tree joint only)
+            addInOut(joint, "tau_" + jNum, "real");   // joint torque input (tree joint only)
+        }
+
+        // Connect link component variables to system-level variables
+        procedure createLinkRelation(val pmodel: PModel, val link: Link) {
+            linkNum: int = getVariable(link, "number");
+            linkName: String = link.name;
+
+            rel: String = "B_" + linkNum + " == " + linkName + ".B_" + linkNum +
+                " /\\ M_" + linkNum + " == " + linkName + ".M_" + linkNum +
+                " /\\ b_" + linkNum + " == " + linkName + ".b_" + linkNum;
+            createRelation(link, rel);
+        }
+
+        // Connect tree-joint component variables to system-level variables and theta/tau vectors
+        procedure createTreeJointRelation(val pmodel: PModel, val joint: Joint) {
+            jNum: int = getVariable(joint, "number");
+            jName: String = joint.name;
+
+            // Use the joint's constant H definition (as in serial-chain generator)
+            rel: String = "H_" + jNum + " == " + jName + ".H" +
+                " /\\ T_" + (jNum + 1) + "_" + jNum + " == " + jName + ".T_" + (jNum + 1) + "_" + jNum +
+                " /\\ theta[" + (jNum - 1) + "] == " + jName + ".theta_" + jNum +
+                " /\\ tau[" + (jNum - 1) + "] == " + jName + ".tau_" + jNum +
+                " /\\ X_J_" + jNum + " == " + jName + ".XJ";
+            createRelation(joint, rel);
+        }
+
+        // System variable creation (spanning tree + closed-chain augmentation)
+        procedure createSystemVariablesClosedChain(val pmodel: PModel, val n: int, val nTree: int, val nLoop: int) {
+            // Spanning-tree SKO variables
+            addInOut(pmodel, "B_k", "Seq(mat(4,4))");
+            addInOut(pmodel, "X_J", "Seq(mat(6,6))");
+            addInOut(pmodel, "X_T", "Seq(mat(6,6))");
+            addInOut(pmodel, "T_geom", "Seq(mat(4,4))");
+            addInOut(pmodel, "T_offset", "Seq(mat(4,4))");
+            addInOut(pmodel, "X_J_k", "Seq(mat(6,6))");
+            addInOut(pmodel, "phi", "mat(" + (6*n) + "," + (6*n) + ")");
+            addInOut(pmodel, "M", "mat(" + (6*n) + "," + (6*n) + ")");
+            addInOut(pmodel, "H", "mat(" + nTree + "," + (6*n) + ")");
+
+            addInOut(pmodel, "theta", "vec(" + nTree + ")");
+            addInOut(pmodel, "tau", "vec(" + nTree + ")");
+
+            addInOut(pmodel, "V", "vec(" + (6*n) + ")");
+            addInOut(pmodel, "alpha", "vec(" + (6*n) + ")");
+            addInOut(pmodel, "a", "vec(" + (6*n) + ")");
+            addInOut(pmodel, "b", "vec(" + (6*n) + ")");
+            addInOut(pmodel, "f", "vec(" + (6*n) + ")");
+
+            addInOut(pmodel, "M_mass", "mat(" + nTree + "," + nTree + ")");
+            addInOut(pmodel, "C", "vec(" + nTree + ")");
+
+            // Closed-chain augmentation (loop constraints)
+            if (nLoop > 0) {
+                addInOut(pmodel, "B_sel", "mat(" + (12*nLoop) + "," + (6*n) + ")");
+                addInOut(pmodel, "Q_c", "mat(" + (6*nLoop) + "," + (12*nLoop) + ")");
+                addInOut(pmodel, "G_c", "mat(" + (6*nLoop) + "," + nTree + ")");
+                addInOut(pmodel, "lambda_c", "vec(" + (6*nLoop) + ")");
+                addInOut(pmodel, "Uprime", "vec(" + (6*nLoop) + ")");
+                addInOut(pmodel, "g_pos", "vec(" + (3*nLoop) + ")");
+            }
+        }
+
+        // Loop-constraint selection matrices (rigid closure, Qrel = I6)
+        // For each loop joint, we pick two constraint nodes:
+        //   node-x: parent link frame
+        //   node-y: child link frame
+        //
+        // Rigid loop closure constraints:
+        //   V_x - V_y = 0   (6 constraints per loop)
+        //
+        // Matrix form:
+        //   B_sel picks {V_x, V_y} from full V
+        //   Q_c applies [I6, -I6] to form (V_x - V_y)
+        procedure buildRigidLoopSelectionMatrices(val pmodel: PModel, val nTree: int) {
+            loopIdx: int = 0;
+            numLinks: int = length(pmodel.links);
+
+            for (idx: int in range(0, numLinks, 1)) {
+                parentLink: Link = pmodel.links[idx];
+                parentNum: int = getVariable(parentLink, "number");
+                numJoints: int = length(parentLink.joints);
+
+                for (jIdx: int in range(0, numJoints, 1)) {
+                    j: Joint = parentLink.joints[jIdx];
+                    jNum: int = getVariable(j, "number");
+                    childFlexible: Flexible = j.flexible;
+                    childLink: Link = childFlexible.link;
+                    childNum: int = getVariable(childLink, "number");
+
+                    // Loop joints are numbered nTree in the thesis' SKO closed-chain numbering.
+                    // The spanning-tree joint for link nTree has childNum == nTree, so exclude that one.
+                    if (jNum == nTree) {
+                        if (childNum != nTree) {
+                            loopIdx = loopIdx + 1;
+
+                            // Joint pose is specified in the parent link frame.
+                            // Use it to shift the constraint point to the joint location.
+                            poseVec = getVariable(j, "poseVec");
+                            poseX = poseVec[0];
+                            poseY = poseVec[1];
+                            poseZ = poseVec[2];
+
+                            // B_sel: rows for node-x (parent) and node-y (child)
+                            r0: int = (loopIdx - 1) * 12;
+                            for (colLink: int in range(1, numLinks + 1, 1)) {
+                                if (colLink == parentNum) {
+                                    createConstraint(pmodel, "(submatrix(B_sel)(" + r0 + "," + ((colLink - 1) * 6) + ",6,6))[t==0] == identity(6)");
+                                } else {
+                                    createConstraint(pmodel, "(submatrix(B_sel)(" + r0 + "," + ((colLink - 1) * 6) + ",6,6))[t==0] == zeroMat(6,6)");
+                                }
+                            }
+                            for (colLink: int in range(1, numLinks + 1, 1)) {
+                                if (colLink == childNum) {
+                                    createConstraint(pmodel, "(submatrix(B_sel)(" + (r0 + 6) + "," + ((colLink - 1) * 6) + ",6,6))[t==0] == identity(6)");
+                                } else {
+                                    createConstraint(pmodel, "(submatrix(B_sel)(" + (r0 + 6) + "," + ((colLink - 1) * 6) + ",6,6))[t==0] == zeroMat(6,6)");
+                                }
+                            }
+
+                            // Q_c: difference operator with parent-side joint offset
+                            qR: int = (loopIdx - 1) * 6;
+                            xParentStr = "[|1,0,0,0,0,0;0,1,0,0,0,0;0,0,1,0,0,0;0," + poseZ + "," + (0.0 - poseY) + ",1,0,0;" + (0.0 - poseZ) + ",0," + poseX + ",0,1,0;" + poseY + "," + (0.0 - poseX) + ",0,0,0,1|]";
+                            for (colLoop: int in range(1, nLoop + 1, 1)) {
+                                qC: int = (colLoop - 1) * 12;
+                                if (colLoop == loopIdx) {
+                                    createConstraint(pmodel, "(submatrix(Q_c)(" + qR + "," + qC + ",6,6))[t==0] == " + xParentStr);
+                                    createConstraint(pmodel, "(submatrix(Q_c)(" + qR + "," + (qC + 6) + ",6,6))[t==0] == -identity(6)");
+                                } else {
+                                    createConstraint(pmodel, "(submatrix(Q_c)(" + qR + "," + qC + ",6,6))[t==0] == zeroMat(6,6)");
+                                    createConstraint(pmodel, "(submatrix(Q_c)(" + qR + "," + (qC + 6) + ",6,6))[t==0] == zeroMat(6,6)");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Position-level loop closure residual g_pos (for projection)
+        // g_pos = p_parent + R_parent * r_joint - p_child
+        procedure buildLoopPositionResiduals(val pmodel: PModel, val nTree: int) {
+            loopIdx: int = 0;
+            numLinks: int = length(pmodel.links);
+
+            for (idx: int in range(0, numLinks, 1)) {
+                parentLink: Link = pmodel.links[idx];
+                parentNum: int = getVariable(parentLink, "number");
+                numJoints: int = length(parentLink.joints);
+
+                for (jIdx: int in range(0, numJoints, 1)) {
+                    j: Joint = parentLink.joints[jIdx];
+                    jNum: int = getVariable(j, "number");
+                    childFlexible: Flexible = j.flexible;
+                    childLink: Link = childFlexible.link;
+                    childNum: int = getVariable(childLink, "number");
+
+                    // Loop joints are numbered nTree; exclude spanning-tree joint
+                    if (jNum == nTree) {
+                        if (childNum != nTree) {
+                            loopIdx = loopIdx + 1;
+
+                            poseVec = getVariable(j, "poseVec");
+                            poseX = poseVec[0];
+                            poseY = poseVec[1];
+                            poseZ = poseVec[2];
+
+                            // Force decimal formatting for pose values (e.g., 4.0 instead of 4)
+                            rVecStr: String = "[|" + formatReal(poseX) + ";" + formatReal(poseY) + ";" + formatReal(poseZ) + "|]";
+                            r0: int = (loopIdx - 1) * 3;
+                            createEquation(pmodel,
+                                "submatrix(g_pos)(" + r0 + ",0,3,1) == " +
+                                "submatrix(B_" + parentNum + ")(0,3,3,1) + " +
+                                "submatrix(B_" + parentNum + ")(0,0,3,3) * " + rVecStr + " - " +
+                                "submatrix(B_" + childNum + ")(0,3,3,1)");
+                        }
+                    }
+                }
+            }
+        }
+
+        // System equations (spanning-tree SKO + closed-chain augmentation)
+        procedure createSystemEquationsClosedChain(val pmodel: PModel, val n: int, val nTree: int, val nLoop: int) {
+            if (nLoop > 0) {
+                buildRigidLoopSelectionMatrices(pmodel, nTree);
+            }
+
+            // Build B_i cascade for the spanning tree
+            for (k: int in range(nTree, 1, -1)) {
+                createEquation(pmodel, "B_" + k + " == B_" + (k + 1) + " * T_" + (k + 1) + "_" + k);
+            };
+
+            // Aggregate B_k sequence
+            bAggStr = "<";
+            for (i: int in range(1, n + 1, 1)) {
+                if (i == 1) {
+                    bAggStr = bAggStr + "B_1";
+                } else {
+                    bAggStr = bAggStr + ",B_" + i;
+                }
+            };
+            bAggStr = bAggStr + ">";
+            createEquation(pmodel, "B_k == " + bAggStr);
+
+            // Aggregate joint transforms
+            xjAggStr = "<";
+            for (j: int in range(1, nTree + 1, 1)) {
+                if (j == 1) {
+                    xjAggStr = xjAggStr + "X_J_1";
+                } else {
+                    xjAggStr = xjAggStr + ",X_J_" + j;
+                }
+            };
+            xjAggStr = xjAggStr + ">";
+            createEquation(pmodel, "X_J == " + xjAggStr);
+            createEquation(pmodel, "X_J_k == " + xjAggStr);
+
+            // Position-level loop closure residual
+            if (nLoop > 0) {
+                buildLoopPositionResiduals(pmodel, nTree);
+            }
+
+            // Build rigid-shift operator phi
+            for (i: int in range(1, n, 1)) {
+                for (j: int in range(1, n, 1)) {
+                    r: int = (i - 1) * 6;
+                    c: int = (j - 1) * 6;
+
+                    if (i == j) {
+                        createEquation(pmodel, "submatrix(phi)(" + r + "," + c + ",6,6) == identity(6)");
+                    } else {
+                        if (i > j) {
+                            createEquation(pmodel, "submatrix(phi)(" + r + "," + c + ",6,6) == Phi(" + i + "," + j + ",B_k)");
+                        } else {
+                            createEquation(pmodel, "submatrix(phi)(" + r + "," + c + ",6,6) == zeroes(6)");
+                        }
+                    }
+                }
+            };
+
+            // Assemble block-diagonal inertia matrix M and bias wrench b
+            for (k: int in range(1, n, 1)) {
+                idx: int = (k - 1) * 6;
+                // Inertia is constant (set once)
+                createConstraint(pmodel, "(submatrix(M)(" + idx + "," + idx + ",6,6))[t==0] == M_" + k);
+                // Bias wrench is time-varying
+                createEquation(pmodel, "submatrix(b)(" + idx + ",0,6,1) == b_" + k);
+            };
+
+            // Assemble joint map H
+            for (k: int in range(1, nTree + 1, 1)) {
+                rH: int = (k - 1);
+                cH: int = (k - 1) * 6;
+                createEquation(pmodel, "submatrix(H)(" + rH + "," + cH + ",1,6) == H_" + k);
+            };
+
+            // Spanning-tree SKO dynamics
+            createEquation(pmodel, "V == adj(phi) * adj(H) * derivative(theta)");
+            createEquation(pmodel, "alpha == adj(phi) * (adj(H) * derivative(derivative(theta)) + a)");
+            createEquation(pmodel, "f == phi * (M * alpha + b)");
+
+            createEquation(pmodel, "M_mass == H * M * adj(phi) * adj(H)");
+            createEquation(pmodel, "C == H * phi * (M * a + b)");
+
+            // Closed-chain augmentation
+            if (nLoop > 0) {
+                // Constraint matrix:
+                //   G_c = Q_c * B_sel * phi* * H*        (cf. Jain Eq. 11.18)
+                createEquation(pmodel, "G_c == Q_c * B_sel * adj(phi) * adj(H)");
+
+                // Catastatic rigid loop constraints => Udot = 0, Qdot = 0, so:
+                //   Q_c * B_sel * alpha == 0
+                // and using alpha = phi* (H* ddtheta + a):
+                //   G_c * ddtheta == - Q_c * B_sel * phi* * a
+                createEquation(pmodel, "Uprime + Q_c * B_sel * adj(phi) * a == 0");
+
+                // Augmented dynamics with Lagrange multipliers (cf. Jain Eq. 11.31):
+                //   tau == M_mass * ddtheta + C - G_c^T * lambda_c
+                createEquation(pmodel, "tau + adj(G_c) * lambda_c == M_mass * derivative(derivative(theta)) + C");
+
+                // Constraint equation:
+                createEquation(pmodel, "G_c * derivative(derivative(theta)) == Uprime");
+
+                // Optional: also enforce velocity-level closure
+                createEquation(pmodel, "Q_c * B_sel * V == zeroVec(" + (6*nLoop) + ")");
+            } else {
+                // Open-chain case
+                createEquation(pmodel, "tau == M_mass * derivative(derivative(theta)) + C");
+            }
+        }
+    }
+
+    functions {
+        // EMF Model Modification
+        function createVariable(ctx: PModel, name: String, type: String, initial: String): int {}
+        function createConstant(ctx: PModel, name: String, value: String): int {}
+        function createEquation(ctx: PModel, expr: String): int {}
+        function createConstraint(ctx: PModel, expr: String): int {}
+        function createRelation(ctx: PModel, expr: String): int {}
+        function createFlexiRelation(ctx: PModel, expr: String): int {}
+        function addInOut(ctx: PModel, name: String, type: String): int {}
+        function addInput(ctx: PModel, name: String, type: String): int {}
+        function createDatatype(ctx: PModel, name: String, fields: String): int {}
+        function createFunction(ctx: PModel, name: String, params: String, retType: String): int {}
+
+        // Collection utilities
+        function length(items: seq(Link)): int {}
+        function length(items: seq(Joint)): int {}
+        function length(items: seq(VariableList)): int {}
+        function length(items: seq(Variable)): int {}
+
+        // EMF Data Accessors (dynamic return types at runtime)
+        function getVariable(ctx: Link, name: String): real {}
+        function getVariable(ctx: Joint, name: String): real {}
+
+        // Formatting helpers
+        function formatReal(value: real): String {}
+    }
+
+    computation {
+        // Create solver-side helper functions
+        // Helper math functions used by the generated equations
+        createFunction(pmodel, "identity", "size: real", "mat(6,6)");
+        createFunction(pmodel, "zeroes", "size: real", "mat(6,6)");
+        createFunction(pmodel, "zeroMat", "r: real, c: real", "mat(0,0)");
+        createFunction(pmodel, "zeroVec", "n: real", "vec(0)");
+        createFunction(pmodel, "Phi", "m: real, n: real, B_k: Seq(mat(4,4))", "mat(6,6)");
+
+        // Determine sizes (assumes SKO closed-chain numbering already done)
+        n = length(pmodel.links);
+        nTree = n - 1;
+        nJoints = length(pmodel.joints);
+        nLoop = nJoints - nTree;
+
+        nv = 6 * n;
+        nd = 12 * nLoop;
+        nc = 6 * nLoop;
+
+        createConstant(pmodel, "n", n);
+        createConstant(pmodel, "nTree", nTree);
+        // Expose nLoop as a system variable with an initial constraint.
+        // This is required by the closed-chain guidedChoice/sourceCodeGen methods
+        // (they infer loop counts from a (nLoop)[t==0]==k constraint).
+        addInOut(pmodel, "nLoop", "real", "" + nLoop);
+        createConstraint(pmodel, "(nLoop)[t==0] == " + nLoop);
+
+
+        // Create system-level variables (includes closed-chain augmentation blocks)
+        createSystemVariablesClosedChain(pmodel, n, nTree, nLoop);
+
+        // Create per-component variables and connect them to system variables
+        numLinks: int = length(pmodel.links);
+        for (idx: int in range(0, numLinks, 1)) {
+            L: Link = pmodel.links[idx];
+            createLinkVariables(pmodel, L);
+            createLinkRelation(pmodel, L);
+        };
+
+        // Only spanning-tree joints (unique 1..nTree) participate in theta/tau.
+        // Loop joints are handled by constraint matrices (Q_c, B_sel, lambda_c).
+        for (idx: int in range(0, numLinks, 1)) {
+            parentLink: Link = pmodel.links[idx];
+            numJoints: int = length(parentLink.joints);
+
+            for (jIdx: int in range(0, numJoints, 1)) {
+                J: Joint = parentLink.joints[jIdx];
+                jNum: int = getVariable(J, "number");
+                childFlexible: Flexible = J.flexible;
+                childLink: Link = childFlexible.link;
+                childNum: int = getVariable(childLink, "number");
+
+                // Tree joint iff child link number equals joint number (serial-chain spanning tree)
+                if (childNum == jNum) {
+                    createTreeJointVariables(pmodel, J);
+                    createTreeJointRelation(pmodel, J);
+                }
+            }
+        };
+
+        // Initialize visual transforms (B_k, X_T, X_J, T_offset, T_geom)
+        for (idx: int in range(0, numLinks, 1)) {
+            L: Link = pmodel.links[idx];
+            linkNum: int = getVariable(L, "number");
+
+            // Use link pose (x,y,z) for base transform
+            poseVec = getVariable(L, "poseVec");
+            poseX = poseVec[0];
+            poseY = poseVec[1];
+            poseZ = poseVec[2];
+
+            bMatStr = "[|1,0,0," + poseX + ";0,1,0," + poseY + ";0,0,1," + poseZ + ";0,0,0,1|]";
+            createConstraint(pmodel, "(B_" + linkNum + ")[t==0] == " + bMatStr);
+
+            // T_offset defaults to identity (joint frame aligned with body frame)
+            tOffsetStr = "[|1,0,0,0;0,1,0,0;0,0,1,0;0,0,0,1|]";
+            createConstraint(pmodel, "(T_offset_" + linkNum + ")[t==0] == " + tOffsetStr);
+
+            // T_geom uses link pose directly (B_k) until B_k is updated during simulation
+            createConstraint(pmodel, "(T_geom_" + linkNum + ")[t==0] == " + bMatStr);
+
+            // X_T from parent->child pose delta (identity for base link)
+            if (linkNum == n) {
+                xtStr = "[|1,0,0,0,0,0;0,1,0,0,0,0;0,0,1,0,0,0;0,0,0,1,0,0;0,0,0,0,1,0;0,0,0,0,0,1|]";
+            } else {
+                // Prefer building X_T from the tree joint poseVec on the parent link.
+                // This avoids X_T becoming identity when link.poseVecs are not populated.
+                dx = 0.0;
+                dy = 0.0;
+                dz = 0.0;
+                // Find parent link by number (parent is linkNum + 1 in SKO closed-chain numbering)
+                for (pIdx: int in range(0, numLinks, 1)) {
+                    P: Link = pmodel.links[pIdx];
+                    pNum: int = getVariable(P, "number");
+                    if (pNum == (linkNum + 1)) {
+                        // Find the tree joint on P whose child is this link (tree joint convention: childNum == jointNum)
+                        numJoints: int = length(P.joints);
+                        for (jIdx: int in range(0, numJoints, 1)) {
+                            J: Joint = P.joints[jIdx];
+                            jNum: int = getVariable(J, "number");
+                            childFlexible: Flexible = J.flexible;
+                            childLink: Link = childFlexible.link;
+                            childNum: int = getVariable(childLink, "number");
+                            if (childNum == linkNum) {
+                                if (jNum == linkNum) {
+                                    parentPoseVec = getVariable(J, "poseVec");
+                                    dx = parentPoseVec[0];
+                                    dy = parentPoseVec[1];
+                                    dz = parentPoseVec[2];
+                                }
+                            }
+                        };
+                    }
+                };
+
+                // Spatial transform for translation delta = (dx,dy,dz): X_T lower-left = skew(-delta)
+                xtStr = "[|1,0,0,0,0,0;0,1,0,0,0,0;0,0,1,0,0,0;0," + dz + "," + (0.0 - dy) + ",1,0,0;" + (0.0 - dz) + ",0," + dx + ",0,1,0;" + dy + "," + (0.0 - dx) + ",0,0,0,1|]";
+            }
+            createConstraint(pmodel, "(X_T_" + linkNum + ")[t==0] == " + xtStr);
+        };
+
+        // X_J_* is defined by joint equations (XJ) and should not be forced to identity here.
+
+        // Initialize loop selection matrices and system equations
+        createSystemEquationsClosedChain(pmodel, n, nTree, nLoop);
+    }
+}

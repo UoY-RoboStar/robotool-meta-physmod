@@ -1,0 +1,412 @@
+// FEATHERSTONE_serial.sln - Featherstone (Spatial Vector) Equation Generator
+//
+// This eqnComp library composes a p-model+ suitable for Featherstone-style rigid-body dynamics
+// (spatial vector algorithms) following Roy Featherstone, "Rigid Body Dynamics Algorithms".
+// Core notation (book):
+//   - XJ(q): joint transform (spatial motion transform, 6x6)
+//   - XT(i): fixed (tree) transform from parent to body i (6x6)
+//   - Xup(i) = XJ * XT(i)
+//   - S(i): motion subspace (6x1)
+//   - I(i): spatial inertia (6x6)
+//   - H: joint-space inertia (mass) matrix
+//   - C: bias forces (Coriolis/centrifugal + gravity)
+//   - tau: applied joint torques
+//
+// IMPORTANT (indexing):
+//   Featherstone regular numbering: pmodel.links is ordered BASE -> TIP.
+//   Base is the first element; there are N = n-1 joints (links 2..n are moving).
+//   XT/I/jtype sequences are ordered BASE -> TIP for moving links.
+//
+// SPDX-License-Identifier: MPL-2.0
+
+Solution pModelPlusGenerator {
+
+    datatypes {
+        PModel { links: seq(Link); joints: seq(Joint); name: String };
+        Link { name: String; index: int; bodies: seq(Body); actuators: seq(Actuator); def: LinkDef; joints: seq(Joint); pose: Pose };
+        LinkDef { inertial: Inertial };
+        Joint { name: String; geometry: Geom; axis: vec(3); def: JointDef };
+        JointDef { name: String; locals: seq(VariableList) };
+        Body { name: String; def: BodyDef };
+        BodyDef { inertial: Inertial; geometry: Geometry };
+        Actuator { name: String; def: ActuatorDef };
+        ActuatorDef { constants: seq(VariableList); name: String };
+        VariableList { vars: seq(Variable) };
+        Variable { name: String };
+        Inertial { mass: real; inertia: Inertia; pose: Pose };
+        Inertia { ixx: real; ixy: real; ixz: real; iyy: real; iyz: real; izz: real };
+        Pose { x: real; y: real; z: real; roll: real; pitch: real; yaw: real };
+        Geometry { length: real; radius: real; x: real; y: real; z: real };
+        Geom { R: mat(3,3); p: vec(3) }
+    }
+
+    state {
+        pmodel: PModel;
+
+        n: int;
+        N: int;
+
+        currentLink: Link;
+        linkNum: int;
+
+        currentBody: Body;
+        currentBodyDef: BodyDef;
+        currentInertial: Inertial;
+        currentInertia: Inertia;
+        numBodies: int;
+
+        geomTypeStr: String;
+        geomVarName: String;
+        geomVal: seq(real);
+        halfHeight: real = 0.0;
+        parentHalfHeight: real = 0.0;
+
+        massVal: real = 0.0;
+        ixxVal: real = 0.0;
+        ixyVal: real = 0.0;
+        ixzVal: real = 0.0;
+        iyyVal: real = 0.0;
+        iyzVal: real = 0.0;
+        izzVal: real = 0.0;
+        cxVal: real = 0.0;
+        cyVal: real = 0.0;
+        czVal: real = 0.0;
+
+        xtStr: String = "";
+        spatialInertiaStr: String = "";
+        cVecStr: String = "";
+
+        xtSeqStr: String = "<";
+        iSeqStr: String = "<";
+        jSeqStr: String = "<";
+
+        jointListNum: int;
+        jointList: seq(Joint);
+        jointDef: Joint;
+        jointNum: int;
+        jointCode: int = 0;
+    }
+
+    procedures {
+        // Compute halfHeight from geometry type and values
+        procedure computeHalfHeight(val gType: String, val gVal: seq(real)) {
+            if (gType == "box") {
+                halfHeight = gVal[2] / 2.0;
+            } else {
+                if (gType == "cylinder") {
+                    halfHeight = gVal[1] / 2.0;
+                } else {
+                    if (gType == "sphere") {
+                        halfHeight = gVal[0];
+                    } else {
+                        halfHeight = 0.0;
+                    };
+                };
+            };
+        }
+
+        // Create a fixed spatial motion transform XT_linkNum = Xtrans([0,0,transZ]) (no rotation).
+        // This is the Featherstone/RBDA XT(i) (also called Xtree in some codebases).
+        procedure createXTTranslationZConstraint(val linkNum: int, val transZ: real) {
+            // Motion transform X = [[I,0],[-r×, I]] with r = (0,0,transZ)
+            // -r× = [[0, transZ, 0],[-transZ, 0, 0],[0,0,0]]
+            xtStr = "[| 1,0,0,0,0,0; " +
+                     "0,1,0,0,0,0; " +
+                     "0,0,1,0,0,0; " +
+                     "0," + transZ + ",0,1,0,0; " +
+                     (-transZ) + ",0,0,0,1,0; " +
+                     "0,0,0,0,0,1 |]";
+            createConstraint(pmodel, "(XT_" + linkNum + ")[t==0] == " + xtStr);
+        }
+
+        // Map a (jointType, axis) pair to Featherstone's standard joint codes:
+        //   Revolute:  ±1=Rx, ±2=Ry, ±3=Rz
+        //   Prismatic: ±4=Px, ±5=Py, ±6=Pz
+        // If axis is not exactly aligned, falls back to +1 (Rx) or +4 (Px).
+        procedure inferJointCode(val jointType: int, val ax: real, val ay: real, val az: real) {
+            if (jointType == 0) { // revolute
+                jointCode = 1;
+
+                if (ax == 1.0) {
+                    if (ay == 0.0) {
+                        if (az == 0.0) {
+                            jointCode = 1;
+                        };
+                    };
+                };
+
+                if (ax == -1.0) {
+                    if (ay == 0.0) {
+                        if (az == 0.0) {
+                            jointCode = -1;
+                        };
+                    };
+                };
+
+                if (ax == 0.0) {
+                    if (ay == 1.0) {
+                        if (az == 0.0) {
+                            jointCode = 2;
+                        };
+                    };
+                    if (ay == -1.0) {
+                        if (az == 0.0) {
+                            jointCode = -2;
+                        };
+                    };
+                    if (ay == 0.0) {
+                        if (az == 1.0) {
+                            jointCode = 3;
+                        };
+                        if (az == -1.0) {
+                            jointCode = -3;
+                        };
+                    };
+                };
+            } else { // prismatic
+                jointCode = 4;
+
+                if (ax == 1.0) {
+                    if (ay == 0.0) {
+                        if (az == 0.0) {
+                            jointCode = 4;
+                        };
+                    };
+                };
+
+                if (ax == -1.0) {
+                    if (ay == 0.0) {
+                        if (az == 0.0) {
+                            jointCode = -4;
+                        };
+                    };
+                };
+
+                if (ax == 0.0) {
+                    if (ay == 1.0) {
+                        if (az == 0.0) {
+                            jointCode = 5;
+                        };
+                    };
+                    if (ay == -1.0) {
+                        if (az == 0.0) {
+                            jointCode = -5;
+                        };
+                    };
+                    if (ay == 0.0) {
+                        if (az == 1.0) {
+                            jointCode = 6;
+                        };
+                        if (az == -1.0) {
+                            jointCode = -6;
+                        };
+                    };
+                };
+            };
+        }
+    }
+
+    // ==========================================================================
+    // PRIMITIVE OPERATIONS (MetaOperations.xtend)
+    // ==========================================================================
+    functions {
+        function createVariable(ctx: PModel, name: String, type: String, initial: String): int {}
+        function createConstant(ctx: PModel, name: String, value: String): int {}
+        function createEquation(ctx: PModel, expr: String): int {}
+        function createConstraint(ctx: PModel, expr: String): int {}
+        function createRelation(ctx: PModel, expr: String): int {}
+        function createFlexiRelation(ctx: PModel, expr: String): int {}
+        function addInOut(ctx: PModel, name: String, type: String): int {}
+        function addInput(ctx: PModel, name: String, type: String): int {}
+        function addGeomVariable(ctx: Link, name: String, body: Body): int {}
+        function createDatatype(ctx: PModel, name: String, fields: String): int {}
+        function createFunction(ctx: PModel, name: String, params: String, retType: String): int {}
+
+        function length(items: seq(Link)): int {}
+        function length(items: seq(Joint)): int {}
+        function length(items: seq(Body)): int {}
+
+        function getVariable(ctx: Link, name: String): real {}
+        function getVariable(ctx: Joint, name: String): real {}
+        function evaluateExpression(expr: real): real {}
+    }
+
+    computation {
+        // Step 1: sizes
+        n = length(pmodel.links);
+        N = n - 1;
+
+        // Step 2: basic datatypes and math helpers
+        createDatatype(pmodel, "Geom", "geomType: string; geomVal: vec(); meshUri: string; meshScale: vec()");
+        createFunction(pmodel, "identity", "size: real", "mat(3,3)");
+        createFunction(pmodel, "skew", "v: vec(3)", "mat(3,3)");
+
+        // Step 3: system-level generalized coordinates + dynamics outputs
+        addInOut(pmodel, "n", "int");
+        addInOut(pmodel, "N", "int");
+        addInOut(pmodel, "dt", "real");
+
+        addInOut(pmodel, "q",     "vec(" + N + ")");
+        addInOut(pmodel, "d_q",   "vec(" + N + ")");
+        addInOut(pmodel, "dd_q",  "vec(" + N + ")");
+        addInOut(pmodel, "tau",   "vec(" + N + ")");
+        addInOut(pmodel, "H",     "mat(" + N + "," + N + ")");
+        addInOut(pmodel, "C",     "vec(" + N + ")");
+
+        addInOut(pmodel, "damping", "mat(" + N + "," + N + ")");
+        addInOut(pmodel, "tau_d",   "vec(" + N + ")");
+
+        addInOut(pmodel, "gravity", "real");
+
+        addInOut(pmodel, "XT",    "Seq(mat(6,6))");
+        addInOut(pmodel, "I",     "Seq(mat(6,6))");
+        addInOut(pmodel, "jtype", "Seq(int)");
+
+        // Step 4: per-link primitives (moving links only: idx > 0)
+        parentHalfHeight = 0.0;
+        xtSeqStr = "<";
+        iSeqStr = "<";
+
+        for (idx: int in range(0, n, 1)) {
+            currentLink = pmodel.links[idx];
+            linkNum = getVariable(currentLink, "number");
+
+            // defaults
+            massVal = 0.0;
+            ixxVal = 0.0;
+            ixyVal = 0.0;
+            ixzVal = 0.0;
+            iyyVal = 0.0;
+            iyzVal = 0.0;
+            izzVal = 0.0;
+            cxVal = 0.0;
+            cyVal = 0.0;
+            czVal = 0.0;
+            halfHeight = 0.0;
+
+            numBodies = length(currentLink.bodies);
+            if (numBodies > 0) {
+                currentBody = currentLink.bodies[0];
+                currentBodyDef = currentBody.def;
+                currentInertial = currentBodyDef.inertial;
+                currentInertia = currentInertial.inertia;
+
+                massVal = evaluateExpression(currentInertial.mass);
+                ixxVal = evaluateExpression(currentInertia.ixx);
+                ixyVal = evaluateExpression(currentInertia.ixy);
+                ixzVal = evaluateExpression(currentInertia.ixz);
+                iyyVal = evaluateExpression(currentInertia.iyy);
+                iyzVal = evaluateExpression(currentInertia.iyz);
+                izzVal = evaluateExpression(currentInertia.izz);
+
+                geomVarName = "geom_" + linkNum + "1";
+                addGeomVariable(currentLink, geomVarName, currentBody);
+                geomTypeStr = getVariable(currentLink, geomVarName + ".geomType");
+                geomVal = getVariable(currentLink, geomVarName + ".geomVal");
+                computeHalfHeight(geomTypeStr, geomVal);
+            };
+
+            if (idx > 0) {
+                addInOut(pmodel, "XT_" + linkNum, "mat(6,6)");
+
+                addInOut(pmodel, "m_"   + linkNum, "real");
+                addInOut(pmodel, "I_C_" + linkNum, "mat(3,3)");
+                addInOut(pmodel, "c_"   + linkNum, "vec(3)");
+                addInOut(pmodel, "I_"   + linkNum, "mat(6,6)");
+
+                // COM offset along -Z to match SKO convention for hanging links
+                cxVal = 0.0;
+                cyVal = 0.0;
+                czVal = 0.0 - halfHeight;
+
+                createConstraint(pmodel, "(m_" + linkNum + ")[t==0]==" + massVal);
+                createConstraint(pmodel, "(I_C_" + linkNum + ")[t==0]==[|" +
+                    ixxVal + "," + ixyVal + "," + ixzVal + ";" +
+                    ixyVal + "," + iyyVal + "," + iyzVal + ";" +
+                    ixzVal + "," + iyzVal + "," + izzVal + "|]");
+                cVecStr = "[|" + cxVal + "," + cyVal + "," + czVal + "|]";
+                createConstraint(pmodel, "(c_" + linkNum + ")[t==0]==" + cVecStr);
+
+                // Build spatial inertia matrix literal for algebraic constraints
+                m00: real = ixxVal + massVal * czVal * czVal;
+                m11: real = iyyVal + massVal * czVal * czVal;
+                m04: real = 0.0 - massVal * czVal;
+                m13: real = massVal * czVal;
+                spatialInertiaStr = "[|" + m00 + "," + ixyVal + "," + ixzVal + ",0.0," + m04 + ",0.0;" +
+                                     ixyVal + "," + m11 + "," + iyzVal + "," + m13 + ",0.0,0.0;" +
+                                     ixzVal + "," + iyzVal + "," + izzVal + ",0.0,0.0,0.0;" +
+                                     "0.0," + m13 + ",0.0," + massVal + ",0.0,0.0;" +
+                                     m04 + ",0.0,0.0,0.0," + massVal + ",0.0;" +
+                                     "0.0,0.0,0.0,0.0,0.0," + massVal + "|]";
+                createConstraint(pmodel, "(I_" + linkNum + ")[t==0]==" + spatialInertiaStr);
+
+                createEquation(pmodel, "submatrix(I_" + linkNum + ")(0,0,3,3) == I_C_" + linkNum +
+                    " + m_" + linkNum + " * transpose(skew(c_" + linkNum + ")) * skew(c_" + linkNum + ")");
+                createEquation(pmodel, "submatrix(I_" + linkNum + ")(0,3,3,3) == m_" + linkNum +
+                    " * skew(c_" + linkNum + ")");
+                createEquation(pmodel, "submatrix(I_" + linkNum + ")(3,0,3,3) == m_" + linkNum +
+                    " * transpose(skew(c_" + linkNum + "))");
+                createEquation(pmodel, "submatrix(I_" + linkNum + ")(3,3,3,3) == m_" + linkNum +
+                    " * identity(3)");
+
+                transZ: real = 0.0;
+                if (idx > 1) {
+                    transZ = -(2.0 * parentHalfHeight);
+                };
+                createXTTranslationZConstraint(linkNum, transZ);
+
+                if (idx == 1) {
+                    xtSeqStr = xtSeqStr + xtStr;
+                    iSeqStr = iSeqStr + spatialInertiaStr;
+                } else {
+                    xtSeqStr = xtSeqStr + "," + xtStr;
+                    iSeqStr = iSeqStr + "," + spatialInertiaStr;
+                };
+            };
+
+            parentHalfHeight = halfHeight;
+        };
+
+        xtSeqStr = xtSeqStr + ">";
+        iSeqStr = iSeqStr + ">";
+
+        createEquation(pmodel, "XT == " + xtSeqStr);
+        createEquation(pmodel, "I == " + iSeqStr);
+        createConstraint(pmodel, "(XT)[t==0]==" + xtSeqStr);
+        createConstraint(pmodel, "(I)[t==0]==" + iSeqStr);
+
+        // Step 5: joint-type codes (order follows pmodel.joints)
+        jointListNum = length(pmodel.joints);
+        jointList = pmodel.joints;
+        jSeqStr = "<";
+
+        for (jIdx: int in range(0, jointListNum, 1)) {
+            jointDef = jointList[jIdx];
+            jointNum = getVariable(jointDef, "number");
+
+            addInOut(pmodel, "jtype_" + jointNum, "int");
+
+            axVal: real = jointDef.axis[0];
+            ayVal: real = jointDef.axis[1];
+            azVal: real = jointDef.axis[2];
+            jointTypeVal: int = 0;
+
+            inferJointCode(jointTypeVal, axVal, ayVal, azVal);
+            createConstraint(pmodel, "(jtype_" + jointNum + ")[t==0] == " + jointCode);
+
+            if (jIdx == 0) {
+                jSeqStr = jSeqStr + jointCode;
+            } else {
+                jSeqStr = jSeqStr + "," + jointCode;
+            };
+        };
+
+        jSeqStr = jSeqStr + ">";
+        createEquation(pmodel, "jtype == " + jSeqStr);
+        createConstraint(pmodel, "(jtype)[t==0]==" + jSeqStr);
+
+        // Step 6: generalized damping torque and system equation of motion
+        createEquation(pmodel, "tau_d == damping * derivative(q)");
+        createEquation(pmodel, "tau == H * derivative(derivative(q)) + C + tau_d");
+    }
+}

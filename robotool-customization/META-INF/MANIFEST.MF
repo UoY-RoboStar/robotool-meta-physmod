@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bundle-Name: RoboTool
-Bundle-SymbolicName: robostar.robotool.customization;singleton=true
+Bundle-Name: RoboTool PhysMod
+Bundle-SymbolicName: robostar.robotool.physmod.customization;singleton=true
 Bundle-Version: 1.0.0.qualifier
-Automatic-Module-Name: robostar.robotool.customization
+Automatic-Module-Name: robostar.robotool.physmod.customization

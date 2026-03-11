@@ -1,4 +1,1 @@
-Generator error: No EObjectDescription could be found in Scope SName.element for ReferenceSensor'my_sensor_ref'.index->Index'i'
-Semantic Object: PMPackage'BodyPlusSensorRef'.pmodels[0]->PModel'BodySensorRefIndex'.links[0]->LocalLink'Tip'.sensors[0]->LocalSensor'my_sensor_ref'.pose->Pose.x->UnitExp.exp->ParExp.exp->Div.left->Mult.right->CallExp.args[0]->Div.left->Mult.left->Mult.right->SName
-URI: temp/__eqnComp_working___synthetic0.pm
-EStructuralFeature: physmod::SName.element
+Dynamics formulation unsupported

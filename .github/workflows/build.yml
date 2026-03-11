@@ -82,13 +82,13 @@ jobs:
         id: maven-version
         run: |
           echo "Version to be released: ${{ steps.version.outputs.version }}"
-          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{ steps.version.outputs.version }}" -Dartifacts="robostar.robotool.customization.feature,robostar.robotool.product.standalone,robostar.robotool.customization.repository,robostar.robotool.customization"
+          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.5.0 -Dtycho-version=2.5.0 -DnewVersion="${{ steps.version.outputs.version }}" -Dartifacts="robostar.robotool.physmod.customization.feature,robostar.robotool.physmod.product.standalone,robostar.robotool.physmod.customization"
   
       - name: Build with Maven
-        run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
+        run: mvn -Dtycho.version=2.5.0 -Dtycho-version=2.5.0 -B package --file pom.xml
 
       - name: List P2 unit versions
-        run: ./robotool-product/target/products/robotool.product/linux/gtk/x86_64/eclipse -application org.eclipse.equinox.p2.director -repository file:`realpath robotool-product/target/repository/` -list -lf "\${id} | \${version}" | grep -E '(circus\.|robostar|sirius|rcp)' | grep -v 'jar' > versions.md
+        run: ./robotool-physmod-product/target/products/robotool.physmod.product/linux/gtk/x86_64/eclipse -application org.eclipse.equinox.p2.director -repository file:`realpath robotool-physmod-product/target/repository/` -list -lf "\${id} | \${version}" | grep -E '(circus\.|robostar|sirius|rcp)' | grep -v 'jar' > versions.md
 
       - name: Store robochart-csp-gen
         uses: actions/upload-artifact@v4
@@ -106,25 +106,26 @@ jobs:
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Store copy of metamodels
         run: |
-          mkdir -p robotool-repository/target/repository/metamodels
-          cp robochart-metamodel/circus.robocalc.robochart/model/robochart.ecore robotool-repository/target/repository/metamodels/
+          mkdir -p robotool-physmod-repository/target/repository/metamodels
+          cp robochart-metamodel/circus.robocalc.robochart/model/robochart.ecore robotool-physmod-repository/target/repository/metamodels/
+          cp physmod-metamodel/circus.robocalc.robosim.physmod/model/physmod.ecore robotool-physmod-repository/target/repository/metamodels/
       
       - if: ${{ github.ref == 'refs/heads/main' }}
-        name: Store robotool-repository
+        name: Store robotool-physmod-repository
         uses: actions/upload-artifact@v4
         with:
-          name: robotool-repository
-          path: robotool-repository/target/repository/
+          name: robotool-physmod-repository
+          path: robotool-physmod-repository/target/repository/
           retention-days: 1
           overwrite: true
 
       - if: ${{ github.ref == 'refs/heads/main' }}
-        name: Store robotool-product
+        name: Store robotool-physmod-product
         uses: actions/upload-artifact@v4
         with:
-          name: robotool-product
+          name: robotool-physmod-product
           path: |
-            robotool-product/target/products/*.zip
+            robotool-physmod-product/target/products/*.zip
             versions.md
           retention-days: 1
           overwrite: true
@@ -182,7 +183,7 @@ jobs:
             name: robochart-csp-gen
             failOnError: false
 
-  deploy-repository:
+  deploy-physmod-repository:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     needs: [build, test-robochart-csp-gen]
@@ -190,22 +191,21 @@ jobs:
       contents: write
       packages: write
     steps:
-      - name: Download robotool-repository
+      - name: Download robotool-physmod-repository
         uses: actions/download-artifact@v4
         with:
-          name: robotool-repository
-          path: robotool-repository
+          name: robotool-physmod-repository
+          path: robotool-physmod-repository
 
       - name: List files
         run: ls -R
 
-      - name: Deploying repository
+      - name: Deploying physmod repository
         run: echo ${{needs.build.outputs.version}}
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.1
         with:
-          # Private key required to access the host
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add SSH known hosts
@@ -223,21 +223,21 @@ jobs:
           remote-user: ${{ secrets.ROBOSTAR_WEB_USER }}
           remote-root: ${{ secrets.ROBOSTAR_WEB_ROOT }}
           remote-baseurl: 'https://robostar.cs.york.ac.uk'
-          remote-relative-path: 'robotool/stable/'
+          remote-relative-path: 'robotool-physmod/stable/'
           version: ${{ needs.build.outputs.version }}
-          maven-target: 'robotool-repository/'
+          maven-target: 'robotool-physmod-repository/'
 
       - name: Create commit comment
         uses: peter-evans/commit-comment@v1
         with:
-          body: 'Successfully deployed at: https://robostar.cs.york.ac.uk/robotool/stable/${{ steps.deploy.outputs.dest }}'
+          body: 'PhysMod plugins deployed at: https://robostar.cs.york.ac.uk/robotool-physmod/stable/${{ steps.deploy.outputs.dest }}'
 
-      - name: Delete robotool-repository artifact
+      - name: Delete robotool-physmod-repository artifact
         uses: geekyeggo/delete-artifact@v5
         with:
-            name: robotool-repository
+            name: robotool-physmod-repository
             failOnError: false
-          
+
   deploy-product:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
@@ -247,10 +247,10 @@ jobs:
       contents: write
       packages: write
     steps:
-      - name: Download robotool-product
+      - name: Download robotool-physmod-product
         uses: actions/download-artifact@v4
         with:
-          name: robotool-product
+          name: robotool-physmod-product
 
       - name: List files
         run: ls -R
@@ -275,7 +275,7 @@ jobs:
         with:
           tag_name: ${{ needs.build.outputs.new_tag }}
           body: |
-            RoboTool version ${{ needs.build.outputs.version }} compiled and packaged as an Eclipse product using Eclipse tycho's Maven builder. 
+            RoboTool PhysMod version ${{ needs.build.outputs.version }} compiled and packaged as an Eclipse product using Eclipse tycho's Maven builder.
 
             Note that binaries are not signed. In particular, when downloaded and extracted under macOS may need [dequarantining](https://superuser.com/questions/526920/how-to-remove-quarantine-from-file-permissions-in-os-x) using the command `xattr -d com.apple.quarantine Eclipse.app` to avoid a message saying that the binary is damaged.
 
@@ -293,38 +293,38 @@ jobs:
             
             </details>
           files: |
-            robotool-product/target/products/*.tar.gz
-            robotool-product/target/products/*.zip
+            robotool-physmod-product/target/products/*.tar.gz
+            robotool-physmod-product/target/products/*.zip
           draft: false
           prerelease: false
           make_latest: true
 
-      - name: Delete robotool-product artifact
+      - name: Delete robotool-physmod-product artifact
         uses: geekyeggo/delete-artifact@v5
         with:
-            name: robotool-product
+            name: robotool-physmod-product
             failOnError: false
 
   cleanup:
     if: always()
     runs-on: ubuntu-latest
-    needs: [build, test-robochart-csp-gen, deploy-product, deploy-repository]
+    needs: [build, test-robochart-csp-gen, deploy-product, deploy-physmod-repository]
     steps:
       - name: Delete robochart-csp-gen artifact
         uses: geekyeggo/delete-artifact@v5
         with:
             name: robochart-csp-gen
             failOnError: false
-    
-      - name: Delete robotool-repository artifact
+
+      - name: Delete robotool-physmod-repository artifact
         uses: geekyeggo/delete-artifact@v5
         with:
-            name: robotool-repository
+            name: robotool-physmod-repository
             failOnError: false
-    
-      - name: Delete robotool-product artifact
+
+      - name: Delete robotool-physmod-product artifact
         uses: geekyeggo/delete-artifact@v5
         with:
-            name: robotool-product
+            name: robotool-physmod-product
             failOnError: false
-   
+

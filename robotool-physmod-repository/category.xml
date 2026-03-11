@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature id="circus.robocalc.robosim.physmod.feature">
+      <category name="physmod"/>
+   </feature>
+   <feature id="circus.robocalc.robosim.physmod.textual.feature">
+      <category name="physmod"/>
+   </feature>
+   <feature id="circus.robocalc.robosim.physmod.graphical.feature">
+      <category name="physmod"/>
+   </feature>
+   <feature id="circus.robocalc.robosim.physmod.generator.eqnComp.feature">
+      <category name="physmod.generator"/>
+   </feature>
+   <feature id="circus.robocalc.robosim.physmod.generator.guidedChoice.feature">
+      <category name="physmod.generator"/>
+   </feature>
+   <feature id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.feature">
+      <category name="physmod.generator"/>
+   </feature>
+
+   <category-def name="physmod" label="PhysMod"/>
+   <category-def name="physmod.generator" label="PhysMod Generator"/>
+</site>

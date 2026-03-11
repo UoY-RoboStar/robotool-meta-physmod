@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="robostar.robotool.customization.feature"
-      label="RoboTool Customization"
+      id="robostar.robotool.physmod.customization.feature"
+      label="RoboTool PhysMod Customization"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -17,7 +17,7 @@
    </license>
 
    <plugin
-         id="robostar.robotool.customization"
+         id="robostar.robotool.physmod.customization"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

@@ -1,0 +1,105 @@
+Solution {
+    datatypes {
+        PendulumState {
+            theta: float;      // angle from vertical
+            theta_dot: float;  // angular velocity
+            theta_ddot: float  // angular acceleration
+        }
+    }
+    
+    state {
+        pendulum: PendulumState = PendulumState{theta=0.1, theta_dot=0.0, theta_ddot=0.0};
+        length: float = 1.0;           // pendulum length (m)
+        mass: float = 1.0;             // pendulum mass (kg) 
+        gravity: float = 9.81;         // gravitational acceleration (m/s^2)
+        damping: float = 0.1;          // damping coefficient
+        dt: float = 0.01;              // time step (s)
+        time: float = 0.0;             // current time
+        energy_kinetic: float = 0.0;   // kinetic energy
+        energy_potential: float = 0.0; // potential energy
+        energy_total: float = 0.0      // total energy
+    }
+    
+    functions {
+        function cos(val angle: float): float {
+            result == if (angle < 0.0) then cos(-angle) else 
+                     if (angle > 3.14159) then -cos(angle - 3.14159) else
+                     1.0 - angle*angle/2.0 + angle*angle*angle*angle/24.0
+        }
+        
+        function sin(val angle: float): float {
+            result == if (angle < 0.0) then -sin(-angle) else
+                     if (angle > 3.14159) then -sin(angle - 3.14159) else
+                     angle - angle*angle*angle/6.0 + angle*angle*angle*angle*angle/120.0
+        }
+        
+        // Lagrangian mechanics: L = T - V
+        // T = (1/2) * m * l^2 * theta_dot^2 (kinetic energy)
+        // V = m * g * l * (1 - cos(theta)) (potential energy)
+        function kinetic_energy(val m: float, val l: float, val theta_dot: float): float {
+            result == 0.5 * m * l * l * theta_dot * theta_dot
+        }
+        
+        function potential_energy(val m: float, val g: float, val l: float, val theta: float): float {
+            result == m * g * l * (1.0 - cos(theta))
+        }
+        
+        // Equation of motion from Lagrangian: theta_ddot = -(g/l)*sin(theta) - damping*theta_dot
+        function pendulum_acceleration(val g: float, val l: float, val theta: float, val theta_dot: float, val b: float): float {
+            result == -(g / l) * sin(theta) - b * theta_dot
+        }
+        
+        // Runge-Kutta 4th order integration step for theta
+        function rk4_theta(val theta: float, val theta_dot: float, val dt: float): float {
+            result == theta + theta_dot * dt
+        }
+        
+        // Runge-Kutta 4th order integration step for theta_dot  
+        function rk4_theta_dot(val theta_dot: float, val theta_ddot: float, val dt: float): float {
+            result == theta_dot + theta_ddot * dt
+        }
+    }
+    
+    procedures {
+        procedure simulate_step(val dt_val: float) {
+            // Calculate acceleration using Lagrangian mechanics
+            pendulum.theta_ddot = pendulum_acceleration(gravity, length, pendulum.theta, pendulum.theta_dot, damping);
+            
+            // Integrate using Euler method (could be upgraded to RK4)
+            pendulum.theta_dot = rk4_theta_dot(pendulum.theta_dot, pendulum.theta_ddot, dt_val);
+            pendulum.theta = rk4_theta(pendulum.theta, pendulum.theta_dot, dt_val);
+            
+            // Update time
+            time = time + dt_val;
+        }
+        
+        procedure calculate_energy() {
+            // Calculate energies using Lagrangian formulation
+            energy_kinetic = kinetic_energy(mass, length, pendulum.theta_dot);
+            energy_potential = potential_energy(mass, gravity, length, pendulum.theta);
+            energy_total = energy_kinetic + energy_potential;
+        }
+    }
+    
+    computation {
+        // Initialize energy calculation
+        calculate_energy();
+        
+        // Simulation loop - 10 seconds of pendulum motion
+        for (step: int in range(0, 1000, 1)) {
+            simulate_step(dt);
+            calculate_energy();
+            
+            // Optional: Reset if pendulum goes too far (|theta| > pi)
+            if (pendulum.theta > 3.14159) {
+                pendulum.theta = pendulum.theta - 6.28318;
+            } else {
+                if (pendulum.theta < -3.14159) {
+                    pendulum.theta = pendulum.theta + 6.28318;
+                } else {
+                    skip;
+                }
+            }
+        }
+    }
+}

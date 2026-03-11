@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>circus.robocalc.robosim.physmod.generator.sourceCodeGen</groupId>
+		<artifactId>circus.robocalc.robosim.physmod.generator.sourceCodeGen.parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests</artifactId>
+	<packaging>eclipse-test-plugin</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+        		<artifactId>maven-resources-plugin</artifactId>
+        		<version>3.1.0</version>
+        		<executions>
+			        <execution>
+            			<id>copy-resources</id>
+	            		<!-- here the phase you need -->
+            			<phase>validate</phase>
+            			<goals>
+	              			<goal>copy-resources</goal>
+            			</goals>
+            			<configuration>
+	              			<outputDirectory>${basedir}/target/classes</outputDirectory>
+              				<resources>
+	                				<resource>
+	                  					<directory>lib</directory>
+                  						<filtering>true</filtering>
+                					</resource>
+              				</resources>
+            			</configuration>
+          			</execution>
+        		</executions>
+      		</plugin>
+			<plugin>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
+			</plugin>
+			<!-- Configure Tycho Surefire for JUnit 5 with console output -->
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>default-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<useModulePath>false</useModulePath>
+					<redirectTestOutputToFile>false</redirectTestOutputToFile>
+					<useUIHarness>false</useUIHarness>
+					<useUIThread>false</useUIThread>
+					<includes>
+						<include>**/Test*.class</include>
+						<include>**/*Test.class</include>
+						<include>**/*Tests.class</include>
+						<include>**/*TestCase.class</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+		<!-- Configure test resources to include the existing tests directory -->
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+			<testResource>
+				<directory>tests</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</testResource>
+		</testResources>
+	</build>
+
+</project>

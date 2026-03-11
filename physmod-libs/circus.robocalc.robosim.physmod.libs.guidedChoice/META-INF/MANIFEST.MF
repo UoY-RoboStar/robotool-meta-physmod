@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PhysMod Guided Choice Libraries
+Bundle-SymbolicName: circus.robocalc.robosim.physmod.libs.guidedChoice;singleton:=true
+Bundle-Version: 3.0.0.qualifier
+Bundle-Vendor: RoboCalc Project
+Require-Bundle: org.eclipse.xtext,
+ org.eclipse.xtext.xbase,
+ org.eclipse.equinox.common,
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.xbase.lib;bundle-version="[2.25.0,3.0.0)",
+ org.eclipse.xtend.lib,
+ org.eclipse.xtext.util,
+ org.eclipse.emf.common,
+ org.antlr.runtime;bundle-version="[3.2.0,3.2.1)",
+ circus.robocalc.robosim.physmod.slnDF;bundle-version="1.0.0",
+ circus.robocalc.robosim.physmod.slnRef;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: circus.robocalc.robosim.physmod.libs.guidedChoice
+Bundle-ActivationPolicy: lazy
+Export-Package: circus.robocalc.robosim.physmod.libs.guidedChoice.solutionLib,
+ circus.robocalc.robosim.physmod.libs.guidedChoice.formulation

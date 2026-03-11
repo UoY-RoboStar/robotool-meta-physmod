@@ -1,0 +1,57 @@
+// Actuators.sln - Actuator Formulation Equation Library
+//
+// This slnDF file specifies equation generation for different actuator types.
+// Individual actuator formulations define how torque/force is computed from inputs.
+//
+// Formulations:
+// - trivial: Direct passthrough (TorqueIn == TorqueOut)
+// - controlled: B_ctrl matrix multiplication (TorqueOut == B_ctrl * ControlIn)
+
+Solution Actuator_Library {
+    datatypes {
+        Actuator { name: String; formulation: String };
+    }
+
+    state {
+        actuator: Actuator;
+        formulation: String;
+    }
+
+    functions {
+        function createEquation(ctx: Actuator, expr: String): int {}
+        function createVariable(ctx: Actuator, name: String, type: String, initial: String): int {}
+        function hasVariable(ctx: Actuator, name: String): bool {}
+    }
+
+    procedures {
+        // Trivial actuator: direct torque passthrough
+        // Input torque equals output torque with no transformation
+        procedure generateTrivialActuator(val act: Actuator) {
+            createEquation(act, "TorqueIn == TorqueOut");
+        }
+
+        // Controlled actuator: B_ctrl matrix formulation
+        // TorqueOut = B_ctrl * ControlIn where B_ctrl is defined in the actuator
+        // The equation is already in the actuator definition from the library,
+        // so no additional equation generation is needed at the actuator level.
+        // System-level B_ctrl composition is handled by the dynamics formulation (SKO).
+        procedure generateControlledActuator(val act: Actuator) {
+            // The controlled actuator already has equation: TorqueOut == B_ctrl * ControlIn
+            // in its definition (from physmod::trivial::actuators::ControlledMotor).
+            // No additional equation needed here - system-level B_ctrl handled by SKO.
+        }
+    }
+
+    computation {
+        // NOTE: `formulation` must be provided by the caller when executing this library.
+        // (Actuators in the PhysMod metamodel do not carry a `formulation` field.)
+
+        if (formulation == "trivial") {
+            generateTrivialActuator(actuator);
+        };
+
+        if (formulation == "controlled") {
+            generateControlledActuator(actuator);
+        };
+    }
+}

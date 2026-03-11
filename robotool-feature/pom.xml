@@ -15,6 +15,6 @@ SPDX-License-Identifier: EPL-2.0
 		<artifactId>robotool-meta</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>robostar.robotool.customization.feature</artifactId>
+	<artifactId>robostar.robotool.physmod.customization.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>

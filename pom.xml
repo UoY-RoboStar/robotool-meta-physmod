@@ -73,11 +73,25 @@
   <module>robochart-assertions</module>
   <module>robochart-csp-gen</module>
   <module>robochart-graphical</module>
+  <!-- DSL modules required by physmod-libs -->
+  <module>slnDF-textual</module>
+  <module>slnRef-textual</module>
+  <!-- PhysMod modules (build order matters: metamodel → textual → graphical → libs → testdata → generators) -->
+  <module>physmod-metamodel</module>
+  <module>physmod-textual</module>
+  <module>physmod-graphical</module>
+  <module>physmod-libs</module>
+  <module>physmod-testdata</module>
+  <module>physmod-eqnComp</module>
+  <!-- Note: physmod-eqnComp has a 'standalone' profile (-Dstandalone) that adds
+       physmod-libs/libs.textual and physmod-testdata as sibling modules.
+       That profile is NOT active here; the root reactor provides them. -->
+  <module>physmod-guidedChoice</module>
+  <module>physmod-sourceCodeGen</module>
+  <!-- RoboTool packaging (last, as these create large product archives) -->
   <module>robotool-feature</module>
   <module>robotool-customization</module>
-  <module>robotool-customization-repository</module>
-  <module>robotool-product</module>
-  <module>robotool-repository</module>
-   <!--TODO ADD YOUR MODULES HERE-->
+  <module>robotool-physmod-product</module>
+  <module>robotool-physmod-repository</module>
  </modules>
 </project>

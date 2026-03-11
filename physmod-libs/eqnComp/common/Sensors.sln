@@ -1,0 +1,83 @@
+// Sensors.sln - Sensor Formulation Equation Library
+//
+// This slnDF file specifies equation generation for different sensor types.
+// Individual sensor formulations define how sensor outputs are computed from inputs.
+//
+// NOTE: This library mirrors the role of Actuators.sln for sensors. It is intended
+// to be used by the eqnComp stage (T3) to make sensor computations explicit and
+// traceable at the model level (p-model+ / slnDF), even if later stages
+// decide to implement some sensors via world-mapping.
+//
+// Formulations:
+// - trivial: Direct passthrough (SignalIn == MeasurementOut)
+// - encoder: Joint encoder (AngleOut == ThetaIn, VelocityOut == DThetaIn)
+// - lidar: Beam-model sensor (equations live in the sensor definition)
+// - imu:  IMU passthrough (Current* == AngularRate*)
+//
+// The meta-operations (createEquation, createVariable, ...) are implemented by the
+// slnDF interpreter runtime. Declarations here are required for parsing.
+
+Solution Sensor_Library {
+    datatypes {
+        Sensor { name: String; formulation: String };
+    }
+
+    state {
+        sensor: Sensor;
+        formulation: String;
+    }
+
+    functions {
+        function createEquation(ctx: Sensor, expr: String): int {}
+        function createVariable(ctx: Sensor, name: String, type: String, initial: String): int {}
+        function hasVariable(ctx: Sensor, name: String): bool {}
+    }
+
+    procedures {
+        // Trivial sensor: direct passthrough
+        procedure generateTrivialSensor(val s: Sensor) {
+            createEquation(s, "SignalIn == MeasurementOut");
+        }
+
+        // JointEncoder sensor: angle/velocity passthrough
+        procedure generateJointEncoderSensor(val s: Sensor) {
+            createEquation(s, "AngleOut == ThetaIn");
+            createEquation(s, "VelocityOut == DThetaIn");
+        }
+
+        // Lidar: the beam-model equations are part of the Lidar sensor definition
+        // (physmod::sensors::Lidar / physmod::trivial::sensors::Lidar). No extra
+        // per-sensor equation generation is needed here; this branch exists for
+        // traceability and future extension (e.g., emitting simplified variants).
+        procedure generateLidarSensor(val s: Sensor) {
+            // No-op: equations already in sensor definition.
+        }
+
+        // IMU: passthrough from angular rates to reported rates
+        procedure generateImuSensor(val s: Sensor) {
+            createEquation(s, "currentLV == angularRateLV");
+            createEquation(s, "currentAV == angularRateAV");
+        }
+    }
+
+    computation {
+        // NOTE: `formulation` must be provided by the caller when executing this library.
+        // (Sensors in the PhysMod metamodel do not carry a `formulation` field.)
+
+        if (formulation == "trivial") {
+            generateTrivialSensor(sensor);
+        };
+
+        if (formulation == "encoder") {
+            generateJointEncoderSensor(sensor);
+        };
+
+        if (formulation == "lidar") {
+            generateLidarSensor(sensor);
+        };
+
+        if (formulation == "imu") {
+            generateImuSensor(sensor);
+        };
+    }
+}

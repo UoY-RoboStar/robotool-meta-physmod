@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package
+			uri = "http://circus.robocalc.robosim.physmod/slnRef"
+			class = "circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefPackage"
+			genModel = "model/generated/SlnRef.genmodel" />
+	</extension>
+</plugin>

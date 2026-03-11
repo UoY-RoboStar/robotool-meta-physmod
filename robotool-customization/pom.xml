@@ -16,7 +16,7 @@ Version Update 3.1.0 : Nov 2022
 		<artifactId>robotool-meta</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>robostar.robotool.customization</artifactId>
+	<artifactId>robostar.robotool.physmod.customization</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
 	<properties>
@@ -25,7 +25,7 @@ Version Update 3.1.0 : Nov 2022
 	  <eclipse.simultaneous.release.build>${maven.build.timestamp}</eclipse.simultaneous.release.build>
 	  <eclipse.simultaneous.release.name>${RELEASE_NAME} (${RELEASE_VERSION})</eclipse.simultaneous.release.name>
 	 
-	  <tycho-version>2.7.5</tycho-version>
+	  <tycho-version>2.5.0</tycho-version>
 	 </properties>
 
 	<build>

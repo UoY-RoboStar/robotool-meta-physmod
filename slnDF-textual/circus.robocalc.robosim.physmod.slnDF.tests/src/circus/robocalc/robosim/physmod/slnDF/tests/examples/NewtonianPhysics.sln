@@ -1,0 +1,146 @@
+Solution {
+    datatypes {
+        Vector3D {
+            x: float;
+            y: float; 
+            z: float
+        };
+        
+        RigidBody {
+            position: Vector3D;
+            velocity: Vector3D;
+            acceleration: Vector3D;
+            mass: float;
+            force: Vector3D
+        }
+    }
+    
+    state {
+        body1: RigidBody = RigidBody{
+            position=Vector3D{x=0.0, y=10.0, z=0.0},
+            velocity=Vector3D{x=5.0, y=0.0, z=0.0}, 
+            acceleration=Vector3D{x=0.0, y=0.0, z=0.0},
+            mass=1.0,
+            force=Vector3D{x=0.0, y=0.0, z=0.0}
+        };
+        
+        body2: RigidBody = RigidBody{
+            position=Vector3D{x=0.0, y=0.0, z=0.0},
+            velocity=Vector3D{x=0.0, y=0.0, z=0.0},
+            acceleration=Vector3D{x=0.0, y=0.0, z=0.0}, 
+            mass=2.0,
+            force=Vector3D{x=0.0, y=0.0, z=0.0}
+        };
+        
+        gravity_constant: float = 9.81;
+        dt: float = 0.016;  // 60 FPS
+        restitution: float = 0.8;  // coefficient of restitution
+        ground_height: float = 0.0;
+        collision_occurred: bool = false
+    }
+    
+    functions {
+        function sqrt_approx(val x: float): float {
+            // Newton-Raphson approximation for square root
+            for (iter: int in range(0, 5, 1)) {
+                result == if (iter == 0) then x/2.0 else (result + x/result) / 2.0
+            }
+        }
+        
+        function vector_magnitude(val vx: float, val vy: float, val vz: float): float {
+            result == sqrt_approx(vx*vx + vy*vy + vz*vz)
+        }
+        
+        function vector_distance(val p1x: float, val p1y: float, val p1z: float, 
+                               val p2x: float, val p2y: float, val p2z: float): float {
+            result == vector_magnitude(p2x - p1x, p2y - p1y, p2z - p1z)
+        }
+        
+        // Newton's second law: F = ma, so a = F/m
+        function calculate_acceleration_x(val force_x: float, val mass: float): float {
+            result == force_x / mass
+        }
+        
+        function calculate_acceleration_y(val force_y: float, val mass: float): float {
+            result == force_y / mass
+        }
+        
+        function calculate_acceleration_z(val force_z: float, val mass: float): float {
+            result == force_z / mass
+        }
+        
+        // Gravitational force between two bodies: F = G*m1*m2/r^2
+        function gravitational_force_magnitude(val m1: float, val m2: float, val distance: float): float {
+            result == if (distance < 0.1) then 0.0 else (6.67e-11 * m1 * m2) / (distance * distance)
+        }
+        
+        // Check ground collision
+        function check_ground_collision(val pos_y: float, val ground_y: float): bool {
+            result == if (pos_y <= ground_y) then true else false
+        }
+    }
+    
+    procedures {
+        procedure apply_gravity(val-res body: RigidBody) {
+            // Apply gravitational acceleration (downward)
+            body.force.y = body.force.y - body.mass * gravity_constant;
+        }
+        
+        procedure integrate_motion(val-res body: RigidBody, val dt_val: float) {
+            // Calculate acceleration from force (F = ma)
+            body.acceleration.x = calculate_acceleration_x(body.force.x, body.mass);
+            body.acceleration.y = calculate_acceleration_y(body.force.y, body.mass);
+            body.acceleration.z = calculate_acceleration_z(body.force.z, body.mass);
+            
+            // Integrate velocity: v = v0 + a*dt
+            body.velocity.x = body.velocity.x + body.acceleration.x * dt_val;
+            body.velocity.y = body.velocity.y + body.acceleration.y * dt_val;
+            body.velocity.z = body.velocity.z + body.acceleration.z * dt_val;
+            
+            // Integrate position: x = x0 + v*dt
+            body.position.x = body.position.x + body.velocity.x * dt_val;
+            body.position.y = body.position.y + body.velocity.y * dt_val;
+            body.position.z = body.position.z + body.velocity.z * dt_val;
+            
+            // Reset forces for next frame
+            body.force.x = 0.0;
+            body.force.y = 0.0;
+            body.force.z = 0.0;
+        }
+        
+        procedure handle_ground_collision(val-res body: RigidBody) {
+            collision_occurred = check_ground_collision(body.position.y, ground_height);
+            
+            if (collision_occurred) {
+                // Place object on ground
+                body.position.y = ground_height;
+                
+                // Reverse and dampen vertical velocity
+                body.velocity.y = -body.velocity.y * restitution;
+                
+                // Apply friction to horizontal motion
+                body.velocity.x = body.velocity.x * 0.9;
+                body.velocity.z = body.velocity.z * 0.9;
+            } else {
+                skip;
+            }
+        }
+    }
+    
+    computation {
+        // Physics simulation loop
+        for (frame: int in range(0, 1000, 1)) {
+            // Apply forces
+            apply_gravity(body1);
+            apply_gravity(body2);
+            
+            // Integrate motion using Newton's laws
+            integrate_motion(body1, dt);
+            integrate_motion(body2, dt);
+            
+            // Handle collisions
+            handle_ground_collision(body1);
+            handle_ground_collision(body2);
+        }
+    }
+}

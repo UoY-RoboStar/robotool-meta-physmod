@@ -1,0 +1,13 @@
+*.class
+*.log
+xtend-gen/
+src-gen/
+target/
+bin/
+sln-gen/
+.idea/
+.claude/
+__synthetic*.pm
+results.json
+*.bak
+*.backup

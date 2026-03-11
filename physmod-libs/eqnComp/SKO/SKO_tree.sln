@@ -1,0 +1,403 @@
+// ============================================================================
+// SKO_Generator_TreeTopology.sln
+//
+// Equation-composition generator for Jain SKO tree-topology multibody systems.
+//
+// This generator:
+//   * Assumes the input p-model is a TREE (open chain, no loops)
+//   * Assumes SKO numbering (Featherstone-reversed) has already been assigned
+//       - base/root has the highest link number (typically n)
+//       - each link k (except the base) has a unique parent link p(k) with p(k) > k
+//       - each flexible joint is stored in its PARENT link, and references its CHILD
+//         via joint.flexible.link
+//   * Builds the SKO operators and manipulator-equation terms per Jain (Ch. 9):
+//       V     = A* H* qdot
+//       alpha = A* (H* qddot + a)
+//       f     = A  (M alpha + b)
+//       tau   = H f  ==  M(q) qddot + C(q,qdot)
+//       M(q)  = H A M A* H*
+//       C     = H A (M A* a + b)
+//
+// Key differences vs the serial-chain generator:
+//   * Forward-kinematics cascade uses parent/child edges: B_child = B_parent * T_parent_child
+//   * phi (A operator) is populated ONLY for ancestor pairs (j is ancestor of i)
+// ============================================================================
+
+Solution SKO_Generator_TreeTopology {
+    datatypes {
+        PModel { links: seq(Link); joints: seq(Joint); name: String };
+        Link   { joints: seq(Joint); bodies: seq(Body); name: String; number: int };
+        Joint  { flexible: Flexible; name: String; number: int };
+        Flexible { link: Link };
+        Body { }
+    }
+
+    state {
+        pmodel: PModel;
+
+        // Sizes
+        n: int = 0;         // number of links
+        nTree: int = 0;     // number of tree joints (assumed n-1)
+        nv: int = 0;        // 6*n
+
+        // Helpers
+        bAggStr: String = "";
+        tOffsetAggStr: String = "";
+        parentTmp: int = 0;
+        isAnc: bool = false;
+
+        // Geometry / pose values for initial-value constraints
+        geomVarName: String = "";
+        geomTypeStr: String = "box";
+        geomVal: seq(real);
+        halfHeight: real = 0.0;
+        poseVec: seq(real);
+        poseZ: real = 0.0;
+        bMatStr: String = "";
+        tOffsetStr: String = "";
+    }
+
+    procedures {
+        // Compute halfHeight from geometry type and values
+        // Box: z/2, Cylinder: length/2, Sphere: radius
+        procedure computeHalfHeight(val gType: String, val gVal: seq(real)) {
+            if (gType == "box") {
+                halfHeight = gVal[2] / 2.0;
+            } else {
+                if (gType == "cylinder") {
+                    halfHeight = gVal[1] / 2.0;
+                } else {
+                    if (gType == "sphere") {
+                        halfHeight = gVal[0];
+                    } else {
+                        halfHeight = 0.0;
+                    };
+                };
+            };
+        }
+
+        // Create initial value constraint for B_k (joint frame)
+        procedure createBConstraint(val link: Link, val k: int, val z: real, val halfH: real) {
+            // B_k is the joint frame at the bottom of the link (z - halfHeight)
+            jointZ: real = z - halfH;
+            bMatStr = "[|1.000000,0.000000,0.000000,0.000000;0.000000,1.000000,0.000000,0.000000;-0.000000,0.000000,1.000000," + jointZ + ";0,0,0,1|]";
+            createConstraint(link, "(B_" + k + ")[t==0]==" + bMatStr);
+        }
+
+        // Create T_offset constraint (joint-to-body offset)
+        procedure createTOffsetConstraint(val link: Link, val k: int, val z: real) {
+            tOffsetStr = "[|1.0,0.0,0.0,0.0;0.0,1.0,0.0,0.0;0.0,0.0,1.0," + z + ";0,0,0,1|]";
+            createConstraint(link, "(T_offset_" + k + ")[t==0]==" + tOffsetStr);
+        }
+
+        // Per-link variables at system and component level
+        procedure createLinkVariables(val pmodel: PModel, val link: Link) {
+            linkNum: int = getVariable(link, "number");
+            numBodies: int = length(link.bodies);
+
+            if (numBodies > 0) {
+                body: Body = link.bodies[0];
+                geomVarName: String = "geom_" + linkNum + "1";
+                addGeomVariable(link, geomVarName, body);
+                addGeomVariable(link, "L" + linkNum + "_geom", body);
+            };
+
+            // System-level variables (stacked/assembled later)
+            addInOut(pmodel, "B_" + linkNum, "mat(4,4)");
+            addInOut(pmodel, "M_" + linkNum, "mat(6,6)");
+            addInOut(pmodel, "T_offset_" + linkNum, "mat(4,4)");
+
+            // Component-level variables (must match Link interface)
+            addInOut(link, "B_" + linkNum, "mat(4,4)");
+            addInOut(link, "M_" + linkNum, "mat(6,6)");
+            addInOut(link, "a_" + linkNum, "vec(6)");
+            addInOut(link, "b_" + linkNum, "vec(6)");
+            addInOut(link, "T_offset_" + linkNum, "mat(4,4)");
+        }
+
+        procedure createLinkRelation(val pmodel: PModel, val link: Link) {
+            linkNum: int = getVariable(link, "number");
+            linkName: String = link.name;
+
+            rel: String = "B_" + linkNum + " == " + linkName + ".B_" + linkNum +
+                " /\\ M_" + linkNum + " == " + linkName + ".M_" + linkNum +
+                " /\\ a[" + (linkNum - 1) + "] == " + linkName + ".a_" + linkNum +
+                " /\\ b[" + (linkNum - 1) + "] == " + linkName + ".b_" + linkNum;
+            createRelation(link, rel);
+        }
+
+        // Tree-joint variables (parent->child)
+        procedure createTreeJointVariables(val pmodel: PModel, val joint: Joint, val parentNum: int, val childNum: int) {
+            jName: String = joint.name;
+            jNum: int = getVariable(joint, "number");
+
+            // System-level variables
+            addInOut(pmodel, "H_" + jNum, "mat(1,6)");
+            addInOut(pmodel, "T_" + parentNum + "_" + childNum, "mat(4,4)");
+
+            // Component-level (match Joint interface)
+            addInOut(joint, "H_" + jNum, "mat(1,6)");
+            addInOut(joint, "T_" + parentNum + "_" + childNum, "mat(4,4)");
+            addInOut(joint, "theta_" + jNum, "real");
+            addInOut(joint, "tau_" + jNum, "real");
+        }
+
+        procedure createTreeJointRelation(val pmodel: PModel, val joint: Joint, val parentNum: int, val childNum: int) {
+            jName: String = joint.name;
+            jNum: int = getVariable(joint, "number");
+
+            rel: String = "H_" + jNum + " == " + jName + ".H_" + jNum +
+                " /\\ T_" + parentNum + "_" + childNum + " == " + jName + ".T_" + parentNum + "_" + childNum +
+                " /\\ theta[" + (jNum - 1) + "] == " + jName + ".theta_" + jNum +
+                " /\\ tau[" + (jNum - 1) + "] == " + jName + ".tau_" + jNum;
+            createRelation(joint, rel);
+        }
+
+        // Find parent link number of a child link number by scanning the p-model.
+        // Returns 0 if not found (root/base).
+        procedure findParent(val childNum: int, res parentNum: int) {
+            parentNum = 0;
+            for (L: Link in pmodel.links) {
+                pNum: int = getVariable(L, "number");
+                for (J: Joint in L.joints) {
+                    flexConn: Flexible = J.flexible;
+                    childLink: Link = flexConn.link;
+                    cNum: int = getVariable(childLink, "number");
+                    if (cNum == childNum) {
+                        parentNum = pNum;
+                    };
+                };
+            };
+        }
+
+        // Returns true iff 'anc' is an ancestor of 'node' in the tree.
+        procedure isAncestorProc(val anc: int, val node: int, res out: bool) {
+            out = false;
+            curr: int = node;
+
+            // Walk up at most n steps (tree has at most n-1 edges)
+            for (k: int in range(0, n, 1)) {
+                if (curr == anc) {
+                    out = true;
+                };
+                tmp: int = 0;
+                findParent(curr, tmp);
+                curr = tmp;
+            };
+        }
+
+        // System variable creation
+        procedure createSystemVariablesTree(val pmodel: PModel, val n: int, val nTree: int) {
+            // Size parameters (exposed as variables with t==0 constraints for libraries)
+            addInOut(pmodel, "n", "real", "" + n);
+            addInOut(pmodel, "nTree", "real", "" + nTree);
+
+            // Core SKO operators / stacked vectors
+            addInOut(pmodel, "B_k", "Seq(mat(4,4))");
+            addInOut(pmodel, "T_offset", "Seq(mat(4,4))");
+            addInOut(pmodel, "phi", "mat(" + (6*n) + "," + (6*n) + ")");
+            addInOut(pmodel, "M", "mat(" + (6*n) + "," + (6*n) + ")");
+            addInOut(pmodel, "H", "mat(" + nTree + "," + (6*n) + ")");
+
+            addInOut(pmodel, "theta", "vec(" + nTree + ")");
+            addInOut(pmodel, "tau", "vec(" + nTree + ")");
+
+            addInOut(pmodel, "V", "vec(" + (6*n) + ")");
+            addInOut(pmodel, "alpha", "vec(" + (6*n) + ")");
+            addInOut(pmodel, "a", "vec(" + (6*n) + ")");
+            addInOut(pmodel, "b", "vec(" + (6*n) + ")");
+            addInOut(pmodel, "f", "vec(" + (6*n) + ")");
+
+            // Manipulator equation terms
+            addInOut(pmodel, "M_mass", "mat(" + nTree + "," + nTree + ")");
+            addInOut(pmodel, "C", "vec(" + nTree + ")");
+        }
+
+        // System equations for tree topology
+        procedure createSystemEquationsTree(val pmodel: PModel, val n: int, val nTree: int) {
+            // 1) Forward-kinematics cascade for ALL tree edges:
+            //      B_child = B_parent * T_parent_child
+            for (P: Link in pmodel.links) {
+                pNum: int = getVariable(P, "number");
+                for (J: Joint in P.joints) {
+                    flexConn: Flexible = J.flexible;
+                    childLink: Link = flexConn.link;
+                    cNum: int = getVariable(childLink, "number");
+                    createEquation(pmodel, "B_" + cNum + " == B_" + pNum + " * T_" + pNum + "_" + cNum);
+                };
+            };
+
+            // 2) Aggregate B_k sequence:  B_k == <B_1, B_2, ..., B_n>
+            bAggStr = "<";
+            for (i: int in range(1, n + 1, 1)) {
+                if (i == 1) {
+                    bAggStr = bAggStr + "B_1";
+                } else {
+                    bAggStr = bAggStr + ",B_" + i;
+                };
+            };
+            bAggStr = bAggStr + ">";
+            createEquation(pmodel, "B_k == " + bAggStr);
+
+            // 2b) Aggregate T_offset sequence: T_offset == <T_offset_1, ..., T_offset_n>
+            tOffsetAggStr = "<";
+            for (i: int in range(1, n + 1, 1)) {
+                if (i == 1) {
+                    tOffsetAggStr = tOffsetAggStr + "T_offset_1";
+                } else {
+                    tOffsetAggStr = tOffsetAggStr + ",T_offset_" + i;
+                };
+            };
+            tOffsetAggStr = tOffsetAggStr + ">";
+            createEquation(pmodel, "T_offset == " + tOffsetAggStr);
+
+            // 3) Build SPO operator phi = A (6x6 blocks)
+            //    For SKO tree with topological numbering, phi is lower-triangular:
+            //      phi(i,i) = I6
+            //      phi(i,j) = Phi(i,j,B_k) if j is an ancestor of i
+            //      phi(i,j) = 0 otherwise
+            for (i: int in range(1, n + 1, 1)) {
+                for (j: int in range(1, n + 1, 1)) {
+                    r: int = (i - 1) * 6;
+                    c: int = (j - 1) * 6;
+
+                    if (i == j) {
+                        createEquation(pmodel, "submatrix(phi)(" + r + "," + c + ",6,6) == Identity(6)");
+                    } else {
+                        if (i > j) {
+                            isAnc = false;
+                            isAncestorProc(j, i, isAnc);
+                            if (isAnc) {
+                                createEquation(pmodel, "submatrix(phi)(" + r + "," + c + ",6,6) == Phi(" + i + "," + j + ",B_k)");
+                            } else {
+                                createEquation(pmodel, "submatrix(phi)(" + r + "," + c + ",6,6) == zeroMat(6,6)");
+                            };
+                        } else {
+                            createEquation(pmodel, "submatrix(phi)(" + r + "," + c + ",6,6) == zeroMat(6,6)");
+                        }
+                    }
+                }
+            };
+
+            // 4) Assemble block-diagonal inertia matrix M and stacked vectors a, b
+            for (k: int in range(1, n + 1, 1)) {
+                idx: int = (k - 1) * 6;
+
+                // Inertia is constant (set once)
+                createConstraint(pmodel, "(submatrix(M)(" + idx + "," + idx + ",6,6))[t==0] == M_" + k);
+
+                // a and b are mapped at link-level relations (index-based)
+            };
+
+            // 5) Assemble joint map H (row = joint.number, column = child link number)
+            for (P: Link in pmodel.links) {
+                for (J: Joint in P.joints) {
+                    flexConn: Flexible = J.flexible;
+                    childLink: Link = flexConn.link;
+                    cNum: int = getVariable(childLink, "number");
+                    jNum: int = getVariable(J, "number");
+                    rH: int = (jNum - 1);
+                    cH: int = (cNum - 1) * 6;
+                    createEquation(pmodel, "submatrix(H)(" + rH + "," + cH + ",1,6) == H_" + jNum);
+                };
+            };
+
+            // 6) Tree-topology SKO dynamics (Jain Ch. 9)
+            createEquation(pmodel, "V == adj(phi) * adj(H) * derivative(theta)");
+            createEquation(pmodel, "alpha == adj(phi) * (adj(H) * derivative(derivative(theta)) + a)");
+            createEquation(pmodel, "f == phi * (M * alpha + b)");
+
+            // Manipulator equation terms
+            createEquation(pmodel, "M_mass == H * phi * M * adj(phi) * adj(H)");
+            createEquation(pmodel, "C == H * phi * (M * adj(phi) * a + b)");
+            createEquation(pmodel, "tau == M_mass * derivative(derivative(theta)) + C");
+
+            // Optional identity (useful for debugging / traceability)
+            createEquation(pmodel, "tau == H * f");
+        }
+    }
+
+    functions {
+        // Meta-operations / primitives (implemented by the host toolchain)
+        function createVariable(name: String, type: String) : bool {}
+        function addInOut(pmodel: PModel, name: String, type: String) : bool {}
+        function createDatatype(pmodel: PModel, name: String, type: String) : bool {}
+        function createFunction(pmodel: PModel, name: String, params: String, retType: String) : bool {}
+        function createRelation(pmodel: PModel, expr: String) : bool {}
+        function createEquation(pmodel: PModel, expr: String) : bool {}
+        function createConstraint(pmodel: PModel, expr: String) : bool {}
+        function createCascade(pmodel: PModel, name: String, expr: String) : bool {}
+        function createObjective(pmodel: PModel, name: String, expr: String) : bool {}
+        function createConstant(pmodel: PModel, name: String, value: int) : bool {}
+        function createInitialGuess(pmodel: PModel, name: String, value: float) : bool {}
+        function addGeomVariable(ctx: Link, name: String, body: Body) : bool {}
+
+        // EMF accessors / collection utilities
+        function getVariable(ctx: Link, name: String) : int {}
+        function getVariable(ctx: Joint, name: String) : int {}
+        function length(items: seq(Link)) : int {}
+        function length(items: seq(Joint)) : int {}
+        function length(items: seq(Body)) : int {}
+    }
+
+    computation {
+        // Create solver-side helper functions
+        createDatatype(pmodel, "Geom", "geomType: string; geomVal: vec(); meshUri: string; meshScale: vec()");
+        createFunction(pmodel, "Identity", "size: int", "mat(6,6)");
+        createFunction(pmodel, "zeroMat", "r: int, c: int", "mat(0,0)");
+        createFunction(pmodel, "zeroVec", "n: int", "vec(0)");
+        createFunction(pmodel, "Phi", "m: int, n: int, B_k: Seq(mat(4,4))", "mat(6,6)");
+
+        // Determine sizes
+        n = length(pmodel.links);
+        nTree = n - 1;
+        nv = 6 * n;
+
+        // Expose size parameters as (t==0) constraints for libraries/tests
+        createSystemVariablesTree(pmodel, n, nTree);
+        createConstraint(pmodel, "(n)[t==0] == " + n);
+        createConstraint(pmodel, "(nTree)[t==0] == " + nTree);
+
+        // Create per-component variables and connect to system variables
+        for (L: Link in pmodel.links) {
+            createLinkVariables(pmodel, L);
+            createLinkRelation(pmodel, L);
+        };
+
+        // Per-link initial constraints for B_k and T_offset
+        for (L: Link in pmodel.links) {
+            linkNum: int = getVariable(L, "number");
+            numBodies: int = length(L.bodies);
+            if (numBodies > 0) {
+                geomVarName = "geom_" + linkNum + "1";
+                geomTypeStr = getVariable(L, geomVarName + ".geomType");
+                geomVal = getVariable(L, geomVarName + ".geomVal");
+                computeHalfHeight(geomTypeStr, geomVal);
+            } else {
+                halfHeight = 0.0;
+            };
+
+            poseVec = getVariable(L, "poseVec");
+            poseZ = poseVec[2];
+            createBConstraint(L, linkNum, poseZ, halfHeight);
+            createTOffsetConstraint(L, linkNum, poseZ);
+        };
+
+        // For each parent link, create variables for each outgoing (parent->child) joint
+        for (P: Link in pmodel.links) {
+            pNum: int = getVariable(P, "number");
+            for (J: Joint in P.joints) {
+                flexConn: Flexible = J.flexible;
+                childLink: Link = flexConn.link;
+                cNum: int = getVariable(childLink, "number");
+
+                // Create joint variables keyed by CHILD index (SKO tree numbering)
+                createTreeJointVariables(pmodel, J, pNum, cNum);
+                createTreeJointRelation(pmodel, J, pNum, cNum);
+            };
+        };
+
+        // Create system equations
+        createSystemEquationsTree(pmodel, n, nTree);
+    }
+}

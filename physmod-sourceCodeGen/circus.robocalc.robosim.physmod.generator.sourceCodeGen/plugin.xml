@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   
+   	<extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.category"
+            name="Solution Generation">
+      </category>
+      <command
+            categoryId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.category"
+            defaultHandler="circus.robocalc.robosim.physmod.generator.sourceCodeGen.sourceCodeGenGeneratorExecutableExtensionFactory:circus.robocalc.robosim.physmod.generator.sourceCodeGen.handlers.CompileOneHandler"
+            id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.compileOne"
+            name="Generate Solution">
+         <commandParameter
+               id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.selectedFile"
+               name="Selected File"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetLanguage"
+               name="Target Language"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetOutput"
+               name="Target Output"
+               optional="true">
+         </commandParameter>
+      </command>
+      <command
+            categoryId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.category"
+            defaultHandler="circus.robocalc.robosim.physmod.generator.sourceCodeGen.sourceCodeGenGeneratorExecutableExtensionFactory:circus.robocalc.robosim.physmod.generator.sourceCodeGen.handlers.GenerateOneDropDownHandler"
+            id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
+            name="Configure Solution Generation">
+         <commandParameter
+               id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetLanguage"
+               name="Target Language"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetOutput"
+               name="Target Output"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetLanguageDetail"
+               name="Target Language Detail"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetFeature"
+               name="Target Feature"
+               optional="true">
+         </commandParameter>
+      </command>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="circus.robocalc.robosim.physmod.generator.sourceCodeGen.sourceCodeGenGeneratorExecutableExtensionFactory:circus.robocalc.robosim.physmod.generator.sourceCodeGen.handlers.CompileOneHandler"
+            commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.compileOne">
+      </handler>
+      <handler
+            class="circus.robocalc.robosim.physmod.generator.sourceCodeGen.sourceCodeGenGeneratorExecutableExtensionFactory:circus.robocalc.robosim.physmod.generator.sourceCodeGen.handlers.GenerateOneDropDownHandler"
+            commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure">
+      </handler>
+   </extension>
+   
+   
+   
+   <extension
+         point="org.eclipse.ui.bindings">
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:robotool.menu">
+         <menu
+               id="robotool.menu.sourceCodeGen"
+               label="Solution Generation"
+               mnemonic="S">
+            <command
+                  commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.compileOne"
+                  label="Generate Solution"
+                  style="push"
+                  tooltip="Generate solution from SolutionRef model">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:circus.robocalc.robosim.physmod.generator.sourceCodeGen.toolbars.compileOne">
+         <menu
+               id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.toolbars.languageMenu"
+               label="Target Language">
+            <command
+                  commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
+                  label="C++"
+                  style="radio">
+               <parameter
+                     name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetLanguage"
+                     value="CPP">
+               </parameter>
+            </command>
+            <command
+                  commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
+                  label="Python"
+                  style="radio">
+               <parameter
+                     name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetLanguage"
+                     value="PYTHON">
+               </parameter>
+            </command>
+            <command
+                  commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
+                  label="LaTeX"
+                  style="radio">
+               <parameter
+                     name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetLanguage"
+                     value="LATEX">
+               </parameter>
+            </command>
+            <menu
+                  id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.toolbars.languageMenu.isabelle"
+                  label="Isabelle">
+               <command
+                     commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
+                     label="Computation"
+                     style="radio">
+                  <parameter
+                        name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetLanguage"
+                        value="ISABELLE">
+                  </parameter>
+                  <parameter
+                        name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetLanguageDetail"
+                        value="COMPUTATION">
+                  </parameter>
+               </command>
+               <command
+                     commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
+                     label="Equations"
+                     style="radio">
+                  <parameter
+                        name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetLanguage"
+                        value="ISABELLE">
+                  </parameter>
+                  <parameter
+                        name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetLanguageDetail"
+                        value="EQUATIONS">
+                  </parameter>
+               </command>
+            </menu>
+         </menu>
+         <menu
+               id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.toolbars.outputMenu"
+               label="Output">
+            <command
+                  commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
+                  label="Standalone"
+                  style="radio">
+               <parameter
+                     name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetOutput"
+                     value="STANDALONE">
+               </parameter>
+            </command>
+            <command
+                  commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
+                  label="Full Simulation"
+                  style="radio">
+               <parameter
+                     name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetOutput"
+                     value="FULL_SIMULATION">
+               </parameter>
+            </command>
+         </menu>
+         <command
+               commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
+               label="Visualisation"
+               style="toggle">
+            <parameter
+                  name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetFeature"
+                  value="VISUALISATION">
+            </parameter>
+         </command>
+         <command
+               commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
+               label="Platform Mapping"
+               style="toggle">
+            <parameter
+                  name="circus.robocalc.robosim.physmod.generator.sourceCodeGen.targetFeature"
+                  value="PLATFORM_MAPPING">
+            </parameter>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=circus.robocalc.robosim.physmod.generator.guidedChoice.toolbars.guidedChoiceToolbar">
+         <toolbar
+               id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.toolbars.sourceCodeGenToolbar"
+               label="Solution Generation">
+            <command
+                  commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.compileOne"
+                  icon="icons/compileOne_toolbar.png"
+                  id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.toolbars.compileOne"
+                  label="Generate Solution"
+                  style="pulldown"
+                  tooltip="Source-Code Gen">
+            </command>
+         </toolbar>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:robotool.contextMenu">
+         <menu
+               id="robotool.contextMenu.sourceCodeGen"
+               label="Solution Generation">
+            <command
+                  commandId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.compileOne"
+                  label="Generate Solution"
+                  style="push"
+                  tooltip="Generate solution from SolutionRef model">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="circus.robocalc.robochart.textual.RoboChart"
+            class="circus.robocalc.robosim.physmod.generator.sourceCodeGen.preferences.AnalysisPreferencePage"
+            id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.preferences.analysis"
+            name="Solution Generation Analysis">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+     <definition
+        id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.isAssertion">
+     <adapt
+           type="org.eclipse.core.resources.IResource">
+        <test
+              property="org.eclipse.core.resources.extension"
+              value="assertions">
+        </test>
+     </adapt>
+  </definition>
+   </extension>
+   <extension
+         point="physmod.generator">
+      <client
+            class="circus.robocalc.robosim.physmod.generator.sourceCodeGen.sourceCodeGenGeneratorExecutableExtensionFactory:circus.robocalc.robosim.physmod.generator.sourceCodeGen.SolutionRefGenerator"
+            folder="src-gen">
+      </client>
+   </extension>
+
+</plugin>

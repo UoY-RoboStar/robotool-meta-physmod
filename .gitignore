@@ -1,2 +1,6 @@
-robotool-repository/target/*
-robotool-customization-repository/target/*
+robotool-physmod-repository/target/*
+**/target/
+**/temp/
+**/latex/
+*.log
+copy-data.sh

@@ -1,0 +1,9 @@
+*.class
+*.log
+xtend-gen/
+src-gen/
+target/
+bin/
+._trace
+*.xtendbin
+*.backup

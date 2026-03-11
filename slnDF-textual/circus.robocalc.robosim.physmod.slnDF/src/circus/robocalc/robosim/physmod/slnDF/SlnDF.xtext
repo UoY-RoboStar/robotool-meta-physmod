@@ -1,0 +1,387 @@
+grammar circus.robocalc.robosim.physmod.slnDF.SlnDF with org.eclipse.xtext.common.Terminals
+
+generate slnDF "http://circus.robocalc.robosim.physmod/slnDF"
+
+// Root solution structure
+Solution:
+    'Solution' name=ID '{'
+        ('datatypes' datatypes=DataTypes)?
+        'state' state=State
+        ('procedures' procedures=Procedures)?
+        ('functions' functions=Functions)?
+        'computation' computation=Computation
+        ('proof' proof=Proof)?
+    '}';
+
+// State declarations
+State:
+    {State} '{' (variables+=VariableLine)* '}';
+
+// Data types
+DataTypes:
+    {DataTypes} '{' (datatypes+=(CustomType) (';' datatypes+=(CustomType))*)? '}';
+
+DataType:
+     '{' (fields+=Field (';' fields+=Field)*)? '}';
+
+Field:
+    {Field} name=ID ':' type=Type;
+    
+EnumType:
+    '{'
+        literals += EnumLiteral (',' literals += EnumLiteral)*
+    '}';
+
+EnumLiteral:
+    name = ID;
+
+CustomType:
+    name = ID type = (DataType|EnumType)
+;
+
+//'{'proc pn = body . Command'}' The scope of Command is defined in the scoping rules to be anywhere in the procedures or computation block
+//body = Command | (val x: T . body) | (result x: T . body) |(val-res :T.body)
+Procedures:
+{Procedures} '{' (procedures+=Procedure (procedures+=Procedure)*)? '}'; 
+
+// Functions
+Functions:
+    {Functions} '{' (functions+=Function (functions+=Function)*)? '}';
+
+Function:
+     'function' name=ID '(' 
+        (parameters+=Variable (',' parameters+=Variable)*)? // Parameters
+    ')' ':' returnType=Type '{'
+        (predicate=SemExprSeq)?
+    '}';
+
+SemanticExpression:
+    Equality|
+    FunctionForLoop|
+    FunctionIfThen
+;
+
+Equality:
+    left= FuncLeftExpr '==' right = Expression
+;
+
+FunctionForLoop:
+    {FunctionForLoop} 'for' '(' variable=Variable 'in' rangeExpression=RangeExpression ')' '{'
+        body=SemExprSeq
+    '}'
+;
+
+FunctionIfThen:
+    {FunctionIfThen} 'if' '(' condition=RelationalExpression ')'
+    'then' thenExpr=SemExprSeq
+    'else' elseExpr=SemExprSeq
+;
+
+SemExprSeq:
+    {SemExprSeq} elements+=SemanticExpression (=> '/\\' elements+=SemanticExpression)*
+;
+
+
+Procedure:
+     'procedure' name=ID '(' 
+        (parameters+=ParameterDeclaration (',' parameters+=ParameterDeclaration)*)? // Parameters
+    ')' '{'
+        ( (line+=Statement))* 
+    '}';
+
+ParameterDeclaration:
+    keyword=('val' | 'res' | 'val-res') variable=Variable;
+
+
+// Computation block
+Computation:
+    {Computation} '{' (lines+=Statement)* '}';
+
+// Proof block (uses relational expressions instead of assignments)
+Proof:
+    {Proof} '{' (expressions+=RelationalExpression ';')* '}';
+
+// Variables
+Variable: 
+    name=ID ':' type=Type ('=' initialValue=Expression)?;
+    
+VariableLine:
+   variable = Variable ';';
+
+//StateVariableLine:
+//   {StateVariable} variable = Variable ';';
+
+// References
+//StateVariableReference:
+// variable=[StateVariable];
+
+
+VariableReference:
+    variable = [Variable];
+
+// Statements (includes loops, conditionals, assignments procedure calls, and expressions)
+//Command
+Statement:
+    // SKIP
+     SKIP |
+     Block |
+     // leftExp = Exp 
+     Assignment |
+     // '{'var x:T . Command'}' Except scope of command is defined by
+     // State variables are in scope of computation block
+     // Variables defined in a computation block are in scope of the computation block
+     // Variables defined in the body of a ifthenelse, loop, or procedure are in scope of their corresponding block 
+     VariableLine |
+     // '{'for VarName = Exp to Exp command'}'
+     ForLoop | 
+     // 'if' Exp 'then' Command 'else' Command
+     IfThenElse| 
+     ProcedureCall ';'
+     ;
+     
+ SKIP:
+    {SKIP} 'skip' ';'
+ ;
+ 
+Block returns Statement:
+    {Block} '{' (statements+=Statement)* '}'
+;
+ 
+//ProcedureCall
+ProcedureCall returns Expression:
+    {ProcedureCall} procedure=[Procedure] '(' (arguments+=Expression (',' arguments+=Expression)*)? ')';
+     
+ // Note that a leftExpr is not actually a Expr!
+ LeftExpr:
+    {LeftVar} variable = [Variable] | 
+// 	StateVariableReference | 
+    {LeftDArr} variable = [Variable] index = Index | 
+// 	{LeftDDArr} variable = [Variable] index = Index2 |
+    LeftSubmatrix | //TODO check if returns expr is allowed
+    LeftSubvector|
+    LeftRecordField
+ ;
+ 
+FuncLeftExpr:
+    (=> function=[Function]  (index=Index)?) |
+    (=> FuncLeftSubmatrix) |
+    (=> FuncLeftSubvector) |
+    (=> FuncLeftRecordField)
+;
+ 
+// Submatrix expression
+FuncLeftSubmatrix returns LeftExpr:
+    {FuncLeftSubmatrix} 'submatrix' '(' function =[Function]')' '(' rowStart=Expression ',' colStart=Expression ',' numRows=Expression ',' numCols=Expression ')';
+    
+// Subvector expression
+FuncLeftSubvector returns LeftExpr:
+    {FuncLeftSubvector} 'subvector' '(' function =[Function]')' '(' start=Expression ',' size=Expression ')';
+
+// Record-field LHS over function result
+FuncLeftRecordField returns LeftExpr:
+    {FuncLeftRecordField} function=[Function] '.' field=ID
+;
+ 
+ 
+// Submatrix expression
+LeftSubmatrix returns LeftExpr:
+    {LeftSubmatrix} 'submatrix' '(' variable =[Variable]')' '(' rowStart=Expression ',' colStart=Expression ',' numRows=Expression ',' numCols=Expression ')';
+    
+// Subvector expression
+LeftSubvector returns LeftExpr:
+    {LeftSubvector} 'subvector' '(' variable =[Variable]')' '(' start=Expression ',' size=Expression ')';
+ 
+ Index:
+    '[' first=Expression (',' second=Expression)? ']'
+;
+
+    
+Assignment:
+    left=LeftExpr '=' right=Expression ';'
+;
+
+
+ForLoop:
+    {ForLoop} 'for' '(' elementVariable=Variable 'in' ((rangeVariable=Expression)| rangeExpression=RangeExpression) ')''{'
+        (lines+=Statement)*
+    '}' ';'? ;
+
+RangeExpression:
+    'range' '(' from=Expression ',' to=Expression ',' increment=Expression ')';
+
+IfThenElse:
+    {IfThenElse} 'if' '(' condition=RelationalExpression ')' '{'
+        thenStatements+=Statement*
+    '}' ('else' '{'
+        elseStatements+=Statement*
+    '}')? ';'? ;
+
+// Expressions
+Expression:
+    RelationalExpression;
+
+RelationalExpression returns Expression:
+    Addition ({RelationalExpression.left=current} operator=('<' | '<=' | '>' | '>=' | '==' | '!=') right=Addition)*;
+
+Addition returns Expression:
+    Multiplication ({Addition.left=current} operator=('+' | '-') right=Multiplication)*;
+
+Multiplication returns Expression:
+    Unary ({Multiplication.left=current} operator=('*' | '/') right=Unary)*;
+
+Unary returns Expression:
+    {Unary} '-' operand=Unary |
+    Primary;
+
+Primary returns Expression:
+    {Primary} base=PrimaryBase (indexes+=Index)*;
+
+PrimaryBase returns Expression:
+    Parenthesized | Atomic2;
+
+Parenthesized returns Expression:
+    '(' Expression ')';
+    
+
+
+// Updated Atomic2: now includes record literal expressions
+Atomic2 returns Expression:
+   SequenceLiteral | Atomic | VectorOrMatrix | BlockMatrix| Subvector | Submatrix | FunctionCall| RecordField | RecordExp;
+// 	{DDArr} variable = [Variable] index = Index2;
+
+// New rule: Record literal expression for constructing records
+//RecordLiteral returns Expression:
+//    {RecordLiteral} type=[DataType|ID] '{' (assignments+=RecordInitialAssignment (',' assignments+=RecordInitialAssignment)*)? '}'
+//;
+
+
+LeftRecordField returns LeftExpr:
+  {LeftRecordField} variable=[Variable] '.' field=ID
+;
+
+
+RecordField returns Expression:
+    name=ID '.' field=ID 
+;
+
+//TODO need to fix references so you can't refer to an Enum type here
+RecordExp returns Expression:
+    {RecordExp} record=[CustomType]'{'
+        definitions+=FieldDefinition (',' definitions+=FieldDefinition)*
+    '}'
+;
+
+FieldDefinition returns FieldDefinition:
+    field=ID '=' value=Expression
+;
+
+// FunctionCall
+FunctionCall returns Expression:
+    {FunctionCall} function=[Function] '(' (arguments+=Expression (',' arguments+=Expression)*)? ')';
+
+// Sequence literal expression for sequences
+SequenceLiteral returns Expression:
+    {SequenceLiteral}  'seq' '(' elements+=Expression (',' elements+=Expression)* ')';
+
+// Base atomic constructs
+Atomic returns Expression:
+    VariableReference |
+    {IntegerExp} value=INT |
+    {FloatExp} value=FLOAT |
+    {BooleanExp} value=('true' | 'false')|
+    {StringExp} value=STRING;
+
+// Vector or matrix literal expression
+// flat row‑major literal
+VectorOrMatrix returns Expression:
+   {VectorOrMatrix} '[' rows+=Row ( ';' rows+=Row )* ']'
+;
+
+// block‑matrix literal
+BlockMatrix returns Expression:
+   {BlockMatrix} '[' blocks+=VMBlock ( ';' blocks+=VMBlock )* ']'
+;
+
+// A row is one or more row elements separated by commas.
+// RowElement allows atomic values and their negations, but NOT function calls
+Row returns Expression:
+    {RowLiteral} elements+=RowElement ( ','  elements+=RowElement)*;
+
+// Row element: atomic value or negated atomic value
+// This allows: 5, -5, 3.14, -3.14, true, x
+// But NOT: vec(2), mat(6,6), x+y, foo()
+// Row element: atomic value, function call, or their negations
+RowElement returns Expression:
+    {Unary} '-' operand=(Atomic | FunctionCall)
+  | (Atomic | FunctionCall);
+
+    
+
+// Submatrix expression
+Submatrix returns Expression:
+    {Submatrix} 'submatrix' '(' variable=Expression ')' '(' rowStart=Expression ',' colStart=Expression ',' numRows=Expression ',' numCols=Expression ')';
+
+// Subvector expression
+Subvector returns Expression:
+    {Subvector} 'subvector' '(' variable=Expression ')' '(' start=Expression ',' size=Expression ')';
+    
+VMBlock returns Expression:
+    {VMBlock} '(' rowStart=Expression ',' colStart=Expression ',' numRows=Expression ',' numCols=Expression ')' expr=Expression 
+;
+    
+//// Geometry expression
+//Geometry returns Expression:
+//	{Geometry} (geom = Box | geom = Cylinder)
+//;
+//
+//Box returns Expression:
+//	{Box} 'Box' '('length = Atomic  ',' width=Atomic  ',' height = Atomic ')'
+//;
+//
+//Cylinder returns Expression:
+// {Cylinder} 'Cylinder' '('radius= Atomic ',' length=Atomic')'
+//;
+
+
+// Types
+Type:
+    IntType | BoolType | FloatType | VecType | MatType | SeqType | StringType | TypeRef;
+
+
+
+TypeRef:
+    type=[CustomType];
+
+IntType:
+    {IntType} "int";
+
+BoolType:
+    {BoolType} "bool";
+
+FloatType:
+    {FloatType} "float";
+
+VecType:
+    {VecType} 'vec' '(' ')'
+  | {VecType} 'vec' '(' size=INT ')';
+
+MatType:
+    {MatType} 'mat' '(' ')'
+  | {MatType} 'mat' '(' rows=INT ',' columns=INT ')';
+
+//GeomType:
+//	'geom'(type = '(' cylinder = 'cylinder' ')' | '(' box ='box' ')' | '(' sphere = 'sphere' ')' | '(' mesh = 'mesh'  ')' | '(' ')')
+//;
+
+SeqType:
+    {SeqType} 'seq' '(' baseType=Type ')';
+
+StringType:
+    {StringType} 'String';
+    
+
+
+
+
+FLOAT:
+    INT '.' INT;

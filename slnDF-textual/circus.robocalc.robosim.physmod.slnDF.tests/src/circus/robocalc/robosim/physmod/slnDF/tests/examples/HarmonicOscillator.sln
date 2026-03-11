@@ -1,0 +1,139 @@
+Solution {
+    datatypes {
+        SpringMass {
+            position: float;    // displacement from equilibrium
+            velocity: float;    // velocity
+            acceleration: float // acceleration
+        }
+    }
+    
+    state {
+        oscillator: SpringMass = SpringMass{position=1.0, velocity=0.0, acceleration=0.0};
+        spring_constant: float = 10.0;  // k (N/m)
+        mass: float = 1.0;              // m (kg)  
+        damping: float = 0.1;           // b (damping coefficient)
+        external_force: float = 0.0;    // F_ext (N)
+        dt: float = 0.01;               // time step (s)
+        time: float = 0.0;              // current time (s)
+        angular_frequency: float = 0.0; // omega = sqrt(k/m)
+        period: float = 0.0;            // T = 2*pi/omega
+        energy_kinetic: float = 0.0;    // kinetic energy
+        energy_potential: float = 0.0;  // potential energy
+        energy_total: float = 0.0       // total energy
+    }
+    
+    functions {
+        function sqrt_approx(val x: float): float {
+            // Newton-Raphson method for square root
+            result == if (x <= 0.0) then 0.0 else
+                     for (i: int in range(0, 10, 1)) {
+                         if (i == 0) then x/2.0 else (result + x/result) / 2.0
+                     }
+        }
+        
+        // Hooke's law: F = -k*x (spring restoring force)
+        function spring_force(val k: float, val displacement: float): float {
+            result == -k * displacement
+        }
+        
+        // Damping force: F = -b*v
+        function damping_force(val b: float, val velocity: float): float {
+            result == -b * velocity
+        }
+        
+        // Total force on mass: F = F_spring + F_damping + F_external
+        function total_force(val k: float, val x: float, val b: float, val v: float, val f_ext: float): float {
+            result == spring_force(k, x) + damping_force(b, v) + f_ext
+        }
+        
+        // Newton's second law: a = F/m
+        function acceleration_from_force(val force: float, val mass: float): float {
+            result == force / mass
+        }
+        
+        // Analytical solution parameters
+        function natural_frequency(val k: float, val m: float): float {
+            result == sqrt_approx(k / m)
+        }
+        
+        function oscillation_period(val omega: float): float {
+            result == if (omega <= 0.0) then 0.0 else 6.28318 / omega
+        }
+        
+        // Energy calculations
+        function kinetic_energy(val m: float, val v: float): float {
+            result == 0.5 * m * v * v
+        }
+        
+        function potential_energy(val k: float, val x: float): float {
+            result == 0.5 * k * x * x
+        }
+        
+        // Runge-Kutta 4th order integration
+        function rk4_position(val pos: float, val vel: float, val dt: float): float {
+            result == pos + vel * dt
+        }
+        
+        function rk4_velocity(val vel: float, val acc: float, val dt: float): float {
+            result == vel + acc * dt
+        }
+    }
+    
+    procedures {
+        procedure calculate_system_properties() {
+            angular_frequency = natural_frequency(spring_constant, mass);
+            period = oscillation_period(angular_frequency);
+        }
+        
+        procedure simulate_timestep(val dt_val: float) {
+            // Calculate total force on the mass
+            val total_f: float = total_force(spring_constant, oscillator.position, 
+                                           damping, oscillator.velocity, external_force);
+            
+            // Calculate acceleration using Newton's second law
+            oscillator.acceleration = acceleration_from_force(total_f, mass);
+            
+            // Integrate using Runge-Kutta method
+            oscillator.velocity = rk4_velocity(oscillator.velocity, oscillator.acceleration, dt_val);
+            oscillator.position = rk4_position(oscillator.position, oscillator.velocity, dt_val);
+            
+            // Update time
+            time = time + dt_val;
+        }
+        
+        procedure calculate_energies() {
+            energy_kinetic = kinetic_energy(mass, oscillator.velocity);
+            energy_potential = potential_energy(spring_constant, oscillator.position);
+            energy_total = energy_kinetic + energy_potential;
+        }
+        
+        procedure apply_external_force(val force_magnitude: float, val frequency: float) {
+            // Apply sinusoidal external force: F = A*sin(omega*t)
+            // Simplified sine approximation
+            val omega_t: float = frequency * time;
+            external_force = force_magnitude * (omega_t - omega_t*omega_t*omega_t/6.0);
+        }
+    }
+    
+    computation {
+        // Initialize system properties
+        calculate_system_properties();
+        calculate_energies();
+        
+        // Simulation: 100 time steps of harmonic oscillation
+        for (step: int in range(0, 1000, 1)) {
+            // Optional: apply external driving force
+            if (step > 500) {
+                apply_external_force(2.0, 1.5);
+            } else {
+                external_force = 0.0;
+            }
+            
+            // Simulate one time step
+            simulate_timestep(dt);
+            
+            // Calculate energy (should be conserved in ideal case)
+            calculate_energies();
+        }
+    }
+}

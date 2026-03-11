@@ -13,3 +13,23 @@
 [submodule "robochart-graphical"]
 	path = robochart-graphical
 	url = git@github.com:UoY-RoboStar/robochart-graphical.git
+[submodule "physmod-metamodel"]
+	path = physmod-metamodel
+	url = git@github.com:UoY-RoboStar/physmod-metamodel.git
+	branch = physmod-physics-engine
+[submodule "physmod-textual"]
+	path = physmod-textual
+	url = git@github.com:UoY-RoboStar/physmod-textual.git
+	branch = physmod-physics-engine
+[submodule "physmod-graphical"]
+	path = physmod-graphical
+	url = git@github.com:UoY-RoboStar/physmod-graphical.git
+	branch = physmod-physics-engine
+[submodule "physmod-eqnComp"]
+	path = physmod-eqnComp
+	url = git@github.com:UoY-RoboStar/physmod-eqnComp.git
+	branch = main
+[submodule "physmod-guidedChoice"]
+	path = physmod-guidedChoice
+	url = git@github.com:UoY-RoboStar/physmod-guidedChoice.git
+	branch = main

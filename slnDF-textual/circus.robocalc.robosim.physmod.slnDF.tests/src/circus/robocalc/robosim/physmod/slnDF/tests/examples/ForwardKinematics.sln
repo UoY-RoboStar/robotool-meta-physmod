@@ -1,0 +1,71 @@
+Solution {
+    datatypes {
+        JointState {
+            angle: float;
+            velocity: float;
+            acceleration: float
+        };
+        
+        Transform {
+            translation: vec(3);
+            rotation: mat(3,3)
+        }
+    }
+    
+    state {
+        joint1: JointState = JointState{angle=0.0, velocity=0.0, acceleration=0.0};
+        joint2: JointState = JointState{angle=0.0, velocity=0.0, acceleration=0.0};
+        link1_length: float = 1.0;
+        link2_length: float = 0.8;
+        end_effector_pos: vec(3) = [0.0, 0.0, 0.0];
+        base_transform: Transform = Transform{
+            translation=[0.0, 0.0, 0.0], 
+            rotation=[1.0, 0.0, 0.0; 0.0, 1.0, 0.0; 0.0, 0.0, 1.0]
+        }
+    }
+    
+    functions {
+        function cos(val angle: float): float {
+            // Built-in cosine approximation
+            result == if (angle < 0.0) then cos(-angle) else 
+                     if (angle > 3.14159) then -cos(angle - 3.14159) else
+                     1.0 - angle*angle/2.0 + angle*angle*angle*angle/24.0
+        }
+        
+        function sin(val angle: float): float {
+            // Built-in sine approximation  
+            result == if (angle < 0.0) then -sin(-angle) else
+                     if (angle > 3.14159) then -sin(angle - 3.14159) else
+                     angle - angle*angle*angle/6.0 + angle*angle*angle*angle*angle/120.0
+        }
+        
+        function forward_kinematics_x(val q1: float, val q2: float, val l1: float, val l2: float): float {
+            result == l1 * cos(q1) + l2 * cos(q1 + q2)
+        }
+        
+        function forward_kinematics_y(val q1: float, val q2: float, val l1: float, val l2: float): float {
+            result == l1 * sin(q1) + l2 * sin(q1 + q2)
+        }
+        
+        function forward_kinematics_z(val q1: float, val q2: float): float {
+            result == 0.0
+        }
+    }
+    
+    computation {
+        // Update end effector position using forward kinematics
+        end_effector_pos[0] = forward_kinematics_x(joint1.angle, joint2.angle, link1_length, link2_length);
+        end_effector_pos[1] = forward_kinematics_y(joint1.angle, joint2.angle, link1_length, link2_length);
+        end_effector_pos[2] = forward_kinematics_z(joint1.angle, joint2.angle);
+        
+        // Simple simulation step
+        for (t: int in range(0, 100, 1)) {
+            joint1.angle = joint1.angle + joint1.velocity * 0.01;
+            joint2.angle = joint2.angle + joint2.velocity * 0.01;
+            
+            // Update positions
+            end_effector_pos[0] = forward_kinematics_x(joint1.angle, joint2.angle, link1_length, link2_length);
+            end_effector_pos[1] = forward_kinematics_y(joint1.angle, joint2.angle, link1_length, link2_length);
+        }
+    }
+}
