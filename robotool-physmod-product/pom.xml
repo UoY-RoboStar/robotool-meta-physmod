@@ -10,7 +10,7 @@
  <packaging>eclipse-repository</packaging>
 
  <properties>
-  <tycho.version>2.5.0</tycho.version>
+  <tycho.version>2.7.5</tycho.version>
   <xtextVersion>2.25.0</xtextVersion>
   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   <eclipse-repo.url>https://download.eclipse.org/releases/2021-12</eclipse-repo.url>
@@ -192,7 +192,7 @@
     </repository>
     <repository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository</url>
+			<url>https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository</url>
 			<layout>p2</layout>
 		</repository>        
     <repository>
@@ -208,11 +208,6 @@
     <repository>
         <id>java</id>
         <url>https://download.eclipse.org/justj/jres/17/updates/release/latest</url>
-        <layout>p2</layout>
-    </repository>
-    <repository>
-        <id>robotool-update</id>
-        <url>https://robostar.cs.york.ac.uk/robotool/update</url>
         <layout>p2</layout>
     </repository>
   </repositories>

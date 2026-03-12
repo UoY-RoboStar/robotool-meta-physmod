@@ -9,6 +9,12 @@
    <feature id="circus.robocalc.robosim.physmod.graphical.feature">
       <category name="physmod"/>
    </feature>
+   <feature id="circus.robocalc.robosim.physmod.slnRef.feature">
+      <category name="physmod"/>
+   </feature>
+   <feature id="circus.robocalc.robosim.physmod.slnDF.feature">
+      <category name="physmod"/>
+   </feature>
    <feature id="circus.robocalc.robosim.physmod.generator.eqnComp.feature">
       <category name="physmod.generator"/>
    </feature>

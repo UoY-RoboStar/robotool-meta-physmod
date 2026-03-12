@@ -53,8 +53,13 @@
       <feature id="circus.robocalc.robochart.graphical.feature" installMode="root"/>
       <feature id="circus.robocalc.robochart.feature" installMode="root"/>
       <feature id="circus.robocalc.robochart.textual.feature" installMode="root"/>
+      <feature id="circus.robocalc.robosim.feature" installMode="root"/>
+      <feature id="circus.robocalc.robosim.textual.feature" installMode="root"/>
+      <feature id="circus.robocalc.robosim.graphical.feature" installMode="root"/>
       <feature id="circus.robocalc.robosim.physmod.feature" installMode="root"/>
       <feature id="circus.robocalc.robosim.physmod.textual.feature" installMode="root"/>
+      <feature id="circus.robocalc.robosim.physmod.slnRef.feature" installMode="root"/>
+      <feature id="circus.robocalc.robosim.physmod.slnDF.feature" installMode="root"/>
       <feature id="circus.robocalc.robosim.physmod.graphical.feature" installMode="root"/>
       <feature id="circus.robocalc.robosim.physmod.generator.eqnComp.feature" installMode="root"/>
       <feature id="circus.robocalc.robosim.physmod.generator.guidedChoice.feature" installMode="root"/>

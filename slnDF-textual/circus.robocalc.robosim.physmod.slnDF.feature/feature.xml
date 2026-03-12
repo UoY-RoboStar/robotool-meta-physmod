@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="circus.robocalc.robosim.physmod.slnDF.feature"
+      label="Solution Description Format (slnDF) Textual Editor"
+      version="1.0.0.qualifier"
+      provider-name="RoboCalc Project">
+
+   <plugin
+         id="circus.robocalc.robosim.physmod.slnDF"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="circus.robocalc.robosim.physmod.slnDF.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="circus.robocalc.robosim.physmod.slnDF.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
