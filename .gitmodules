@@ -33,3 +33,15 @@
 	path = physmod-guidedChoice
 	url = git@github.com:UoY-RoboStar/physmod-guidedChoice.git
 	branch = main
+[submodule "robosim-metamodel"]
+	path = robosim-metamodel
+	url = git@github.com:UoY-RoboStar/robosim-metamodel.git
+	branch = physmod-physics-engine
+[submodule "robosim-textual"]
+	path = robosim-textual
+	url = git@github.com:UoY-RoboStar/robosim-textual.git
+	branch = physmod-physics-engine
+[submodule "robosim-graphical"]
+	path = robosim-graphical
+	url = git@github.com:UoY-RoboStar/robosim-graphical.git
+	branch = physmod-physics-engine

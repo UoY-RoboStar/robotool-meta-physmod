@@ -13,6 +13,7 @@
         <module>circus.robocalc.robosim.physmod.slnDF.tests</module>
         <module>circus.robocalc.robosim.physmod.slnDF.ui</module>
         <!-- <module>circus.robocalc.robosim.physmod.slnDF.ui.tests</module> -->
+        <module>circus.robocalc.robosim.physmod.slnDF.feature</module>
     </modules>
     <properties>
         <xtextVersion>2.25.0</xtextVersion>

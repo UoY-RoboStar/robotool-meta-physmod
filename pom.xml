@@ -73,6 +73,10 @@
   <module>robochart-assertions</module>
   <module>robochart-csp-gen</module>
   <module>robochart-graphical</module>
+  <!-- RoboSim modules (required by physmod) -->
+  <module>robosim-metamodel</module>
+  <module>robosim-textual</module>
+  <module>robosim-graphical</module>
   <!-- DSL modules required by physmod-libs -->
   <module>slnDF-textual</module>
   <module>slnRef-textual</module>

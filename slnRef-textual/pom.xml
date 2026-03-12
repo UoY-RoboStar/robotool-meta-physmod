@@ -33,6 +33,7 @@
         <module>circus.robocalc.robosim.physmod.slnRef.ui</module>
         <module>circus.robocalc.robosim.physmod.slnRef.tests</module>
         <module>circus.robocalc.robosim.physmod.slnRef.ui.tests</module>
+        <module>circus.robocalc.robosim.physmod.slnRef.feature</module>
     </modules>
 
     <dependencyManagement>
