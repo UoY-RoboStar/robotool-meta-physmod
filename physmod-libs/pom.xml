@@ -26,6 +26,7 @@
 		<module>circus.robocalc.robosim.physmod.libs.guidedChoice</module>
 		<module>circus.robocalc.robosim.physmod.libs.sourceCodeGen</module>
 		<module>circus.robocalc.robosim.physmod.libs.textual</module>
+		<module>circus.robocalc.robosim.physmod.libs.eqnComp</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
