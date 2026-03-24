@@ -17,6 +17,8 @@ Require-Bundle: org.junit.jupiter.api;bundle-version="[5.0.0,6.0.0)",
  circus.robocalc.robosim.textual;bundle-version="2.0.0",
  circus.robocalc.robosim.physmod;bundle-version="2.0.0",
  circus.robocalc.robosim.physmod.textual;bundle-version="1.0.0",
+ circus.robocalc.robosim.physmod.libs.textual;bundle-version="[3.0.0,4.0.0)",
+ circus.robocalc.robosim.physmod.testdata;bundle-version="[1.0.0,2.0.0)",
  circus.robocalc.robosim.physmod.generator.sourceCodeGen;bundle-version="1.0.0",
  circus.robocalc.robosim.physmod.slnDF;bundle-version="1.0.0",
  circus.robocalc.robosim.physmod.slnDF.tests;bundle-version="1.0.0";resolution:=optional,
@@ -25,4 +27,4 @@ Require-Bundle: org.junit.jupiter.api;bundle-version="[5.0.0,6.0.0)",
  circus.robocalc.robosim.physmod.slnRef;bundle-version="1.0.0",
  circus.robocalc.robosim.physmod.generator.eqnComp;bundle-version="1.0.0",
  circus.robocalc.robosim.physmod.generator.guidedChoice;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
