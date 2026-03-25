@@ -58,6 +58,13 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
+      - name: Cache Maven repository
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: ~/.m2/repository
+          key: maven-filtered-cache-${{ hashFiles('**/pom.xml') }}
+
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Bump version and push tag
         id: tag_version
@@ -83,13 +90,21 @@ jobs:
         id: maven-version
         run: |
           echo "Version to be released: ${{ steps.version.outputs.version }}"
-          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{ steps.version.outputs.version }}" -Dartifacts="robostar.robotool.physmod.customization.feature,robostar.robotool.physmod.product.standalone,robostar.robotool.physmod.customization"
+          mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 ${{ steps.cache.outputs.cache-hit == 'true' && '-o' || '' }} -DnewVersion="${{ steps.version.outputs.version }}" -Dartifacts="robostar.robotool.physmod.customization.feature,robostar.robotool.physmod.product.standalone,robostar.robotool.physmod.customization"
   
-      - name: Install C++ dependencies
-        run: sudo apt-get update && sudo apt-get install -y libeigen3-dev
+      - name: Install C++ build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential libeigen3-dev
 
       - name: Build with Maven
-        run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
+        run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 ${{ steps.cache.outputs.cache-hit == 'true' && '-o' || '' }} -B package --file pom.xml
+
+      - name: Save filtered Maven cache
+        run: |
+          rm -rf ~/.m2/repository/circus
+          rm -rf ~/.m2/repository/robostar
+          find ~/.m2/repository -name "*.lastUpdated" -delete
 
       - name: Upload surefire reports
         if: failure()
@@ -338,4 +353,3 @@ jobs:
         with:
             name: robotool-physmod-product
             failOnError: false
-
