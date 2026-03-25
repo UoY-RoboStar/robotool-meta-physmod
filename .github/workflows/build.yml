@@ -91,6 +91,13 @@ jobs:
       - name: Build with Maven
         run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
 
+      - name: Upload surefire reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: '**/target/surefire-reports/**'
+
       - name: List P2 unit versions
         run: ./robotool-physmod-product/target/products/robotool.physmod.product/linux/gtk/x86_64/eclipse -application org.eclipse.equinox.p2.director -repository file:`realpath robotool-physmod-product/target/repository/` -list -lf "\${id} | \${version}" | grep -E '(circus\.|robostar|sirius|rcp)' | grep -v 'jar' > versions.md
 
