@@ -45,7 +45,35 @@ public class TestIsabelle_SKO_WithProof {
     }
 
     private Path testRoot() {
-        return Paths.get("").toAbsolutePath().resolve("tests").resolve("integrationTests").resolve("SKO_proof");
+        Path local = Paths.get("").toAbsolutePath().resolve("tests").resolve("integrationTests").resolve("SKO_proof");
+        if (Files.exists(local)) {
+            return local;
+        }
+        Path fromTestdata = resolveTestdataPath("SKO_proof");
+        if (fromTestdata != null) {
+            return fromTestdata;
+        }
+        return local;
+    }
+
+    private Path tempOutputRoot() {
+        try {
+            return Files.createTempDirectory("TestIsabelle_SKO");
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Failed to create temp directory", e);
+        }
+    }
+
+    private Path resolveTestdataPath(String relativePath) {
+        Path cwd = Paths.get("").toAbsolutePath();
+        String testdataRel = "physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/" + relativePath;
+        for (Path base : java.util.List.of(cwd, cwd.resolve(".."), cwd.resolve("../.."), cwd.resolve("../../.."))) {
+            Path candidate = base.resolve(testdataRel);
+            if (Files.exists(candidate)) {
+                return candidate.normalize();
+            }
+        }
+        return null;
     }
 
     @Test
@@ -111,7 +139,7 @@ public class TestIsabelle_SKO_WithProof {
             assertFalse(solutionDSL.trim().isEmpty(), "Generated Solution DSL from proof is empty");
 
             // Save the generated Solution DSL for inspection
-            Path outputDir = testRoot().resolve("temp");
+            Path outputDir = tempOutputRoot();
             Files.createDirectories(outputDir);
             Path slnFile = outputDir.resolve("proof_solution.sln");
             Files.writeString(slnFile, solutionDSL);

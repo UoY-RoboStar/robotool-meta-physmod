@@ -19,6 +19,7 @@ import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.extensions.InjectionExtension;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -70,6 +71,7 @@ public class TestAcrobot_Featherstone_T5Standalone_Visualisation {
         return Paths.get("").toAbsolutePath().resolve(SKO_TESTDATA_PROJECT_PATH);
     }
 
+    @Disabled("Requires pipeline output / CMake / missing testdata")
     @Test
     public void testStandaloneVisualisationMode() throws Exception {
         // Clean temp directory

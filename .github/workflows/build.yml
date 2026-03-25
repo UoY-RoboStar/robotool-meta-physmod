@@ -85,6 +85,9 @@ jobs:
           echo "Version to be released: ${{ steps.version.outputs.version }}"
           mvn org.eclipse.tycho:tycho-versions-plugin:set-version -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -DnewVersion="${{ steps.version.outputs.version }}" -Dartifacts="robostar.robotool.physmod.customization.feature,robostar.robotool.physmod.product.standalone,robostar.robotool.physmod.customization"
   
+      - name: Install C++ dependencies
+        run: sudo apt-get update && sudo apt-get install -y libeigen3-dev
+
       - name: Build with Maven
         run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 -B package --file pom.xml
 

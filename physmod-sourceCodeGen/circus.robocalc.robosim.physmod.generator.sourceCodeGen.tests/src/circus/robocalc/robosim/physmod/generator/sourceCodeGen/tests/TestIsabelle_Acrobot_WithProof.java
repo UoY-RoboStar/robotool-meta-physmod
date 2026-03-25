@@ -41,12 +41,40 @@ public class TestIsabelle_Acrobot_WithProof {
     }
 
     private Path testRoot() {
-        return Paths.get("").toAbsolutePath()
+        Path local = Paths.get("").toAbsolutePath()
             .resolve("tests")
             .resolve("integrationTests")
             .resolve("RobotExamples")
             .resolve("acrobot")
             .resolve("SKO_proof");
+        if (Files.exists(local)) {
+            return local;
+        }
+        Path fromTestdata = resolveTestdataPath("RobotExamples/Acrobot/SKO_proof");
+        if (fromTestdata != null) {
+            return fromTestdata;
+        }
+        return local;
+    }
+
+    private Path tempOutputRoot() {
+        try {
+            return Files.createTempDirectory("TestIsabelle_Acrobot");
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Failed to create temp directory", e);
+        }
+    }
+
+    private Path resolveTestdataPath(String relativePath) {
+        Path cwd = Paths.get("").toAbsolutePath();
+        String testdataRel = "physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/" + relativePath;
+        for (Path base : java.util.List.of(cwd, cwd.resolve(".."), cwd.resolve("../.."), cwd.resolve("../../.."))) {
+            Path candidate = base.resolve(testdataRel);
+            if (Files.exists(candidate)) {
+                return candidate.normalize();
+            }
+        }
+        return null;
     }
 
     @Test
@@ -96,7 +124,7 @@ public class TestIsabelle_Acrobot_WithProof {
             assertNotNull(solutionDSL, "Generated Solution DSL from proof is null");
             assertFalse(solutionDSL.trim().isEmpty(), "Generated Solution DSL from proof is empty");
 
-            Path outputDir = testRoot().resolve("temp");
+            Path outputDir = tempOutputRoot();
             Files.createDirectories(outputDir);
             Path slnFile = outputDir.resolve("proof_solution.sln");
             Files.writeString(slnFile, solutionDSL);

@@ -21,6 +21,7 @@ import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipse.xtext.testing.util.ParseHelper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -60,6 +61,7 @@ public class TestAcrobot_CGATrajectoryMatchesSKO {
     private static final String CGA_TESTDATA_PROJECT_PATH =
         "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/Acrobot/CGA/standalone_visualisation";
 
+    @Disabled("Requires pipeline output / CMake / missing testdata")
     @Test
     public void testCgaTrajectoryMatchesSko() throws Exception {
         Path skoSlnRefPath = resolveSkoPipelineSlnRef();
