@@ -37,6 +37,7 @@ import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
  * - Compiles and runs standalone executable with visualization
  * - Useful for comparing dynamics with Drake
  */
+@org.junit.jupiter.api.Disabled("CI: MeshcatCpp not available on GitHub Actions runner. Passes locally with MeshcatCpp installed.")
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
 public class TestSimpleArm_T5Standalone_Visualisation {
