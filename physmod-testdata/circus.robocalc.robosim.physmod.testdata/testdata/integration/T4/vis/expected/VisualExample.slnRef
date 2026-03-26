@@ -55,3 +55,9 @@ constraint " (L2_geom . geomVal) [ t == 0] ==[| 0.25 , 4.0 |]"
 constraint " (L3_geom . geomType) [ t == 0] ==box"
 constraint " (L3_geom . geomVal) [ t == 0] ==[| 1.0 , 1.0 , 0.5 |]"
 }
+SolutionRef {
+	expression Local { name sensor_outputs type "real" }
+	method SKO::SensorOutputMapping
+	order 2
+constraint " (BaseLink_BaseSensor_SignalIn) [ t == t] ==BaseLink_BaseSensor_MeasurementOut"
+}

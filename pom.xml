@@ -87,9 +87,6 @@
   <module>physmod-libs</module>
   <module>physmod-testdata</module>
   <module>physmod-eqnComp</module>
-  <!-- Note: physmod-eqnComp has a 'standalone' profile (-Dstandalone) that adds
-       physmod-libs/libs.textual and physmod-testdata as sibling modules.
-       That profile is NOT active here; the root reactor provides them. -->
   <module>physmod-guidedChoice</module>
   <module>physmod-sourceCodeGen</module>
   <!-- RoboTool packaging (last, as these create large product archives) -->

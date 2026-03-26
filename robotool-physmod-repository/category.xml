@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+   <feature id="robostar.robotool.physmod.customization.feature"/>
+
+   <feature id="circus.robocalc.robochart.feature">
+      <category name="robochart"/>
+   </feature>
+   <feature id="circus.robocalc.robochart.textual.feature">
+      <category name="robochart"/>
+   </feature>
+   <feature id="circus.robocalc.robochart.graphical.feature">
+      <category name="robochart"/>
+   </feature>
+   <feature id="circus.robocalc.robochart.assertions.feature">
+      <category name="robochart"/>
+   </feature>
+   <feature id="circus.robocalc.robochart.generator.csp.feature">
+      <category name="robochart"/>
+   </feature>
+
+   <feature id="circus.robocalc.robosim.feature">
+      <category name="robosim"/>
+   </feature>
+   <feature id="circus.robocalc.robosim.textual.feature">
+      <category name="robosim"/>
+   </feature>
+   <feature id="circus.robocalc.robosim.graphical.feature">
+      <category name="robosim"/>
+   </feature>
+
    <feature id="circus.robocalc.robosim.physmod.feature">
       <category name="physmod"/>
    </feature>
@@ -25,6 +53,8 @@
       <category name="physmod.generator"/>
    </feature>
 
+   <category-def name="robochart" label="RoboChart"/>
+   <category-def name="robosim" label="RoboSim"/>
    <category-def name="physmod" label="PhysMod"/>
    <category-def name="physmod.generator" label="PhysMod Generator"/>
 </site>

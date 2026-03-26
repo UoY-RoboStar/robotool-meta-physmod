@@ -37,6 +37,7 @@ import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
  * - Compiles and runs standalone executable with visualization
  * - Useful for debugging visualization issues (link positions, transforms, etc.)
  */
+@org.junit.jupiter.api.Disabled("CI: MeshcatCpp not available on GitHub Actions runner. Passes locally with MeshcatCpp installed.")
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
 public class TestAcrobot_T5Standalone_Visualisation {

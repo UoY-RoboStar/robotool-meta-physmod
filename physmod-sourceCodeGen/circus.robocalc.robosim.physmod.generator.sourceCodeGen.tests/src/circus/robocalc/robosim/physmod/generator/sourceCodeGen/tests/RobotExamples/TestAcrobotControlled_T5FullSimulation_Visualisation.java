@@ -23,6 +23,7 @@ import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.extensions.InjectionExtension;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -86,6 +87,7 @@ public class TestAcrobotControlled_T5FullSimulation_Visualisation {
         return scenarioRoot().resolve("temp");
     }
 
+    @Disabled("Requires pipeline output / CMake / missing testdata")
     @Test
     public void testFullSimulationWithVisualisation() throws Exception {
         // Clean temp directory to avoid stale artifacts

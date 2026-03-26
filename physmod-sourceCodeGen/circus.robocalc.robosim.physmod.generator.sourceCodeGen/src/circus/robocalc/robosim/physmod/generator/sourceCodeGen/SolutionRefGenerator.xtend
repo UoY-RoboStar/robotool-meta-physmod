@@ -23,13 +23,13 @@ import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution
 import org.eclipse.emf.common.util.BasicEList
 import circus.robocalc.robosim.physmod.libs.sourceCodeGen.solutionLib.SolutionLib
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.MultiFileCppGenerator
-import circus.robocalc.robosim.physmod.generator.sourceCodeGen.latex.SolutionToLatexGenerator
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.isabelle.SolutionToIsabelleGenerator
 import circus.robocalc.robosim.physmod.libs.sourceCodeGen.solutionLib.Formulation
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRef
 import circus.robocalc.robosim.physmod.slnRef.slnRef.Local
 import circus.robocalc.robosim.physmod.slnDF.slnDF.SlnDFFactory
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefFactory
+import circus.robocalc.robosim.physmod.generator.sourceCodeGen.latex.SolutionToLatexGenerator
 import circus.robocalc.robosim.physmod.slnRef.slnRef.Constraint
 import circus.robocalc.robosim.physmod.slnRef.slnRef.Input
 import circus.robocalc.robosim.physmod.slnDF.slnDF.State
@@ -175,9 +175,11 @@ class SolutionRefGenerator extends AbstractGenerator {
 
             if (solution !== null) {
                 if (outputFormat == "latex") {
-                    // Generate LaTeX document
                     val latexGenerator = new SolutionToLatexGenerator()
-                    latexGenerator.doGenerate(solution.eResource, fsa, context)
+                    fsa.generateFile(
+                        "solution.tex",
+                        latexGenerator.compile(solution)
+                    )
                 } else if (outputFormat == "isabelle") {
                     val isabelleGenerator = new SolutionToIsabelleGenerator(isabelleMode)
                     isabelleGenerator.generate(solution, solutionText, fsa)

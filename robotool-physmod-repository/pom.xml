@@ -44,10 +44,5 @@ SPDX-License-Identifier: EPL-2.0
       <url>http://download.eclipse.org/sirius/updates/releases/6.2.2/2019-06</url>
       <layout>p2</layout>
     </repository>
-    <repository>
-      <id>robotool</id>
-      <url>https://robostar.cs.york.ac.uk/robotool/update</url>
-      <layout>p2</layout>
-    </repository>
   </repositories>
 </project>

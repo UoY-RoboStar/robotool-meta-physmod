@@ -21,10 +21,6 @@
 			<unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
 			<repository location="https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.25.0/"/>
 		</location>
-		<!-- Add our internal update site where circus.robocalc.robosim.physmod.slnRef is available -->
-		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://robostar.cs.york.ac.uk/robotool/update"/>
-		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<unit id="com.google.gson" version="0.0.0"/>
 			<unit id="org.antlr.runtime" version="0.0.0"/>
@@ -40,6 +36,53 @@
 			<unit id="org.objectweb.asm.tree" version="0.0.0"/>
 			<unit id="io.github.classgraph" version="0.0.0"/>
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/2021-12"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robochart.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/metamodel/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robochart.textual.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/textual/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robochart.assertions.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/assertions/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robochart.generator.csp.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/csp-generator/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robochart.graphical.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/graphical/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robosim.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/robosim-metamodel/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robosim.textual.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/robosim-textual/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robosim.graphical.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/robosim-graphical/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robosim.physmod.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/physmod-metamodel/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robosim.physmod.textual.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/physmod-textual/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="circus.robocalc.robosim.physmod.graphical.feature.feature.group" version="0.0.0"/>
+			<repository location="https://www.cs.york.ac.uk/robostar/robotool/physmod-graphical/update/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<repository location="http://download.eclipse.org/sirius/updates/releases/6.2.2/2019-06"/>
 		</location>
 	</locations>
 </target>

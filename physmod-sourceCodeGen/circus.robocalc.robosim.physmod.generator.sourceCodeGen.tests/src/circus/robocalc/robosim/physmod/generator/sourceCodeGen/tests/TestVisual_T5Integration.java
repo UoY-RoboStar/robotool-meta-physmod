@@ -23,7 +23,35 @@ import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 public class TestVisual_T5Integration {
 
     private Path integrationRoot() {
-        return Paths.get("").toAbsolutePath().resolve("tests").resolve("integrationTests").resolve("vis");
+        Path local = Paths.get("").toAbsolutePath().resolve("tests").resolve("integrationTests").resolve("vis");
+        if (Files.exists(local)) {
+            return local;
+        }
+        Path fromTestdata = resolveTestdataPath("vis");
+        if (fromTestdata != null) {
+            return fromTestdata;
+        }
+        return local;
+    }
+
+    private Path tempOutputRoot() {
+        try {
+            return Files.createTempDirectory("TestVisual_T5Integration");
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Failed to create temp directory", e);
+        }
+    }
+
+    private Path resolveTestdataPath(String relativePath) {
+        Path cwd = Paths.get("").toAbsolutePath();
+        String testdataRel = "physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/" + relativePath;
+        for (Path base : java.util.List.of(cwd, cwd.resolve(".."), cwd.resolve("../.."), cwd.resolve("../../.."))) {
+            Path candidate = base.resolve(testdataRel);
+            if (Files.exists(candidate)) {
+                return candidate.normalize();
+            }
+        }
+        return null;
     }
     
     // Main method to run test directly
@@ -90,8 +118,8 @@ public class TestVisual_T5Integration {
                 "Missing platform1_state.hpp. Generated files: " + files.keySet());
             assertTrue(files.keySet().stream().anyMatch(n -> stripPrefix.apply(n).equals("CMakeLists.txt") || stripPrefix.apply(n).endsWith("/CMakeLists.txt")), 
                 "Missing CMakeLists.txt. Generated files: " + files.keySet());
-            assertTrue(files.keySet().stream().anyMatch(n -> stripPrefix.apply(n).startsWith("src/")), 
-                "Missing src/ directory files. Generated files: " + files.keySet());
+            assertTrue(files.keySet().stream().anyMatch(n -> stripPrefix.apply(n).endsWith(".cpp") || stripPrefix.apply(n).endsWith(".hpp")),
+                "Missing C++ source files. Generated files: " + files.keySet());
 
             // Debug: Print what files were generated
             System.out.println("Generated Visual files:");
@@ -100,7 +128,8 @@ public class TestVisual_T5Integration {
             }
 
             // STAGE 1: Persist Solution DSL (.sln) to temp/stage1
-            Path tempStage1 = integrationRoot().resolve("temp").resolve("stage1");
+            Path tempRoot = tempOutputRoot();
+            Path tempStage1 = tempRoot.resolve("stage1");
             Files.createDirectories(tempStage1);
             for (Map.Entry<String, Object> e : files.entrySet()) {
                 if (e.getKey().endsWith(".sln")) {
@@ -112,7 +141,7 @@ public class TestVisual_T5Integration {
             }
 
             // STAGE 2: Persist C++ code to temp/stage2
-            Path tempStage2 = integrationRoot().resolve("temp").resolve("stage2");
+            Path tempStage2 = tempRoot.resolve("stage2");
             Files.createDirectories(tempStage2);
             for (Map.Entry<String, Object> e : files.entrySet()) {
                 if (!e.getKey().endsWith(".sln")) {

@@ -206,3 +206,11 @@ constraint " (d_theta) [ t == 0] ==0"
 constraint " (dt) [ t == 0] ==0.01"
 constraint " (theta) [ t == 0] ==zeroVec(2)"
 }
+SolutionRef {
+	expression Local { name sensor_outputs type "real" }
+	method SKO::SensorOutputMapping
+	order 9
+constraint " (BaseLink_BaseSensor_SignalIn) [ t == t] ==BaseLink_BaseSensor_MeasurementOut"
+constraint " (BaseLink_ElbowSensor_SignalIn) [ t == t] ==BaseLink_ElbowSensor_MeasurementOut"
+constraint " (IntermediateLink_WristSensor_SignalIn) [ t == t] ==IntermediateLink_WristSensor_MeasurementOut"
+}

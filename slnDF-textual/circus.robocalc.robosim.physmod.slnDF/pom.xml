@@ -10,15 +10,6 @@
     <artifactId>circus.robocalc.robosim.physmod.slnDF</artifactId>
     <packaging>eclipse-plugin</packaging>
     <name>slnDF Runtime</name>
-    <dependencies>
-        <dependency>
-            <groupId>circus.robocalc.robosim.physmod</groupId>
-            <artifactId>circus.robocalc.robosim.physmod.slnDF.target</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <type>eclipse-target-definition</type>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
     <build>
         <plugins>
             <plugin>
