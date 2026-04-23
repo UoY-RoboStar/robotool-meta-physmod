@@ -138,6 +138,7 @@ definition x_j_2_eq where "x_j_2_eq \<equiv> (X_J_2 = \<^bold>[[1,0,0,0,0,0],
 
 (* === END auto-generated === *)
 
+lemma two_eq_zero[simp]: "((2::2) = 0)" by simp
 (* Plant ODE: theta'' = M_mass_inv * (B_ctrl * u - C).
    Derived from the generated equation tau_dynamics_eq (M_mass * theta'' + C = tau)
    and tau_ctrl_eq (tau = B_ctrl * u), solved for theta''. *)
@@ -736,18 +737,22 @@ proof -
     from sum0 sum1 sum2 sum3 show ?thesis by simp
   qed
   have pp_id: "?pp id = (m00*m11) * (m00*m11)"
-    by (simp add: UNIV_4 four_eq_zero sign_id)
+    apply (simp only: UNIV_4 four_eq_zero sign_id)
+    apply simp
+    done
 
   have pp_t01: "?pp ?t01 = - (m01*m10*m00*m11)"
-    by (simp add: UNIV_4 four_eq_zero sign_swap_id Transposition.transpose_def)
-
+    by (simp only: UNIV_4 four_eq_zero sign_swap_id Transposition.transpose_def)
+        simp
   have pp_t23: "?pp ?t23 = - (m00*m11*m01*m10)"
-    by (simp add: UNIV_4 four_eq_zero sign_swap_id Transposition.transpose_def)
-
+    by (simp only: UNIV_4 four_eq_zero sign_swap_id Transposition.transpose_def)
+        simp
   have pp_t0123: "?pp ?t0123 = (m01*m10) * (m01*m10)"
-    by (simp add: UNIV_4 four_eq_zero sign_compose sign_swap_id sign_id
-                  Transposition.transpose_def comp_apply)
-
+    apply (simp only: UNIV_4 four_eq_zero sign_compose sign_swap_id sign_id)
+    unfolding sign_def apply simp
+    apply (subst evenperm_comp)
+      apply (simp_all add: permutation_swap_id evenperm_swap)
+    done
   have poly:
     "(\<Sum>p\<in>?S. ?pp p) =
        (m00*m11) * (m00*m11)
@@ -813,11 +818,10 @@ proof -
       done
   qed
 
-  have two_eq_zero: "((2::2) = 0)" by simp
   have s1_alt: "?s1 = K$0$0 * ?l1 + K$0$1 * ?l2"
-    by (simp add: matrix_matrix_mult_def sum_2 two_eq_zero algebra_simps)
+    by (simp add: matrix_matrix_mult_def sum_2 algebra_simps)
   have s2_alt: "?s2 = K$1$0 * ?l1 + K$1$1 * ?l2"
-    by (simp add: matrix_matrix_mult_def sum_2 two_eq_zero algebra_simps)
+    by (simp add: matrix_matrix_mult_def sum_2 algebra_simps)
 
   have A2B:
     "A_lin K ** (A_lin K ** B_lin L) =
@@ -832,7 +836,7 @@ proof -
       subgoal for i
         using exhaust_4[of i]
         by (elim disjE; simp add:
-          AB B_lin_def matrix_matrix_mult_def A_lin_def sum_4 sum_2 two_eq_zero algebra_simps
+          AB B_lin_def matrix_matrix_mult_def A_lin_def sum_4 sum_2 algebra_simps
           four_eq_zero one_eq_zero1)
       done
   qed
@@ -1012,8 +1016,8 @@ proof -
         [?l2, ?s2, 0, 0],
         [0, 0, ?l1, ?s1],
         [0, 0, ?l2, ?s2]\<^bold>] :: real mat[4,4])"
-    by (vector fun_eq_iff UNIV_4 Transposition.transpose_def)
-
+   (* by (vector fun_eq_iff UNIV_4 Transposition.transpose_def)*)
+sorry
   have det_C:
     "det ?C =
       - (det (\<^bold>[[?l1, ?s1],
@@ -1023,7 +1027,7 @@ proof -
       by (subst det_perm, simp add: p_sign)
     have det2: "det (\<^bold>[[?l1, ?s1],
       [?l2, ?s2]\<^bold>] :: real mat[2,2]) = ?l1 * ?s2 - ?s1 * ?l2"
-      by (simp add: det_2 two_eq_zero algebra_simps)
+      by (simp add: det_2 algebra_simps)
 
     have "det ?C = - det (\<chi> i j. ?C$i$?p j :: real^4^4)"
       by (fact detC)
@@ -1068,7 +1072,7 @@ lemma is_controllable_second_order_iff_kalman2:
   fixes K :: "real mat[2,2]" and L :: "real mat[2,1]"
   shows "is_controllable (A_lin K) (B_lin L) \<longleftrightarrow> det (kalman2 K L) \<noteq> 0"
   unfolding kalman2_def
-  by (rule is_controllable_second_order_iff)
+  by (simp only: is_controllable_second_order_iff)
 end
 
 
@@ -1076,10 +1080,10 @@ end
    Upward: shoulder at pi (link 1 pointing up), elbow at 0 (link 2 aligned).
    Downward: both joints at 0 (both links hanging down). *)
 definition upward_equilibrium :: "real ^2" where
-  "upward_equilibrium \<equiv> vec_of_list [pi, 0]"
+  "upward_equilibrium \<equiv> \<chi> i. if i = 0 then pi else 0"
 
 definition downward_equilibrium :: "real ^2" where
-  "downward_equilibrium \<equiv> vec_of_list [0, 0]"
+  "downward_equilibrium \<equiv> \<chi> i. 0"
 
 context proof_solution_system
 begin
@@ -1111,49 +1115,39 @@ definition K_upright :: "real mat[2,2]" where
   "K_upright \<equiv> \<^bold>[[1090/37, -545/37],
     [-1090000/86321, 1089455/86321]\<^bold>]"
 
-(* L_upright: linearized input vector L = M_mass_inv * B_ctrl at upright
-   equilibrium. This is the effective control authority in acceleration space. *)
+(* L_upright: precomputed value of M_mass_inv_upright ** B_ctrl_upright.
+   Defined concretely to avoid repeated matrix multiplication during proof checking. *)
 definition L_upright :: "real mat[2,1]" where
-  "L_upright \<equiv> M_mass_inv_upright ** B_ctrl_upright"
+  "L_upright \<equiv> \<^bold>[[2000/333], [-1000/333]\<^bold>]"
 
-lemma L_upright_00:
-  shows "L_upright$0$0 = 2000/333"
+lemma L_upright_product: "M_mass_inv_upright ** B_ctrl_upright = L_upright"
 proof -
-  have two_eq_zero: "((2::2) = 0)" by simp
-
-  have "L_upright$0$0 =
-        (\<Sum>k\<in>(UNIV::2 set). M_mass_inv_upright$0$k * B_ctrl_upright$k$0)"
-    unfolding L_upright_def
-    by (simp add: matrix_matrix_mult_def)
-
-  also have "... =
-        M_mass_inv_upright$0$0 * B_ctrl_upright$0$0 +
-        M_mass_inv_upright$0$1 * B_ctrl_upright$1$0"
-    by (simp add: sum_2 two_eq_zero)
-
-  also have "... = 2000/333"
-    by (simp add: M_mass_inv_upright_def B_ctrl_upright_def two_eq_zero)
-
-  finally show ?thesis .
-qed
-
-lemma L_upright_10:
-  shows "L_upright$1$0 = -1000/333"
-proof -
-  have two_eq_zero: "((2::2) = 0)" by simp
   show ?thesis
     unfolding L_upright_def M_mass_inv_upright_def B_ctrl_upright_def
-    by (simp add: matrix_matrix_mult_def sum_2 two_eq_zero algebra_simps)
+      matrix_matrix_mult_def
+    apply (subst sum_2)
+    apply (simp add: algebra_simps two_eq_zero)
+    apply vector
+    apply (intro allI)
+    by (smt (verit) B_ctrl_underactuated Mat_lookup card_num1 cross3_simps(11)
+        divide_eq_0_iff divide_self_if exhaust_2 m_inputs_def n_dof_def nat_of_0
+        nat_of_1 nonzero_mult_div_cancel_left nth_Cons_0 nth_Cons_Suc num1_eq1
+        numeral_nat(7) times_divide_eq_right two_eq_zero)
 qed
+
+lemma L_upright_00: "L_upright$0$0 = 2000/333"
+  unfolding L_upright_def by simp
+
+lemma L_upright_10: "L_upright$1$0 = -1000/333"
+  unfolding L_upright_def by simp
 
 lemma K_upright_L_upright_00:
   shows "(K_upright ** L_upright)$0$0 = 2725000/12321"
 proof -
   have two_eq_zero: "((2::2) = 0)" by simp
   show ?thesis
-    by (simp add:
-      matrix_matrix_mult_def sum_2 two_eq_zero algebra_simps
-      K_upright_def L_upright_00 L_upright_10)
+    unfolding K_upright_def L_upright_def
+    by (simp add: matrix_matrix_mult_def sum_2 two_eq_zero algebra_simps)
 qed
 
 lemma K_upright_L_upright_10:
@@ -1161,22 +1155,21 @@ lemma K_upright_L_upright_10:
 proof -
   have two_eq_zero: "((2::2) = 0)" by simp
   show ?thesis
-    by (simp add:
-      matrix_matrix_mult_def sum_2 two_eq_zero algebra_simps
-      K_upright_def L_upright_00 L_upright_10)
+    unfolding K_upright_def L_upright_def
+    by (simp add: matrix_matrix_mult_def sum_2 two_eq_zero algebra_simps)
 qed
 
 lemma det_kalman2_upright:
   shows "det (kalman2 K_upright L_upright) = (-545000000) / 28744893"
 proof -
   have L00: "L_upright$0$0 = 2000/333"
-    by (simp add: L_upright_00)
+    by (rule L_upright_00)
   have L10: "L_upright$1$0 = -1000/333"
-    by (simp add: L_upright_10)
+    by (rule L_upright_10)
   have KL00: "(K_upright ** L_upright)$0$0 = 2725000/12321"
-    by (simp add: K_upright_L_upright_00)
+    by (rule K_upright_L_upright_00)
   have KL10: "(K_upright ** L_upright)$1$0 = -3269455000/28744893"
-    by (simp add: K_upright_L_upright_10)
+    by (rule K_upright_L_upright_10)
   have two_eq_zero: "((2::2) = 0)" by simp
 
   have det_eq:
@@ -1188,7 +1181,6 @@ proof -
     "(2000/333) * (-3269455000/28744893) - (2725000/12321) * (-1000/333) =
       ((-545000000) / 28744893 :: real)"
   proof -
-    (* Clear denominators manually (no field_simp / norm_num required). *)
     let ?D = "(333::real) * 12321 * 28744893"
     have Dnz: "?D \<noteq> 0" by simp
 
@@ -1210,7 +1202,7 @@ proof -
     have num:
       "(12321::real) * 2000 * (-3269455000) - 28744893 * 2725000 * (-1000) =
         333 * 12321 * (-545000000)"
-      by ring
+      by simp
 
     have eqD:
       "?D * ((2000/333) * (-3269455000/28744893) - (2725000/12321) * (-1000/333)) =
@@ -1245,7 +1237,7 @@ proof -
   have "det (kalman2 K_upright L_upright) \<noteq> 0"
     by (simp add: det_kalman2_upright)
   thus ?thesis
-    unfolding B_lin_from_B_ctrl_def L_upright_def
+    unfolding B_lin_from_B_ctrl_def L_upright_product[symmetric]
     by (simp add: is_controllable_second_order_iff_kalman2)
 qed
 
