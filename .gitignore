@@ -4,3 +4,6 @@ robotool-physmod-repository/target/*
 **/latex/
 *.log
 copy-data.sh
+/.m2/
+/.mvn/
+/.local-p2/
