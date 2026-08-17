@@ -11,7 +11,6 @@
       </category>
       <command
             categoryId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.category"
-            defaultHandler="circus.robocalc.robosim.physmod.generator.sourceCodeGen.sourceCodeGenGeneratorExecutableExtensionFactory:circus.robocalc.robosim.physmod.generator.sourceCodeGen.handlers.CompileOneHandler"
             id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.compileOne"
             name="Generate Solution">
          <commandParameter
@@ -32,7 +31,6 @@
       </command>
       <command
             categoryId="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.category"
-            defaultHandler="circus.robocalc.robosim.physmod.generator.sourceCodeGen.sourceCodeGenGeneratorExecutableExtensionFactory:circus.robocalc.robosim.physmod.generator.sourceCodeGen.handlers.GenerateOneDropDownHandler"
             id="circus.robocalc.robosim.physmod.generator.sourceCodeGen.commands.configure"
             name="Configure Solution Generation">
          <commandParameter
