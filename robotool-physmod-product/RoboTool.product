@@ -56,6 +56,7 @@
       <feature id="circus.robocalc.robosim.feature" installMode="root"/>
       <feature id="circus.robocalc.robosim.textual.feature" installMode="root"/>
       <feature id="circus.robocalc.robosim.graphical.feature" installMode="root"/>
+      <feature id="circus.robocalc.robosim.generator.code.feature" installMode="root"/>
       <feature id="circus.robocalc.robosim.physmod.feature" installMode="root"/>
       <feature id="circus.robocalc.robosim.physmod.textual.feature" installMode="root"/>
       <feature id="circus.robocalc.robosim.physmod.slnRef.feature" installMode="root"/>

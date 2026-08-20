@@ -45,3 +45,11 @@
 	path = robosim-graphical
 	url = git@github.com:UoY-RoboStar/robosim-graphical.git
 	branch = physmod-physics-engine
+[submodule "robosim-code-gen"]
+	path = robosim-code-gen
+	url = git@github.com:UoY-RoboStar/robosim-code-gen.git
+	branch = physmod-physics-engine
+[submodule "robosim-assertions"]
+	path = robosim-assertions
+	url = git@github.com:UoY-RoboStar/robosim-assertions.git
+	branch = robotool-meta
