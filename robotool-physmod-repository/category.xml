@@ -27,6 +27,9 @@
    <feature id="circus.robocalc.robosim.graphical.feature">
       <category name="robosim"/>
    </feature>
+   <feature id="circus.robocalc.robosim.generator.code.feature">
+      <category name="robosim"/>
+   </feature>
 
    <feature id="circus.robocalc.robosim.physmod.feature">
       <category name="physmod"/>

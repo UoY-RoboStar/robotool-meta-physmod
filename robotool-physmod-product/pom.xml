@@ -201,6 +201,11 @@
         <layout>p2</layout>
     </repository>
     <repository>
+        <id>emfatic</id>
+        <url>https://download.eclipse.org/emfatic/update</url>
+        <layout>p2</layout>
+    </repository>
+    <repository>
         <id>sirius</id>
         <url>https://archive.eclipse.org/sirius/updates/releases/6.5.1/2020-09</url>
         <layout>p2</layout>

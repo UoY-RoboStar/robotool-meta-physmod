@@ -81,7 +81,9 @@
   <!-- RoboSim modules (required by physmod) -->
   <module>robosim-metamodel</module>
   <module>robosim-textual</module>
+  <module>robosim-assertions</module>
   <module>robosim-graphical</module>
+  <module>robosim-code-gen</module>
   <!-- DSL modules required by physmod-libs -->
   <module>slnDF-textual</module>
   <module>slnRef-textual</module>
