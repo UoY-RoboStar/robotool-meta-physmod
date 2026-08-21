@@ -98,7 +98,7 @@ jobs:
           sudo apt-get install -y cmake build-essential libeigen3-dev
 
       - name: Build with Maven
-        run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 ${{ steps.cache.outputs.cache-hit == 'true' && '-o' || '' }} -pl '!circus.robocalc.robosim.physmod.textual.tests' -B package --file pom.xml
+        run: mvn -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 ${{ steps.cache.outputs.cache-hit == 'true' && '-o' || '' }} -pl '!:circus.robocalc.robosim.physmod.textual.tests' -B package --file pom.xml
 
       - name: Save filtered Maven cache
         run: |
