@@ -58,6 +58,14 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
+      # The runner image now ships Maven 3.10, under which Tycho 2.7.5 fails ("Invalid Collect Request"),
+      # so use Maven 3.9.16
+      - name: Set up Maven 3.9.16
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/maven.tar.gz" https://archive.apache.org/dist/maven/maven-3/3.9.16/binaries/apache-maven-3.9.16-bin.tar.gz
+          tar -xzf "$RUNNER_TEMP/maven.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/apache-maven-3.9.16/bin" >> "$GITHUB_PATH"
+
       - name: Cache Maven repository
         uses: actions/cache@v4
         id: cache
