@@ -93,7 +93,7 @@ public class TestSKO_T5FullSimulation {
         return workspaceRoot.resolve("Examples").resolve("CPP_tests").resolve("manualImplementationCPP");
     }
 
-    @Disabled("Generated platform_mapping_adapter.cpp references World.gravity_world not present in manual fixture structs — needs generator fix")
+    @Disabled("Test data out of date: the hand-written expected/manual/src/platform_mapping.h lacks the World.gravity_world field that the generated platform_mapping_adapter.cpp uses")
     @Test
     public void testFullSimulation() throws Exception {
         Path input = testdataRoot().resolve("fullSimulation").resolve("input").resolve("SimpleArmSerial.slnRef");

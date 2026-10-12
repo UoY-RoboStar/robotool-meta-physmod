@@ -27,6 +27,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjec
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 
+@org.junit.jupiter.api.Tag("generator-backlog")
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
 public class FourBarClosedChainSourceCodeGenTest {

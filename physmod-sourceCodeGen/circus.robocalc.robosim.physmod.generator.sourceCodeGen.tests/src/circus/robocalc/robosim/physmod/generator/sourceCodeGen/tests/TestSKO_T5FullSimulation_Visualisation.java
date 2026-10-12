@@ -22,7 +22,7 @@ import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.extensions.InjectionExtension;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -89,7 +89,7 @@ public class TestSKO_T5FullSimulation_Visualisation {
         return Paths.get("").toAbsolutePath().resolve(TESTDATA_PROJECT_PATH);
     }
 
-    @Disabled("Requires MeshcatCpp (not available on CI)")
+    @Tag("requires-meshcat")
     @Test
     public void testFullSimulationWithVisualisation() throws Exception {
         Path input = testdataRoot().resolve("fullSimulation_visualisation").resolve("input").resolve("SimpleArmSerial.slnRef");

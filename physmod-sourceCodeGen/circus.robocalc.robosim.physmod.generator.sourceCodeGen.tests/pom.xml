@@ -57,6 +57,9 @@
 					<redirectTestOutputToFile>false</redirectTestOutputToFile>
 					<useUIHarness>false</useUIHarness>
 					<useUIThread>false</useUIThread>
+					<providerHint>junit5</providerHint>
+					<groups>${physmod.test.groups}</groups>
+					<excludedGroups>${physmod.test.excludedGroups}</excludedGroups>
 					<includes>
 						<include>**/Test*.class</include>
 						<include>**/*Test.class</include>

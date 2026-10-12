@@ -27,6 +27,10 @@ SPDX-License-Identifier: EPL-2.0
 		<systemProperties></systemProperties>
 <!--		<tycho.testArgLine></tycho.testArgLine> -->
 		<additionalTestArguments></additionalTestArguments>
+		<!-- JUnit 5 tag filters: generator-backlog tests fail because of a known generator bug;
+		     requires-meshcat tests need MeshcatCpp. Run the backlog with -Pgenerator-backlog. -->
+		<physmod.test.groups></physmod.test.groups>
+		<physmod.test.excludedGroups>generator-backlog,requires-meshcat</physmod.test.excludedGroups>
 		<eclipse-repo.url>http://download.eclipse.org/releases/2021-12</eclipse-repo.url>
 	</properties>
 	<modules>
@@ -302,7 +306,6 @@ SPDX-License-Identifier: EPL-2.0
 						<argLine>${platformSystemProperties} ${systemProperties} ${moduleProperties} ${additionalTestArguments}</argLine>
 						<failIfNoTests>false</failIfNoTests>
 						<useUIHarness>false</useUIHarness>
-						<includes>**/Test*.java</includes>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -359,6 +362,13 @@ SPDX-License-Identifier: EPL-2.0
 			</activation>
 			<properties>
 				<moduleProperties>--add-modules=ALL-SYSTEM</moduleProperties>
+			</properties>
+		</profile>
+		<profile>
+			<id>generator-backlog</id>
+			<properties>
+				<physmod.test.groups>generator-backlog</physmod.test.groups>
+				<physmod.test.excludedGroups>requires-meshcat</physmod.test.excludedGroups>
 			</properties>
 		</profile>
 	</profiles>

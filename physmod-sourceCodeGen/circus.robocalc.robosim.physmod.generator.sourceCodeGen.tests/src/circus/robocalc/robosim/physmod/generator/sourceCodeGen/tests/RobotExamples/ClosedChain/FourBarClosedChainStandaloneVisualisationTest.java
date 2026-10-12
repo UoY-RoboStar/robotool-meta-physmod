@@ -56,6 +56,7 @@ import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
  * STANDALONE_VISUALISATION mode test for FourBarPlanarLinkage (closed chain).
  * Generates physics engine with visualization only and compiles a standalone build.
  */
+@org.junit.jupiter.api.Tag("requires-meshcat")
 public class FourBarClosedChainStandaloneVisualisationTest {
 
     private ParseHelper<Solution> solutionDSLParseHelper;
