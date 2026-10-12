@@ -64,18 +64,23 @@ testdata/
 
 ## How To Run Tests
 
-The T3 eqnComp and T4 guidedChoice test runners are in a private repository and cannot be run from this project alone. The T5 sourceCodeGen, pipeline, and metamodel coverage tests can be run from the repo root:
+The eqnComp (T3), guidedChoice (T4) and sourceCodeGen (T5) tests all run from this repository. Run them from the repo root:
 
 ```bash
-# T5 sourceCodeGen tests
-mvn -pl physmod-sourceCodeGen/circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests -am test
+# All generator tests
+mvn -B -Dtycho-version=2.7.5 package
 
-# End-to-end pipeline tests (T3 -> T4 -> T5)
-mvn -pl IntegrationTests/circus.robocalc.robosim.physmod.generator.pipeline.tests -am test
-
-# PhysMod metamodel coverage tests (C5)
-mvn -pl physmod-eqnComp/circus.robocalc.robosim.physmod.generator.eqnComp.tests -am -Dtest=MetamodelCoverageGeneratorTest,MetamodelCoverageSKOGeneratorTest test
+# eqnComp tests only (faster); add -Dtest=<Class> for one class
+mvn -f physmod-eqnComp/pom.xml -Dstandalone verify
 ```
+
+On JDK 17, Xtend needs:
+
+```bash
+export MAVEN_OPTS="--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED"
+```
+
+On macOS, the native C++ tests need `EIGEN3_INCLUDE_DIR=/opt/homebrew/include/eigen3`.
 
 ## Test Data Conventions
 
