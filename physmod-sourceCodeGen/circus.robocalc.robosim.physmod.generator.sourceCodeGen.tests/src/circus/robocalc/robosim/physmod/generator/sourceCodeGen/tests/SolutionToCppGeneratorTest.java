@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
@@ -21,6 +19,7 @@ import com.google.inject.Inject;
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.SolutionToCppGenerator;
 import circus.robocalc.robosim.physmod.slnDF.tests.SlnDFInjectorProvider;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * Test class for SolutionToCppGenerator.
@@ -39,31 +38,9 @@ public class SolutionToCppGeneratorTest {
     private static final String INPUT_DIR = "input";
     private static final String EXPECTED_DIR = "expected";
 
-    /**
-     * Resolve the physmod-testdata root directory for T5 unit tests.
-     * Tries multiple candidate paths to support running from different working directories.
-     */
-    private Path resolveTestdataRoot() throws IOException {
-        Path rel = Paths.get(
-            "physmod-testdata",
-            "circus.robocalc.robosim.physmod.testdata",
-            "testdata",
-            "unit",
-            "T5",
-            "SolutionToCppGenerator"
-        );
-        Path cwd = Paths.get("").toAbsolutePath();
-        List<Path> candidates = List.of(
-            cwd.resolve(rel),
-            cwd.resolve("..").resolve(rel),
-            cwd.resolve("..").resolve("..").resolve(rel)
-        );
-        for (Path candidate : candidates) {
-            if (Files.exists(candidate)) {
-                return candidate.normalize();
-            }
-        }
-        throw new IOException("physmod-testdata T5 unit test root not found. Tried: " + candidates);
+    /** The test data directory for these T5 unit tests. */
+    private Path resolveTestdataRoot() {
+        return TestData.path("unit/T5/SolutionToCppGenerator");
     }
 
     /**
@@ -89,12 +66,6 @@ public class SolutionToCppGeneratorTest {
         return Files.readString(filePath);
     }
 
-    /**
-     * Helper method to normalize line endings and whitespace for comparison
-     */
-    private String normalizeContent(String content) {
-        return content.trim().replaceAll("\\r\\n", "\n").replaceAll("\\r", "\n");
-    }
     
     /**
      * Helper method to test C++ compilation of generated code
@@ -352,13 +323,7 @@ public class SolutionToCppGeneratorTest {
             Path expectedPath = getTestPath(EXPECTED_DIR, testName + "_" + fileName.replace("/", "_"));
             
             if (Files.exists(expectedPath)) {
-                // Compare with expected content
-                String expectedContent = readFile(expectedPath);
-                String normalizedGenerated = normalizeContent(generatedContent);
-                String normalizedExpected = normalizeContent(expectedContent);
-                
-                assertEquals(normalizedExpected, normalizedGenerated, 
-                    "Generated content should match expected content for file: " + fileName);
+                TestData.assertMatchesExpected(expectedPath, generatedContent);
             } else {
                 // If no expected file exists, just verify that content was generated
                 System.out.println("Generated file: " + fileName);
@@ -423,13 +388,7 @@ public class SolutionToCppGeneratorTest {
             Path expectedPath = getSubfolderTestPath(category, EXPECTED_DIR, testName + "_" + fileName.replace("/", "_"));
             
             if (Files.exists(expectedPath)) {
-                // Compare with expected content
-                String expectedContent = readFile(expectedPath);
-                String normalizedGenerated = normalizeContent(generatedContent);
-                String normalizedExpected = normalizeContent(expectedContent);
-                
-                assertEquals(normalizedExpected, normalizedGenerated, 
-                    "Generated content should match expected content for file: " + fileName + " in category: " + category);
+                TestData.assertMatchesExpected(expectedPath, generatedContent);
             } else {
                 // If no expected file exists, just verify that content was generated
                 System.out.println("Generated file: " + fileName + " (category: " + category + ")");

@@ -68,7 +68,7 @@ The eqnComp (T3), guidedChoice (T4) and sourceCodeGen (T5) tests all run from th
 
 ```bash
 # All generator tests
-mvn -B -Dtycho-version=2.7.5 package
+mvn -B -Dtycho.version=2.7.5 -Dtycho-version=2.7.5 package
 
 # eqnComp tests only (faster); add -Dtest=<Class> for one class
 mvn -f physmod-eqnComp/pom.xml -Dstandalone verify

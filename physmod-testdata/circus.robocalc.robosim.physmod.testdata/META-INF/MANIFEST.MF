@@ -8,3 +8,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: circus.robocalc.robosim.physmod.testdata
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
+Export-Package: circus.robocalc.robosim.physmod.testdata
