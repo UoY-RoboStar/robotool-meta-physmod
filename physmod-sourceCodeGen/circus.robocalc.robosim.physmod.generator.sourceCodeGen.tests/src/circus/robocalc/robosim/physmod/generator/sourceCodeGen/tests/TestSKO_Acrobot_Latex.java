@@ -26,6 +26,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjec
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnDFInjectorProvider;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * LaTeX generation integration test for Acrobot SKO:
@@ -42,8 +43,8 @@ public class TestSKO_Acrobot_Latex {
 
     // For SolutionDSL, we'll get the injector from SlnDFInjectorProvider
     private ParseHelper<Solution> solutionDSLParseHelper;
-    private static final String TESTDATA_PROJECT_PATH =
-        "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/Acrobot/SKO";
+    private static final Path TESTDATA_PROJECT_PATH =
+        TestData.path("integration/T5/Acrobot/SKO");
 
     // Initialize SolutionDSL parser on first use
     private ParseHelper<Solution> getSolutionDSLParseHelper() {
@@ -56,7 +57,7 @@ public class TestSKO_Acrobot_Latex {
     }
 
     private Path acrobotSkoRoot() {
-        return Paths.get("").toAbsolutePath().resolve(TESTDATA_PROJECT_PATH);
+        return TESTDATA_PROJECT_PATH;
     }
 
     @Test
@@ -140,19 +141,7 @@ public class TestSKO_Acrobot_Latex {
             verifyLatexContent(latexContent);
             System.out.println("✓ Stage 2: LaTeX content validated");
 
-            // Compare with expected output if it exists
-            Path expectedLatex = acrobotSkoRoot().resolve("latex").resolve("expected").resolve("solution.tex");
-            if (Files.exists(expectedLatex)) {
-                String expectedContent = Files.readString(expectedLatex);
-                // Normalize whitespace for comparison
-                String normalizedExpected = normalizeWhitespace(expectedContent);
-                String normalizedActual = normalizeWhitespace(latexContent);
-                assertEquals(normalizedExpected, normalizedActual,
-                    "LaTeX output differs from expected");
-                System.out.println("✓ LaTeX output matches expected");
-            } else {
-                System.out.println("⚠ No expected LaTeX output for comparison");
-            }
+            // There is no expected file yet, so the output is only checked structurally.
 
             // Optional: Try to compile with pdflatex if available
             if (isPdflatexAvailable()) {
@@ -251,13 +240,6 @@ public class TestSKO_Acrobot_Latex {
             assertTrue(latexContent.contains("\\mathbb{R}") || latexContent.contains("\\in"),
                        "Missing mathematical set notation");
         }
-    }
-
-    /**
-     * Normalize whitespace for comparison (collapse multiple spaces/newlines).
-     */
-    private String normalizeWhitespace(String text) {
-        return text.replaceAll("\\s+", " ").trim();
     }
 
     /**

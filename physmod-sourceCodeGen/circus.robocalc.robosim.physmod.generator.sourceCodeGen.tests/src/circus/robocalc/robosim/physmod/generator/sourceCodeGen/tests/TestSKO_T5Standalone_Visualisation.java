@@ -29,6 +29,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnDFInject
 import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * STANDALONE_VISUALISATION mode test for SimpleArmSerial:
@@ -46,8 +47,8 @@ public class TestSKO_T5Standalone_Visualisation {
     private ParseHelper<SlnRefs> slnRefParseHelper;
 
     private ParseHelper<Solution> solutionDSLParseHelper;
-    private static final String TESTDATA_PROJECT_PATH =
-        "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/SKO/";
+    private static final Path TESTDATA_PROJECT_PATH =
+        TestData.path("integration/T5/SKO");
 
     private ParseHelper<Solution> getSolutionDSLParseHelper() {
         if (solutionDSLParseHelper == null) {
@@ -70,7 +71,7 @@ public class TestSKO_T5Standalone_Visualisation {
     }
 
     private Path testdataRoot() {
-        return Paths.get("").toAbsolutePath().resolve(TESTDATA_PROJECT_PATH);
+        return TESTDATA_PROJECT_PATH;
     }
 
     @Test

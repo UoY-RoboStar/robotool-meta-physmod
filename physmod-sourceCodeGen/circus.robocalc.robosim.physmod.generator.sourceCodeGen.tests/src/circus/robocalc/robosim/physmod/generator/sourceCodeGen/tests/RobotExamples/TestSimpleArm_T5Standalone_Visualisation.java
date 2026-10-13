@@ -29,6 +29,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnDFInject
 import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * STANDALONE_VISUALISATION mode test for SimpleArm:
@@ -65,15 +66,7 @@ public class TestSimpleArm_T5Standalone_Visualisation {
     }
 
     private Path standaloneVisRoot() {
-        Path local = integrationRoot().resolve("SKO").resolve("standalone_visualisation");
-        if (Files.exists(local)) {
-            return local;
-        }
-        Path fromTestdata = resolveTestdataPath("RobotExamples/SimpleArm/SKO/standalone_visualisation");
-        if (fromTestdata != null) {
-            return fromTestdata;
-        }
-        return local;
+        return TestData.path("integration/T5/RobotExamples/SimpleArm/SKO/standalone_visualisation");
     }
 
     private Path tempOutputRoot() {
@@ -82,18 +75,6 @@ public class TestSimpleArm_T5Standalone_Visualisation {
         } catch (java.io.IOException e) {
             throw new RuntimeException("Failed to create temp directory", e);
         }
-    }
-
-    private Path resolveTestdataPath(String relativePath) {
-        Path cwd = Paths.get("").toAbsolutePath();
-        String testdataRel = "physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/" + relativePath;
-        for (Path base : java.util.List.of(cwd, cwd.resolve(".."), cwd.resolve("../.."), cwd.resolve("../../.."))) {
-            Path candidate = base.resolve(testdataRel);
-            if (Files.exists(candidate)) {
-                return candidate.normalize();
-            }
-        }
-        return null;
     }
 
     @Test

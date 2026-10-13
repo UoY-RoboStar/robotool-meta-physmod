@@ -33,6 +33,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjec
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.utils.StubFillingUtility;
 import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * T5 Full Simulation test without visualisation:
@@ -73,8 +74,8 @@ public class TestSKO_T5FullSimulation {
     private static final String TODO_MARKER = "/* TODO/STUB */";
     private static final double CSV_TIME_TOLERANCE = 1e-6;
     private static final double CSV_POS_TORQUE_TOLERANCE = 1e-3;
-    private static final String TESTDATA_PROJECT_PATH =
-        "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/SKO/";
+    private static final Path TESTDATA_PROJECT_PATH =
+        TestData.path("integration/T5/SKO");
 
     private Path integrationRoot() {
         return Paths.get("").toAbsolutePath().resolve("tests").resolve("integrationTests").resolve("SKO");
@@ -85,7 +86,7 @@ public class TestSKO_T5FullSimulation {
     }
 
     private Path testdataRoot() {
-        return Paths.get("").toAbsolutePath().resolve(TESTDATA_PROJECT_PATH);
+        return TESTDATA_PROJECT_PATH;
     }
 
     private Path manualImplementationCPPRoot() {

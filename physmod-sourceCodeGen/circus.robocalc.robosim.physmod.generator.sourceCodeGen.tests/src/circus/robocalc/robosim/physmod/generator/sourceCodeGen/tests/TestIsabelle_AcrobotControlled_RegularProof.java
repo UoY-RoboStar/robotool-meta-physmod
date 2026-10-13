@@ -22,6 +22,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnDFInject
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjectorProvider;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
@@ -32,8 +33,8 @@ public class TestIsabelle_AcrobotControlled_RegularProof {
 
     private ParseHelper<Solution> solutionDSLParseHelper;
 
-    private static final String TESTDATA_PROJECT_PATH =
-        "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/AcrobotControlled/SKO/FullSimulation_Visualisation/";
+    private static final Path TESTDATA_PROJECT_PATH =
+        TestData.path("integration/T5/AcrobotControlled/SKO/FullSimulation_Visualisation");
 
     private ParseHelper<Solution> getSolutionDSLParseHelper() {
         if (solutionDSLParseHelper == null) {
@@ -51,7 +52,7 @@ public class TestIsabelle_AcrobotControlled_RegularProof {
     }
 
     private Path testdataRoot() {
-        return Paths.get("").toAbsolutePath().resolve(TESTDATA_PROJECT_PATH);
+        return TESTDATA_PROJECT_PATH;
     }
 
     private Path inputSlnRef() {

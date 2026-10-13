@@ -34,6 +34,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjec
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.utils.StubFillingUtility;
 import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * T5 Full Simulation visualisation test for the Acrobot scenario.
@@ -84,15 +85,7 @@ public class TestAcrobot_T5FullSimulation_Visualisation {
     }
 
     private Path scenarioRoot() {
-        Path local = integrationRoot().resolve("SKO").resolve("fullSimulation_visualisation");
-        if (Files.exists(local)) {
-            return local;
-        }
-        Path fromTestdata = resolveTestdataPath("RobotExamples/Acrobot/SKO/fullSimulation_visualisation");
-        if (fromTestdata != null) {
-            return fromTestdata;
-        }
-        return local;
+        return TestData.path("integration/T5/RobotExamples/Acrobot/SKO/fullSimulation_visualisation");
     }
 
     private Path tempOutputRoot() {
@@ -101,18 +94,6 @@ public class TestAcrobot_T5FullSimulation_Visualisation {
         } catch (java.io.IOException e) {
             throw new RuntimeException("Failed to create temp directory", e);
         }
-    }
-
-    private Path resolveTestdataPath(String relativePath) {
-        Path cwd = Paths.get("").toAbsolutePath();
-        String testdataRel = "physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/" + relativePath;
-        for (Path base : java.util.List.of(cwd, cwd.resolve(".."), cwd.resolve("../.."), cwd.resolve("../../.."))) {
-            Path candidate = base.resolve(testdataRel);
-            if (Files.exists(candidate)) {
-                return candidate.normalize();
-            }
-        }
-        return null;
     }
 
     @Disabled("Requires CMake / missing testdata")

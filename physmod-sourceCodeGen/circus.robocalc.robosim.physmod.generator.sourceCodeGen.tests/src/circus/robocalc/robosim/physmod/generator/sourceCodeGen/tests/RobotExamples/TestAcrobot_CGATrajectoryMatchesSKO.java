@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +34,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjec
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRef;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
@@ -58,8 +58,8 @@ public class TestAcrobot_CGATrajectoryMatchesSKO {
     private static final double TIME_TOL = 1e-9;
     private static final double TRAJ_TOL = 5e-3;
     private static final double BK_TOL = 1e-6;
-    private static final String CGA_TESTDATA_PROJECT_PATH =
-        "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/Acrobot/CGA/standalone_visualisation";
+    private static final Path CGA_TESTDATA_PROJECT_PATH =
+        TestData.path("integration/T5/Acrobot/CGA/standalone_visualisation");
 
     @Disabled("Requires pipeline output / CMake / missing testdata")
     @Test
@@ -469,33 +469,11 @@ public class TestAcrobot_CGATrajectoryMatchesSKO {
     }
 
     private static Path cgaStandaloneRoot() {
-        return Paths.get("").toAbsolutePath().resolve(CGA_TESTDATA_PROJECT_PATH);
+        return CGA_TESTDATA_PROJECT_PATH;
     }
 
     private static Path resolveSkoPipelineSlnRef() throws IOException {
-        Path rel = Paths.get(
-            "physmod-testdata",
-            "circus.robocalc.robosim.physmod.testdata",
-            "testdata",
-            "integration",
-            "pipeline",
-            "RobotExamples",
-            "acrobot",
-            "temp",
-            "T4",
-            "guidedChoice_GENERATORAcrobot.slnRef"
-        );
-
-        Path cwd = Paths.get("").toAbsolutePath();
-        List<Path> candidates = List.of(
-            cwd.resolve(rel),
-            cwd.resolve("..").resolve(rel),
-            cwd.resolve("..").resolve("..").resolve(rel)
-        );
-        for (Path p : candidates) {
-            if (Files.exists(p)) return p.normalize();
-        }
-        throw new IOException("SKO pipeline slnRef not found. Tried: " + candidates);
+        return TestData.path("integration/pipeline/RobotExamples/acrobot/temp/T4/guidedChoice_GENERATORAcrobot.slnRef");
     }
 
     private static void restoreProperty(String key, String value) {

@@ -24,6 +24,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnDFInject
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjectorProvider;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * Integration-style test for the Isabelle "equations" generation option.
@@ -34,8 +35,8 @@ public class TestIsabelle_T5Equations {
 
     @Inject
     private ParseHelper<SlnRefs> slnRefParseHelper;
-    private static final String TESTDATA_PROJECT_PATH =
-        "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/SKO/";
+    private static final Path TESTDATA_PROJECT_PATH =
+        TestData.path("integration/T5/SKO");
 
     private ParseHelper<Solution> solutionDSLParseHelper;
 
@@ -53,7 +54,7 @@ public class TestIsabelle_T5Equations {
     }
 
     private Path testdataRoot() {
-        return Paths.get("").toAbsolutePath().resolve(TESTDATA_PROJECT_PATH);
+        return TESTDATA_PROJECT_PATH;
     }
 
     private Path isabelleRoot() {

@@ -51,6 +51,7 @@ import circus.robocalc.robosim.physmod.textual.PhysModStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * STANDALONE_VISUALISATION mode test for FourBarPlanarLinkage (closed chain).
@@ -61,8 +62,8 @@ public class FourBarClosedChainStandaloneVisualisationTest {
 
     private ParseHelper<Solution> solutionDSLParseHelper;
 
-    private static final String TESTDATA_PROJECT_PATH =
-        "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/ClosedChain/SKO/standalone_visualisation";
+    private static final Path TESTDATA_PROJECT_PATH =
+        TestData.path("integration/T5/ClosedChain/SKO/standalone_visualisation");
     private static final String MODEL_NAME = "FourBarPlanarLinkage";
     private static final int LINK_COUNT = 4;
     private static final String THETA_INIT = "[|-1.8234765819369751; -1.8234765819369751; 1.8234765819369751|]";
@@ -100,7 +101,7 @@ public class FourBarClosedChainStandaloneVisualisationTest {
     }
 
     private Path scenarioRoot() {
-        return Paths.get("").toAbsolutePath().resolve(TESTDATA_PROJECT_PATH);
+        return TESTDATA_PROJECT_PATH;
     }
 
     private Path tempRoot() {
@@ -250,32 +251,7 @@ public class FourBarClosedChainStandaloneVisualisationTest {
     }
 
     private static Path resolveFourBarInput() throws IOException {
-        Path cwd = Paths.get("").toAbsolutePath();
-        Path rel = Paths.get(
-            "physmod-testdata",
-            "circus.robocalc.robosim.physmod.testdata",
-            "testdata",
-            "integration",
-            "T3",
-            "ClosedChain",
-            "SKO",
-            "input",
-            "FourBarPlanarLinkage.pm"
-        );
-
-        List<Path> candidates = List.of(
-            cwd.resolve(rel),
-            cwd.resolve("..").resolve(rel),
-            cwd.resolve("..").resolve("..").resolve(rel)
-        );
-
-        for (Path candidate : candidates) {
-            if (Files.exists(candidate)) {
-                return candidate.normalize();
-            }
-        }
-
-        throw new IOException("FourBarPlanarLinkage.pm not found. Tried: " + candidates);
+        return TestData.path("integration/T3/ClosedChain/SKO/input/FourBarPlanarLinkage.pm");
     }
 
     private static String readFirstWithExtension(InMemoryFileSystemAccess fsa, String extension) {

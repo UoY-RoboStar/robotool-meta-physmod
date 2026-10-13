@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjec
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.utils.StubFillingUtility;
 import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * T5 Full Simulation visualisation test for the AcrobotControlled scenario.
@@ -75,11 +75,11 @@ public class TestAcrobotControlled_T5FullSimulation_Visualisation {
     private static final String TODO_MARKER = "/* TODO/STUB */";
     private static final double CSV_TOLERANCE = 1e-3;
     private static final long CSV_POLL_INTERVAL_MS = 200;
-    private static final String TESTDATA_PROJECT_PATH =
-        "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/AcrobotControlled/SKO/FullSimulation_Visualisation/";
+    private static final Path TESTDATA_PROJECT_PATH =
+        TestData.path("integration/T5/AcrobotControlled/SKO/FullSimulation_Visualisation");
 
     private Path scenarioRoot() {
-        return Paths.get("").toAbsolutePath().resolve(TESTDATA_PROJECT_PATH);
+        return TESTDATA_PROJECT_PATH;
     }
 
     // Temp directory in testdata project for generated artifacts (preserved for inspection)

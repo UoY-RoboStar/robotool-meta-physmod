@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
@@ -16,6 +15,7 @@ import com.google.inject.Injector;
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.SolutionRefGenerator;
 import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * T5 Visual integration test: feed T4 Visual slnRef output and ensure T5 generates visualization code.
@@ -23,15 +23,7 @@ import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 public class TestVisual_T5Integration {
 
     private Path integrationRoot() {
-        Path local = Paths.get("").toAbsolutePath().resolve("tests").resolve("integrationTests").resolve("vis");
-        if (Files.exists(local)) {
-            return local;
-        }
-        Path fromTestdata = resolveTestdataPath("vis");
-        if (fromTestdata != null) {
-            return fromTestdata;
-        }
-        return local;
+        return TestData.path("integration/T5/vis");
     }
 
     private Path tempOutputRoot() {
@@ -42,17 +34,6 @@ public class TestVisual_T5Integration {
         }
     }
 
-    private Path resolveTestdataPath(String relativePath) {
-        Path cwd = Paths.get("").toAbsolutePath();
-        String testdataRel = "physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/" + relativePath;
-        for (Path base : java.util.List.of(cwd, cwd.resolve(".."), cwd.resolve("../.."), cwd.resolve("../../.."))) {
-            Path candidate = base.resolve(testdataRel);
-            if (Files.exists(candidate)) {
-                return candidate.normalize();
-            }
-        }
-        return null;
-    }
     
     // Main method to run test directly
     public static void main(String[] args) {

@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +28,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnDFInject
 import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * STANDALONE_VISUALISATION mode test for Acrobot:
@@ -46,8 +46,8 @@ public class TestAcrobot_T5Standalone_Visualisation {
     private ParseHelper<SlnRefs> slnRefParseHelper;
 
     private ParseHelper<Solution> solutionDSLParseHelper;
-    private static final String TESTDATA_PROJECT_PATH =
-        "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/Acrobot/SKO/standalone_visualisation";
+    private static final Path TESTDATA_PROJECT_PATH =
+        TestData.path("integration/T5/Acrobot/SKO/standalone_visualisation");
 
     private ParseHelper<Solution> getSolutionDSLParseHelper() {
         if (solutionDSLParseHelper == null) {
@@ -59,7 +59,7 @@ public class TestAcrobot_T5Standalone_Visualisation {
     }
 
     private Path standaloneVisRoot() {
-        return Paths.get("").toAbsolutePath().resolve(TESTDATA_PROJECT_PATH);
+        return TESTDATA_PROJECT_PATH;
     }
 
     @Test

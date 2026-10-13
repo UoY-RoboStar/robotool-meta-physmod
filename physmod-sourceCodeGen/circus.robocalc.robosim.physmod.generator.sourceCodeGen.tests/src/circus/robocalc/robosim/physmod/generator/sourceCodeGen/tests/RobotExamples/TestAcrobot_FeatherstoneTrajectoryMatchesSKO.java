@@ -33,6 +33,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjec
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRef;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
@@ -378,29 +379,7 @@ public class TestAcrobot_FeatherstoneTrajectoryMatchesSKO {
     }
 
     private static Path resolveSkoPipelineSlnRef() throws IOException {
-        Path rel = Paths.get(
-            "physmod-testdata",
-            "circus.robocalc.robosim.physmod.testdata",
-            "testdata",
-            "integration",
-            "pipeline",
-            "RobotExamples",
-            "acrobot",
-            "temp",
-            "T4",
-            "guidedChoice_GENERATORAcrobot.slnRef"
-        );
-
-        Path cwd = Paths.get("").toAbsolutePath();
-        List<Path> candidates = List.of(
-            cwd.resolve(rel),
-            cwd.resolve("..").resolve(rel),
-            cwd.resolve("..").resolve("..").resolve(rel)
-        );
-        for (Path p : candidates) {
-            if (Files.exists(p)) return p.normalize();
-        }
-        throw new IOException("SKO pipeline slnRef not found. Tried: " + candidates);
+        return TestData.path("integration/pipeline/RobotExamples/acrobot/temp/T4/guidedChoice_GENERATORAcrobot.slnRef");
     }
 
     private static void restoreProperty(String key, String value) {

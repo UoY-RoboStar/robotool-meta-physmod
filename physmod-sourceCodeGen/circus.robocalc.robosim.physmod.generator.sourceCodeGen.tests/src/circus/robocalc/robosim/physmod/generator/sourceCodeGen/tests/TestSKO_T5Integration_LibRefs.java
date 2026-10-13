@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.SolutionRefGenerator;
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjectorProvider;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * T5 integration test: feed T4 slnRef output and ensure T5 generates Solution DSL and C++.
@@ -29,15 +30,15 @@ public class TestSKO_T5Integration_LibRefs {
 
     @Inject
     private ParseHelper<SlnRefs> slnRefParseHelper;
-    private static final String TESTDATA_PROJECT_PATH =
-        "../../physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/SKO/";
+    private static final Path TESTDATA_PROJECT_PATH =
+        TestData.path("integration/T5/SKO");
 
     private Path integrationRoot() {
         return Paths.get("").toAbsolutePath().resolve("tests").resolve("integrationTests").resolve("SKO");
     }
 
     private Path testdataRoot() {
-        return Paths.get("").toAbsolutePath().resolve(TESTDATA_PROJECT_PATH);
+        return TESTDATA_PROJECT_PATH;
     }
 
     @Test

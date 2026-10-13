@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.testing.InjectWith;
@@ -22,6 +21,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnDFInject
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjectorProvider;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 /**
  * Integration test for Isabelle generation with proof blocks built from T4 output.
@@ -45,15 +45,7 @@ public class TestIsabelle_SKO_WithProof {
     }
 
     private Path testRoot() {
-        Path local = Paths.get("").toAbsolutePath().resolve("tests").resolve("integrationTests").resolve("SKO_proof");
-        if (Files.exists(local)) {
-            return local;
-        }
-        Path fromTestdata = resolveTestdataPath("SKO_proof");
-        if (fromTestdata != null) {
-            return fromTestdata;
-        }
-        return local;
+        return TestData.path("integration/T5/SKO_proof");
     }
 
     private Path tempOutputRoot() {
@@ -62,18 +54,6 @@ public class TestIsabelle_SKO_WithProof {
         } catch (java.io.IOException e) {
             throw new RuntimeException("Failed to create temp directory", e);
         }
-    }
-
-    private Path resolveTestdataPath(String relativePath) {
-        Path cwd = Paths.get("").toAbsolutePath();
-        String testdataRel = "physmod-testdata/circus.robocalc.robosim.physmod.testdata/testdata/integration/T5/" + relativePath;
-        for (Path base : java.util.List.of(cwd, cwd.resolve(".."), cwd.resolve("../.."), cwd.resolve("../../.."))) {
-            Path candidate = base.resolve(testdataRel);
-            if (Files.exists(candidate)) {
-                return candidate.normalize();
-            }
-        }
-        return null;
     }
 
     @Test

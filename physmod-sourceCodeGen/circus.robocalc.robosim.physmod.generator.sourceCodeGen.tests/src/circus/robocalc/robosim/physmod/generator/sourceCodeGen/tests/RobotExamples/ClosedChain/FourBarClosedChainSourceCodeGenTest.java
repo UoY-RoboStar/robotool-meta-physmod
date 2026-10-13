@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
@@ -26,6 +24,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnDFInject
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjectorProvider;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
+import circus.robocalc.robosim.physmod.testdata.TestData;
 
 @org.junit.jupiter.api.Tag("generator-backlog")
 @ExtendWith(InjectionExtension.class)
@@ -89,31 +88,6 @@ public class FourBarClosedChainSourceCodeGenTest {
     }
 
     private static Path resolveSlnRefInput() throws IOException {
-        Path cwd = Paths.get("").toAbsolutePath();
-        Path rel = Paths.get(
-            "physmod-testdata",
-            "circus.robocalc.robosim.physmod.testdata",
-            "testdata",
-            "integration",
-            "T5",
-            "ClosedChain",
-            "SKO",
-            "input",
-            "FourBarPlanarLinkage.slnRef"
-        );
-
-        List<Path> candidates = List.of(
-            cwd.resolve(rel),
-            cwd.resolve("..").resolve(rel),
-            cwd.resolve("..").resolve("..").resolve(rel)
-        );
-
-        for (Path candidate : candidates) {
-            if (Files.exists(candidate)) {
-                return candidate.normalize();
-            }
-        }
-
-        throw new IOException("FourBarPlanarLinkage.slnRef not found. Tried: " + candidates);
+        return TestData.path("integration/T5/ClosedChain/SKO/input/FourBarPlanarLinkage.slnRef");
     }
 }
