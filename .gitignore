@@ -1,7 +1,6 @@
 robotool-physmod-repository/target/*
 **/target/
 **/temp/
-**/latex/
 *.log
 copy-data.sh
 /.m2/
