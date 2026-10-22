@@ -59,7 +59,7 @@ public class TestIsabelle_SKO_WithProof {
     @Test
     public void testIsabelleWithProofBlock() throws Exception {
         // Read proof .slnRef from local test input directory
-        Path inputPath = testRoot().resolve("input").resolve("SimpleArmSerial_WithProof.slnRef");
+        Path inputPath = InputCheck.valid(testRoot().resolve("input").resolve("SimpleArmSerial_WithProof.slnRef"));
 
         assertTrue(Files.exists(inputPath), "Missing proof input: " + inputPath);
 

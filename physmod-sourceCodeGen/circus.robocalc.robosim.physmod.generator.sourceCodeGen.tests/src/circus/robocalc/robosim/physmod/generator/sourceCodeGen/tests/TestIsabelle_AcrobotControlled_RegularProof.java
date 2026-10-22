@@ -69,7 +69,7 @@ public class TestIsabelle_AcrobotControlled_RegularProof {
             return pipelineOutput;
         }
 
-        return testdataRoot().resolve("input").resolve("AcrobotControlled.slnRef");
+        return InputCheck.valid(testdataRoot().resolve("input").resolve("AcrobotControlled.slnRef"));
     }
 
     private Path outputDir() {

@@ -80,7 +80,7 @@ import  physmod::math::*
 		}
 		local joint ElbowJoint {
 			def {
-				const H : vector ( real , 6 ) , theta_2 : real , XJ : matrix ( real , 6 , 6 )
+				const H : vector ( real , 6 ) , XJ : matrix ( real , 6 , 6 )
 			InOut B_2 : matrix ( real , 4 , 4 ) InOut B_3 : matrix ( real , 4 , 4 ) InOut _B_3 : matrix ( real , 4 , 4 ) InOut T_3_2 : matrix ( real , 4 , 4 ) InOut V_3 : vector ( real , 6 ) InOut _V_3 : vector ( real , 6 ) InOut alpha_3 : vector ( real , 6 ) InOut _alpha_3 : vector ( real , 6 ) InOut f_2 : vector ( real , 6 ) InOut r_v2 : real = 1 InOut theta_2 : real InOut phi_3_2 : matrix ( real , 6 , 6 ) local number : real = 2 local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |] const H2 : vector ( real , 6 ) = (| 1 , 0 , 0 , 0 , 0 , 0 |) equation H == H2 equation XJ == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta_2 ) , - sin ( theta_2 ) , 0 , 0 , 0 ; 0 , sin ( theta_2 ) , cos ( theta_2 ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta_2 ) , - sin ( theta_2 ) ; 0 , 0 , 0 , 0 , sin ( theta_2 ) , cos ( theta_2 ) |] equation _B_3 == B_3 equation _V_3 == V_3 equation _alpha_3 == alpha_3 equation _f_2 == f_2 Constraint ( XJ ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 1.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1.0 |] }
 			flexibly connected to IntermediateLink
 			pose {
@@ -147,7 +147,7 @@ import  physmod::math::*
 		}
 		local joint WristJoint {
 			def {
-				const  H : vector ( real , 6 ) , theta_1 : real , XJ : matrix ( real , 6 , 6 )
+				const  H : vector ( real , 6 ) , XJ : matrix ( real , 6 , 6 )
 			InOut B_1 : matrix ( real , 4 , 4 ) InOut B_2 : matrix ( real , 4 , 4 ) InOut _B_2 : matrix ( real , 4 , 4 ) InOut T_2_1 : matrix ( real , 4 , 4 ) InOut V_2 : vector ( real , 6 ) InOut _V_2 : vector ( real , 6 ) InOut alpha_2 : vector ( real , 6 ) InOut _alpha_2 : vector ( real , 6 ) InOut f_1 : vector ( real , 6 ) InOut r_v1 : real = 1 InOut theta_1 : real InOut phi_2_1 : matrix ( real , 6 , 6 ) local number : real = 1 local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |] const H1 : vector ( real , 6 ) = (| 0 , 0 , 1 , 0 , 0 , 0 |) equation H == H1 equation XJ == [| cos ( theta_1 ) , - sin ( theta_1 ) , 0 , 0 , 0 , 0 ; sin ( theta_1 ) , cos ( theta_1 ) , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0 , 0 , cos ( theta_1 ) , - sin ( theta_1 ) , 0 ; 0 , 0 , 0 , sin ( theta_1 ) , cos ( theta_1 ) , 0 ; 0 , 0 , 0 , 0 , 0 , 1 |] equation _B_2 == B_2 equation _V_2 == V_2 equation _alpha_2 == alpha_2 equation _f_1 == f_1 Constraint ( XJ ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 1.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1.0 |] }
 			flexibly connected to Gripper
 			pose {
@@ -170,7 +170,7 @@ import  physmod::math::*
 					yaw = 0.0
 				}
 			}
-		relation B_2 == IntermediateLink . WristJoint . B_2 /\ V_2 == IntermediateLink . WristJoint . V_2 /\ alpha_2 == IntermediateLink . WristJoint . alpha_2 /\ XJ_1 == IntermediateLink . WristJoint . XJ }
+		relation B_2 == WristJoint . B_2 /\ V_2 == WristJoint . V_2 /\ alpha_2 == WristJoint . alpha_2 /\ XJ_1 == WristJoint . XJ }
 		pose {
 			x = 
 			
@@ -182,7 +182,7 @@ import  physmod::math::*
 			pitch = 0.0
 			yaw = 0.0
 		}
-	relation H_2 == IntermediateLink.H2 /\  B_2 == IntermediateLink . B_2 /\ V [ 1 ] == IntermediateLink . V_2 /\ a [ 1 ] == IntermediateLink . a_2 /\ b [ 1 ] == IntermediateLink . b_2 /\ alpha [ 1 ] == IntermediateLink . alpha_2 /\ submatrix ( M ) ( 6 , 6 , 6 , 6 ) == IntermediateLink . M_2 /\ tau [ 1 ] == IntermediateLink . tau_2
+	relation H_2 == IntermediateLink . H_2 /\  B_2 == IntermediateLink . B_2 /\ V [ 1 ] == IntermediateLink . V_2 /\ a [ 1 ] == IntermediateLink . a_2 /\ b [ 1 ] == IntermediateLink . b_2 /\ alpha [ 1 ] == IntermediateLink . alpha_2 /\ submatrix ( M ) ( 6 , 6 , 6 , 6 ) == IntermediateLink . M_2 /\ tau [ 1 ] == IntermediateLink . tau_2
 	relation_flexi B_2 == IntermediateLink . B_2 /\ f_2 == IntermediateLink . f_2 /\ theta_2 == IntermediateLink . theta_2 /\ T_3_2 == IntermediateLink . T_3_2 /\ phi_3_2 == IntermediateLink . phi_3_2 /\ _V_3 == IntermediateLink . _V_3 /\ theta [ 1 ] == IntermediateLink . theta_2 }
 	local link Gripper {
 		def {
@@ -235,20 +235,15 @@ InOut b : vector ( real , 18 )
 InOut alpha : vector ( real , 18 ) 
 InOut phi : matrix ( real , 18 , 18 ) 
 InOut M : matrix ( real , 18 , 18 ) 
-InOut theta : vector ( real , 2 ) 
 InOut tau : vector ( real , 2 ) 
 InOut C : vector ( real , 2 ) 
-InOut H : matrix ( real , 2 , 18 ) 
 InOut M_mass : matrix ( real , 2 , 2 ) 
-InOut B_1 : matrix ( real , 4 , 4 ) 
 InOut M_1 : matrix ( real , 6 , 6 ) 
 InOut r_v1 : real = 1 
 InOut T_2_1 : matrix ( real , 4 , 4 ) 
-InOut B_2 : matrix ( real , 4 , 4 ) 
 InOut M_2 : matrix ( real , 6 , 6 ) 
 InOut r_v2 : real = 1 
 InOut T_3_2 : matrix ( real , 4 , 4 ) 
-InOut B_3 : matrix ( real , 4 , 4 ) 
 InOut M_3 : matrix ( real , 6 , 6 ) 
 
 equation submatrix ( phi ) ( 0 , 0 , 3 , 3 ) == identity ( 3 ) 
@@ -318,8 +313,3 @@ function zeroMat ( a : real , b : real ) : matrix ( real , 0 , 0 ) { }
 function getFramePosition ( k : real , B_n : Seq( matrix ( real , 4 , 4 ) ) ) : vector ( real , 3 ) { } 
 
 const T : int
-
-record Geom{
- 	geomType: string
- 	geomVal: vector(real)
-}

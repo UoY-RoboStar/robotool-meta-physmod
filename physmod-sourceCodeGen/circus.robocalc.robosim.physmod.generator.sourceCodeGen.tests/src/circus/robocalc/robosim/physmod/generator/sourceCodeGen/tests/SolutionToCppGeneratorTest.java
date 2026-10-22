@@ -216,7 +216,7 @@ public class SolutionToCppGeneratorTest {
      * Helper method to test compilation for a simple test case
      */
     private void testCompilationForTest(String testName) throws Exception {
-        Path inputPath = getTestPath(INPUT_DIR, testName + ".sln");
+        Path inputPath = InputCheck.valid(getTestPath(INPUT_DIR, testName + ".sln"));
         if (!Files.exists(inputPath)) {
             System.out.println("Skipping compilation test for " + testName + " - input file not found");
             return;
@@ -247,7 +247,7 @@ public class SolutionToCppGeneratorTest {
      * Helper method to test compilation for a subfolder test case
      */
     private void testCompilationForSubfolderTest(String category, String testName) throws Exception {
-        Path inputPath = getSubfolderTestPath(category, INPUT_DIR, testName + ".sln");
+        Path inputPath = InputCheck.valid(getSubfolderTestPath(category, INPUT_DIR, testName + ".sln"));
         if (!Files.exists(inputPath)) {
             System.out.println("Skipping compilation test for " + category + "/" + testName + " - input file not found");
             return;
@@ -279,7 +279,7 @@ public class SolutionToCppGeneratorTest {
      */
     private void runGenerationTest(String testName) throws Exception {
         // Read DSL input from file
-        Path inputPath = getTestPath(INPUT_DIR, testName + ".sln");
+        Path inputPath = InputCheck.valid(getTestPath(INPUT_DIR, testName + ".sln"));
         assertTrue(Files.exists(inputPath), "Input file should exist: " + inputPath);
         
         String dslInput = readFile(inputPath);
@@ -344,7 +344,7 @@ public class SolutionToCppGeneratorTest {
      */
     private void runSubfolderGenerationTest(String category, String testName) throws Exception {
         // Read DSL input from subfolder
-        Path inputPath = getSubfolderTestPath(category, INPUT_DIR, testName + ".sln");
+        Path inputPath = InputCheck.valid(getSubfolderTestPath(category, INPUT_DIR, testName + ".sln"));
         assertTrue(Files.exists(inputPath), "Input file should exist: " + inputPath);
         
         String dslInput = readFile(inputPath);

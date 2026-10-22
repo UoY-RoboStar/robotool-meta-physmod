@@ -52,6 +52,7 @@ import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.testdata.TestData;
+import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.InputCheck;
 
 /**
  * STANDALONE_VISUALISATION mode test for FourBarPlanarLinkage (closed chain).
@@ -627,6 +628,7 @@ public class FourBarClosedChainStandaloneVisualisationTest {
         assertNotNull(parsed, "Parsing FourBarPlanarLinkage.pm failed");
         assertTrue(parsed.eResource().getErrors().isEmpty(),
             () -> "Parse errors: " + parsed.eResource().getErrors());
+        InputCheck.valid(parsed.eResource());
 
         PMPackage pmPackage = (PMPackage) parsed;
         PModel pmodel = pmPackage.getPmodels().isEmpty()

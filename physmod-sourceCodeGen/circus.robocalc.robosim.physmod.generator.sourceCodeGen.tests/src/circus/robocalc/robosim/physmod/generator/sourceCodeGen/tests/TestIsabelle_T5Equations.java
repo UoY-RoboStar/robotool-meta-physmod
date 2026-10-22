@@ -63,7 +63,7 @@ public class TestIsabelle_T5Equations {
 
     @Test
     public void testIsabelleEquationsGeneration() throws Exception {
-        Path input = testdataRoot().resolve("integrated").resolve("input").resolve("SimpleArmSerial.slnRef");
+        Path input = InputCheck.valid(testdataRoot().resolve("integrated").resolve("input").resolve("SimpleArmSerial.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

@@ -54,7 +54,7 @@ public class TestIsabelle_AcrobotControlled_WithProof {
 
     @Test
     public void testIsabelleWithProofBlock_AcrobotControlled() throws Exception {
-        Path inputPath = testRoot().resolve("input").resolve("acrobotControlled_WithProof.slnRef");
+        Path inputPath = InputCheck.valid(testRoot().resolve("input").resolve("acrobotControlled_WithProof.slnRef"));
         assertTrue(Files.exists(inputPath), "Missing proof input: " + inputPath);
 
         String slnRefText = Files.readString(inputPath);

@@ -30,6 +30,7 @@ import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.testdata.TestData;
+import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.InputCheck;
 
 /**
  * STANDALONE_VISUALISATION mode test for SimpleArm:
@@ -83,7 +84,7 @@ public class TestSimpleArm_T5Standalone_Visualisation {
         Path tempDir = tempOutputRoot();
 
         // Input: simplearm slnRef (gravity only, no controller)
-        Path input = standaloneVisRoot().resolve("input").resolve("simplearm_gravity_only.slnRef");
+        Path input = InputCheck.valid(standaloneVisRoot().resolve("input").resolve("simplearm_gravity_only.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

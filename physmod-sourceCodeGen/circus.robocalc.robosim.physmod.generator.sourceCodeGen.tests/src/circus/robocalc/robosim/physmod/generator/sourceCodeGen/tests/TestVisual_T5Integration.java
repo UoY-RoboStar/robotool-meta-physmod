@@ -40,9 +40,9 @@ public class TestVisual_T5Integration {
         try {
             TestVisual_T5Integration test = new TestVisual_T5Integration();
             test.testGenerateFromT4SlnRef_Visual();
-            System.out.println("✅ Test completed successfully!");
+            System.out.println("Test completed successfully!");
         } catch (Exception e) {
-            System.err.println("❌ Test failed: " + e.getMessage());
+            System.err.println("Test failed: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -50,7 +50,7 @@ public class TestVisual_T5Integration {
     @Test
     public void testGenerateFromT4SlnRef_Visual() throws Exception {
         // STAGE 2 Input: T4 Visual slnRef (stage2 = slnRef input to T5)
-        Path inputStage2 = integrationRoot().resolve("input").resolve("stage2").resolve("VisualExample.slnRef");
+        Path inputStage2 = InputCheck.valid(integrationRoot().resolve("input").resolve("stage2").resolve("VisualExample.slnRef"));
         assertTrue(Files.exists(inputStage2), "Missing input slnRef: " + inputStage2);
 
         String slnRefText = Files.readString(inputStage2);

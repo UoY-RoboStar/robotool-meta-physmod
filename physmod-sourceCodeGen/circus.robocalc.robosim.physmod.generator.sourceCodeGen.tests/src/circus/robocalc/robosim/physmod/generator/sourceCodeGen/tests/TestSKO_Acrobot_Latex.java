@@ -63,7 +63,7 @@ public class TestSKO_Acrobot_Latex {
     @Test
     public void testAcrobotLatexGeneration() throws Exception {
         // Use input from acrobot SKO folder
-        Path input = acrobotSkoRoot().resolve("standalone_visualisation").resolve("input").resolve("acrobot_gravity_only.slnRef");
+        Path input = InputCheck.valid(acrobotSkoRoot().resolve("standalone_visualisation").resolve("input").resolve("acrobot_gravity_only.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

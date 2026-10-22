@@ -49,6 +49,7 @@ public class TestSKO_T5Integration_LibRefs {
             input = testdataRoot().resolve("integrated").resolve("input").resolve("SimpleArmSerial.slnRef");
         }
         assertTrue(Files.exists(input), "Missing input slnRef in default or integrated input directory");
+        InputCheck.valid(input);
 
         String slnRefText = Files.readString(input);
 

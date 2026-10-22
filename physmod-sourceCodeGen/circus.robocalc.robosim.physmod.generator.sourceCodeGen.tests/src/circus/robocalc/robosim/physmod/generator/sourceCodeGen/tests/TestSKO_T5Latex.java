@@ -73,7 +73,7 @@ public class TestSKO_T5Latex {
     @Tag("generator-backlog")
     public void testLatexGeneration() throws Exception {
         // Use input from latex test folder
-        Path input = testdataRoot().resolve("latex").resolve("input").resolve("SimpleArmSerial.slnRef");
+        Path input = InputCheck.valid(testdataRoot().resolve("latex").resolve("input").resolve("SimpleArmSerial.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

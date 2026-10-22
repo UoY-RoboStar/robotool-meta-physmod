@@ -35,6 +35,7 @@ import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRef;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.testdata.TestData;
+import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.InputCheck;
 
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
@@ -67,7 +68,7 @@ public class TestAcrobot_CGATrajectoryMatchesSKO {
         Path skoSlnRefPath = resolveSkoPipelineSlnRef();
         assertTrue(Files.exists(skoSlnRefPath), "Missing SKO pipeline slnRef: " + skoSlnRefPath);
 
-        Path cgaSlnRefPath = cgaStandaloneRoot().resolve("input").resolve("acrobot_cga.slnRef");
+        Path cgaSlnRefPath = InputCheck.valid(cgaStandaloneRoot().resolve("input").resolve("acrobot_cga.slnRef"));
         assertTrue(Files.exists(cgaSlnRefPath), "Missing CGA slnRef: " + cgaSlnRefPath);
 
         SlnRefs skoRefs = slnRefParseHelper.parse(Files.readString(skoSlnRefPath));

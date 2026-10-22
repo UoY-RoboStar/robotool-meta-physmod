@@ -1,3 +1,5 @@
+import physmod::math::*
+
 pmodel pm1 {
     InOut theta: vector(real,2)
     InOut X_J: Seq(matrix(real,6,6))
@@ -13,4 +15,11 @@ pmodel pm1 {
     Constraint (X_J_2)[t==0] == zeroMat(6,6)
     Constraint (X_J)[t==0] == <X_J_1, X_J_2>
     Constraint (theta)[t==0] == zeroVec(2)
+
+    local link BaseLink {
+        def {}
+    }
 }
+
+function zeroVec(a: real): vector(real,1) {}
+function zeroMat(a: real, b: real): matrix(real,0,0) {}

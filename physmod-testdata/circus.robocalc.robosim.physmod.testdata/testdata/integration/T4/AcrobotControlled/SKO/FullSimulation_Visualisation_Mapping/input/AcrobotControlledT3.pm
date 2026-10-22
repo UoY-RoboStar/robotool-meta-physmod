@@ -17,6 +17,8 @@ pmodel AcrobotControlled {
 			InOut f_3 : vector ( real , 6 )
 			InOut B_3 : matrix ( real , 4 , 4 )
 			InOut X_T_3 : matrix ( real , 6 , 6 )
+			InOut T_geom_3 : matrix ( real , 4 , 4 )
+			InOut T_offset_3 : matrix ( real , 4 , 4 )
 			InOut m_3 : real = 0.1
 			InOut I_C_3 : matrix ( real , 3 , 3 ) = [| 0.1 , 0.0 , 0.0 ; 0.0 , 0.1 , 0.0 ; 0.0 , 0.0 , 0.1 |]
 			InOut c_3 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
@@ -121,6 +123,8 @@ pmodel AcrobotControlled {
 			InOut f_2 : vector ( real , 6 )
 			InOut B_2 : matrix ( real , 4 , 4 )
 			InOut X_T_2 : matrix ( real , 6 , 6 )
+			InOut T_geom_2 : matrix ( real , 4 , 4 )
+			InOut T_offset_2 : matrix ( real , 4 , 4 )
 			InOut m_2 : real = 1.0
 			InOut I_C_2 : matrix ( real , 3 , 3 ) = [| 0.083 , 0.0 , 0.0 ; 0.0 , 0.083 , 0.0 ; 0.0 , 0.0 , 0.001 |]
 			InOut c_2 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
@@ -234,7 +238,7 @@ pmodel AcrobotControlled {
 		}
         pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     relation B_2 == Link1 . B_2 /\ V [ 1 ] == Link1 . V_2 /\ a [ 1 ] == Link1 . a_2 /\ b [ 1 ] == Link1 . b_2 /\ alpha [ 1 ] == Link1 . alpha_2 /\ submatrix ( M ) ( 6 , 6 , 6 , 6 ) == Link1 . M_2 /\ tau [ 1 ] == Link1 . tau_2 /\ L2_geom == geom_21 /\ submatrix ( H ) ( 1 , 6 , 1 , 6 ) == Link1 . H_2
-		relation_flexi B_2 == Link1 . B_2 /\ f_2 == Link1 . f_2 /\ theta_2 == Link1 . theta_2 /\ T_3_2 == Link1 . T_3_2 /\ phi_3_2 == Link1 . phi_3_2 /\ _V_3 == Link1 . _V_3 /\ H == Link1 . H_2 /\ XJ == Link1 . X_J_2
+		relation_flexi B_2 == Link1 . B_2 /\ f_2 == Link1 . f_2 /\ theta_2 == Link1 . theta_2 /\ T_3_2 == Link1 . T_3_2 /\ phi_3_2 == Link1 . phi_3_2 /\ _V_3 == Link1 . _V_3 /\ H == Link1 . H_2 /\ X_J_2 == Link1 . X_J_2
 	}
 
     local link Link2 {
@@ -249,6 +253,8 @@ pmodel AcrobotControlled {
 			InOut f_1 : vector ( real , 6 )
 			InOut B_1 : matrix ( real , 4 , 4 )
 			InOut X_T_1 : matrix ( real , 6 , 6 )
+			InOut T_geom_1 : matrix ( real , 4 , 4 )
+			InOut T_offset_1 : matrix ( real , 4 , 4 )
 			InOut m_1 : real = 1.0
 			InOut I_C_1 : matrix ( real , 3 , 3 ) = [| 0.333 , 0.0 , 0.0 ; 0.0 , 0.333 , 0.0 ; 0.0 , 0.0 , 0.001 |]
 			InOut c_1 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
@@ -294,7 +300,7 @@ pmodel AcrobotControlled {
         }
         pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     relation B_1 == Link2 . B_1 /\ V [ 0 ] == Link2 . V_1 /\ a [ 0 ] == Link2 . a_1 /\ b [ 0 ] == Link2 . b_1 /\ alpha [ 0 ] == Link2 . alpha_1 /\ submatrix ( M ) ( 0 , 0 , 6 , 6 ) == Link2 . M_1 /\ tau [ 0 ] == Link2 . tau_1 /\ L1_geom == geom_11 /\ submatrix ( H ) ( 0 , 0 , 1 , 6 ) == Link2 . H_1
-		relation_flexi B_1 == Link2 . B_1 /\ f_1 == Link2 . f_1 /\ theta_1 == Link2 . theta_1 /\ T_2_1 == Link2 . T_2_1 /\ phi_2_1 == Link2 . phi_2_1 /\ _V_2 == Link2 . _V_2 /\ H == Link2 . H_1 /\ XJ == Link2 . X_J_1
+		relation_flexi B_1 == Link2 . B_1 /\ f_1 == Link2 . f_1 /\ theta_1 == Link2 . theta_1 /\ T_2_1 == Link2 . T_2_1 /\ phi_2_1 == Link2 . phi_2_1 /\ _V_2 == Link2 . _V_2 /\ H == Link2 . H_1 /\ X_J_1 == Link2 . X_J_1
 	}
 	const n : int = 3
 	InOut N : real = 2
@@ -322,16 +328,22 @@ pmodel AcrobotControlled {
 	InOut B_1 : matrix ( real , 4 , 4 )
 	InOut X_T_1 : matrix ( real , 6 , 6 )
 	InOut M_1 : matrix ( real , 6 , 6 )
+	InOut T_geom_1 : matrix ( real , 4 , 4 )
+	InOut T_offset_1 : matrix ( real , 4 , 4 )
 	InOut r_v1 : real = 1
 	InOut T_2_1 : matrix ( real , 4 , 4 )
 	InOut B_2 : matrix ( real , 4 , 4 )
 	InOut X_T_2 : matrix ( real , 6 , 6 )
 	InOut M_2 : matrix ( real , 6 , 6 )
+	InOut T_geom_2 : matrix ( real , 4 , 4 )
+	InOut T_offset_2 : matrix ( real , 4 , 4 )
 	InOut r_v2 : real = 1
 	InOut T_3_2 : matrix ( real , 4 , 4 )
 	InOut B_3 : matrix ( real , 4 , 4 )
 	InOut X_T_3 : matrix ( real , 6 , 6 )
 	InOut M_3 : matrix ( real , 6 , 6 )
+	InOut T_geom_3 : matrix ( real , 4 , 4 )
+	InOut T_offset_3 : matrix ( real , 4 , 4 )
 	InOut X_J_1 : matrix ( real , 6 , 6 )
 	InOut X_J_2 : matrix ( real , 6 , 6 )
 	InOut B_ctrl : matrix ( real , 2 , 1 )

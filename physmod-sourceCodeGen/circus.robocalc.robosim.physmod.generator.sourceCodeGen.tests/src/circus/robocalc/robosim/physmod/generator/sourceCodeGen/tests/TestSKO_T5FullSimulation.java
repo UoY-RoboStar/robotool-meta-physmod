@@ -97,7 +97,7 @@ public class TestSKO_T5FullSimulation {
     @Disabled("Test data out of date: the hand-written expected/manual/src/platform_mapping.h lacks the World.gravity_world field that the generated platform_mapping_adapter.cpp uses")
     @Test
     public void testFullSimulation() throws Exception {
-        Path input = testdataRoot().resolve("fullSimulation").resolve("input").resolve("SimpleArmSerial.slnRef");
+        Path input = InputCheck.valid(testdataRoot().resolve("fullSimulation").resolve("input").resolve("SimpleArmSerial.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

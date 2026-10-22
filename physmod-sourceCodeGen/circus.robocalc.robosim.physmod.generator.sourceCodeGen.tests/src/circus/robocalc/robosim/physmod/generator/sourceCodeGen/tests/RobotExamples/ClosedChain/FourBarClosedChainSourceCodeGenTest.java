@@ -25,6 +25,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.SlnRefInjec
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.testdata.TestData;
+import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.InputCheck;
 
 @org.junit.jupiter.api.Tag("generator-backlog")
 @ExtendWith(InjectionExtension.class)
@@ -88,6 +89,6 @@ public class FourBarClosedChainSourceCodeGenTest {
     }
 
     private static Path resolveSlnRefInput() throws IOException {
-        return TestData.path("integration/T5/ClosedChain/SKO/input/FourBarPlanarLinkage.slnRef");
+        return InputCheck.valid(TestData.path("integration/T5/ClosedChain/SKO/input/FourBarPlanarLinkage.slnRef"));
     }
 }

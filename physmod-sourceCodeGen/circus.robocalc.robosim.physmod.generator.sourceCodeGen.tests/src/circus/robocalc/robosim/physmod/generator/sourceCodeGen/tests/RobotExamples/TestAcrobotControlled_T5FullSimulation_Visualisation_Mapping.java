@@ -34,6 +34,7 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.utils.StubF
 import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.testdata.TestData;
+import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.InputCheck;
 
 /**
  * T5 Full Simulation Visualisation Mapping test for the AcrobotControlled scenario.
@@ -102,7 +103,7 @@ public class TestAcrobotControlled_T5FullSimulation_Visualisation_Mapping {
     public void testFullSimulationWithVisualisationMapping() throws Exception {
         Path tempDir = tempRoot();
 
-        Path input = scenarioRoot().resolve("input").resolve("AcrobotControlled.slnRef");
+        Path input = InputCheck.valid(scenarioRoot().resolve("input").resolve("AcrobotControlled.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

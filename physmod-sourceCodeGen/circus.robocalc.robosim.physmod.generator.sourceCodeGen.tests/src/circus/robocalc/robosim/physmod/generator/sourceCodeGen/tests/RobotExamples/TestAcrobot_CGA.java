@@ -29,6 +29,7 @@ import circus.robocalc.robosim.physmod.slnRef.SlnRefStandaloneSetup;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.testdata.TestData;
+import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.InputCheck;
 
 /**
  * Integration test for CGA (Conformal Geometric Algebra) formulation with Acrobot example.
@@ -77,7 +78,7 @@ public class TestAcrobot_CGA {
         }
 
         // Input: acrobot slnRef with CGA formulation
-        Path input = cgaRoot().resolve("input").resolve("acrobot_cga.slnRef");
+        Path input = InputCheck.valid(cgaRoot().resolve("input").resolve("acrobot_cga.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

@@ -16,14 +16,17 @@ pmodel TestVariables {
 	
 	local testVar: real
 	local counter: int
-	local flag: bool
+	local flag: boolean
 	
 	equation position == velocity * T
 	equation tau == m * 9.81
 	
 	local link TestLink {
+		def { }
 		local body TestBody {
-			
+			def {
+				box(length=1, width=1, height=1)
+			}
 		}
 	}
 }

@@ -41,18 +41,6 @@ pmodel IntegerInertiaTest {
             
             def {
                 box(length=1, width=1, height=1)
-                inertial information {
-                    mass 1
-                    inertia matrix {ixx 0 ixy 0 ixz 0 iyy 0 iyz 0 izz 1}
-                    pose {
-                        x = 0
-                        y = 0
-                        z = 0
-                        roll = 0
-                        pitch = 0
-                        yaw = 0
-                    }
-                }
             }
         }
     }

@@ -93,7 +93,7 @@ public class TestSKO_T5FullSimulation_Visualisation {
     @Tag("requires-meshcat")
     @Test
     public void testFullSimulationWithVisualisation() throws Exception {
-        Path input = testdataRoot().resolve("fullSimulation_visualisation").resolve("input").resolve("SimpleArmSerial.slnRef");
+        Path input = InputCheck.valid(testdataRoot().resolve("fullSimulation_visualisation").resolve("input").resolve("SimpleArmSerial.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

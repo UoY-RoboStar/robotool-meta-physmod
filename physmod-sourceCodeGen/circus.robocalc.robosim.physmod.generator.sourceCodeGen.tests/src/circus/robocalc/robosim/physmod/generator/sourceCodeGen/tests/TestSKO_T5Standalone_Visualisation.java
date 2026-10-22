@@ -83,7 +83,7 @@ public class TestSKO_T5Standalone_Visualisation {
         }
 
         // Input: SimpleArmSerial slnRef (gravity only, no controller)
-        Path input = testdataRoot().resolve("standalone_visualisation").resolve("input").resolve("SimpleArmSerial_gravity_only.slnRef");
+        Path input = InputCheck.valid(testdataRoot().resolve("standalone_visualisation").resolve("input").resolve("SimpleArmSerial_gravity_only.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

@@ -152,10 +152,13 @@ input Local { name L2_geom type "Geom" }
 input Local { name geom_11 type "Geom" }
 input Local { name L1_geom type "Geom" }
 input Local { name n type "int" }
+input Local { name T_geom_1 type "matrix(real,4,4)" }
+input Local { name T_geom_2 type "matrix(real,4,4)" }
+input Local { name T_geom_3 type "matrix(real,4,4)" }
 constraint " (n) [ t == 0] ==3"
-constraint " (T_geom_1) [ t == 0] ==zeroMat(4, 4)"
-constraint " (T_geom_2) [ t == 0] ==zeroMat(4, 4)"
-constraint " (T_geom_3) [ t == 0] ==zeroMat(4, 4)"
+constraint " (T_geom_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0; 0,0,0,1|]"
+constraint " (T_geom_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0; 0,0,0,1|]"
+constraint " (T_geom_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0; 0,0,0,1|]"
 constraint " (T_geom_1) [ t == t] ==B_1*T_offset_1"
 constraint " (T_geom_2) [ t == t] ==B_2*T_offset_2"
 constraint " (T_geom_3) [ t == t] ==B_3*T_offset_3"

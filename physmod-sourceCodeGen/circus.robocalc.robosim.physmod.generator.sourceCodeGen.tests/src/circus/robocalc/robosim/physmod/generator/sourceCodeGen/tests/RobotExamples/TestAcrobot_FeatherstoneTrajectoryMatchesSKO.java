@@ -34,6 +34,7 @@ import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRef;
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.testdata.TestData;
+import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.InputCheck;
 
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
@@ -66,6 +67,7 @@ public class TestAcrobot_FeatherstoneTrajectoryMatchesSKO {
         Path featherstoneSlnRefPath = Paths.get("tests", "integrationTests", "RobotExamples", "acrobot",
             "FEATHERSTONE", "standalone", "input", "acrobot_featherstone.slnRef").toAbsolutePath();
         assertTrue(Files.exists(featherstoneSlnRefPath), "Missing Featherstone slnRef: " + featherstoneSlnRefPath);
+        InputCheck.valid(featherstoneSlnRefPath);
 
         SlnRefs skoRefs = slnRefParseHelper.parse(Files.readString(skoSlnRefPath));
         assertNotNull(skoRefs, "Failed to parse SKO SlnRefs");
