@@ -6,7 +6,7 @@ import  physmod::math::*
 
 	solution{
         solutionExpr 
-        phi : matrix ( real , 18 , 18 ) order 2 group 0 method Eval Input B_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input n : int Constraint ( n ) [ t == 0 ] == 3 Constraint ( n ) [ t == 0 ] == 3 Constraint ( B_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 4.75 ; 0 , 0 , 0 , 1 |] Constraint ( B_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 2.5 ; 0 , 0 , 0 , 1 |] Constraint ( B_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 0.0 ; 0 , 0 , 0 , 1 |] Constraint ( B_k ) [ t == 0 ] == < B_1 , B_2 , B_3 > Constraint ( phi ) [ t == 0 ] == zeroMat ( 18 , 18 ) }
+        phi : matrix ( real , 18 , 18 ) order 2 group 0 method Eval Input B_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input n : int Constraint ( n ) [ t == 0 ] == 3 Constraint ( n ) [ t == 0 ] == 3 Constraint ( B_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 4.5 ; 0 , 0 , 0 , 1 |] Constraint ( B_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 0.5 ; 0 , 0 , 0 , 1 |] Constraint ( B_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 0.0 ; 0 , 0 , 0 , 1 |] Constraint ( B_k ) [ t == 0 ] == < B_1 , B_2 , B_3 > Constraint ( phi ) [ t == 0 ] == zeroMat ( 18 , 18 ) }
 
 	solution{
         solutionExpr 
@@ -30,7 +30,7 @@ import  physmod::math::*
 			InOut T_offset_3 : matrix ( real , 4 , 4 )
 			InOut m_3 : real = 100.0
 			InOut I_C_3 : matrix ( real , 3 , 3 ) = [| 10.417 , 0.0 , 0.0 ; 0.0 , 16.667 , 0.0 ; 0.0 , 0.0 , 10.417 |]
-			InOut c_3 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_3 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.25 |]
 			InOut cz_3 : real = 0.0
 			InOut _f_2 : vector ( real , 6 )
 			InOut phi_3_2 : matrix ( real , 6 , 6 )
@@ -38,7 +38,7 @@ import  physmod::math::*
 			local number : real = 3
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.25 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_3 ) ( 0 , 0 , 3 , 3 ) == I_C_3 + m_3 * transpose ( skew ( c_3 ) ) * skew ( c_3 )
-			equation submatrix ( M_3 ) ( 0 , 3 , 3 , 3 ) == m_3 * transpose ( skew ( c_3 ) )
+			equation submatrix ( M_3 ) ( 0 , 3 , 3 , 3 ) == m_3 * skew ( c_3 )
 			equation submatrix ( M_3 ) ( 3 , 0 , 3 , 3 ) == - m_3 * skew ( c_3 )
 			equation submatrix ( M_3 ) ( 3 , 3 , 3 , 3 ) == m_3 * identity ( 3 )
 			equation f_3 == phi_3_2 * _f_2 + M_3 * alpha_3 + b_3
@@ -191,7 +191,7 @@ import  physmod::math::*
 			InOut T_offset_2 : matrix ( real , 4 , 4 )
 			InOut m_2 : real = 1.0
 			InOut I_C_2 : matrix ( real , 3 , 3 ) = [| 1.349 , 0.0 , 0.0 ; 0.0 , 1.349 , 0.0 ; 0.0 , 0.0 , 0.0313 |]
-			InOut c_2 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_2 : vector ( real , 3 ) = [| 0.0 , 0.0 , 2.0 |]
 			InOut cz_2 : real = 0.0
 			InOut theta_2 : real
 			InOut phi_3_2 : matrix ( real , 6 , 6 )
@@ -208,7 +208,7 @@ import  physmod::math::*
 			local number : real = 2
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 2.5 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_2 ) ( 0 , 0 , 3 , 3 ) == I_C_2 + m_2 * transpose ( skew ( c_2 ) ) * skew ( c_2 )
-			equation submatrix ( M_2 ) ( 0 , 3 , 3 , 3 ) == m_2 * transpose ( skew ( c_2 ) )
+			equation submatrix ( M_2 ) ( 0 , 3 , 3 , 3 ) == m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 0 , 3 , 3 ) == - m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 3 , 3 , 3 ) == m_2 * identity ( 3 )
 			equation V_2 == adj ( phi_3_2 ) * _V_3 + adj ( H_2 ) + derivative ( theta_2 )
@@ -216,7 +216,7 @@ import  physmod::math::*
 			equation tau_2 == H_2 * f_2
 			equation B_2 == _B_3 * T_3_2
 			equation f_2 == phi_2_1 * _f_1 + M_2 * alpha_2 + b_2
-			Constraint ( B_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 2.500000 ; 0 , 0 , 0 , 1 |]
+			Constraint ( B_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 0.500000 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_geom_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 2.500000 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_offset_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 2.000000 ; 0 , 0 , 0 , 1 |]
 			Constraint ( X_T_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0.500000 , - 0.000000 , 1 , 0 , 0 ; - 0.500000 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
@@ -347,7 +347,7 @@ import  physmod::math::*
 			InOut T_offset_1 : matrix ( real , 4 , 4 )
 			InOut m_1 : real = 0.5
 			InOut I_C_1 : matrix ( real , 3 , 3 ) = [| 0.0208 , 0.0 , 0.0 ; 0.0 , 0.0208 , 0.0 ; 0.0 , 0.0 , 0.0208 |]
-			InOut c_1 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_1 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.25 |]
 			InOut cz_1 : real = 0.0
 			InOut theta_1 : real
 			InOut phi_2_1 : matrix ( real , 6 , 6 )
@@ -362,7 +362,7 @@ import  physmod::math::*
 			local number : real = 1
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 4.75 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_1 ) ( 0 , 0 , 3 , 3 ) == I_C_1 + m_1 * transpose ( skew ( c_1 ) ) * skew ( c_1 )
-			equation submatrix ( M_1 ) ( 0 , 3 , 3 , 3 ) == m_1 * transpose ( skew ( c_1 ) )
+			equation submatrix ( M_1 ) ( 0 , 3 , 3 , 3 ) == m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 0 , 3 , 3 ) == - m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 3 , 3 , 3 ) == m_1 * identity ( 3 )
 			equation V_1 == adj ( phi_2_1 ) * _V_2 + adj ( H_1 ) + derivative ( theta_1 )
@@ -370,7 +370,7 @@ import  physmod::math::*
 			equation tau_1 == H_1 * f_1
 			equation B_1 == _B_2 * T_2_1
 			equation f_1 == M_1 * alpha_1 + b_1
-			Constraint ( B_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 4.750000 ; 0 , 0 , 0 , 1 |]
+			Constraint ( B_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 4.500000 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_geom_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 4.750000 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.250000 ; 0 , 0 , 0 , 1 |]
 			Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 4.000000 , - 0.000000 , 1 , 0 , 0 ; - 4.000000 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
@@ -489,7 +489,7 @@ import  physmod::math::*
 	solution { solutionExpr dd_theta : vector ( real , 2 ) order 6 group 0 method DirectForwardDynamics Input n : int Input tau : vector ( real , 2 ) Input M_inv : matrix ( real , 2 , 2 ) Input C : vector ( real , 2 ) Constraint ( n ) [ t == 0 ] == 3 Constraint ( n ) [ t == 0 ] == 3 Constraint ( M_inv ) [ t == 0 ] == zeroMat ( 2 , 2 ) Constraint ( tau ) [ t == 0 ] == zeroVec ( 2 ) Constraint ( dd_theta ) [ t == 0 ] == zeroVec ( 2 ) Constraint ( C ) [ t == 0 ] == zeroVec ( 2 ) }
 	solution { solutionExpr d_theta : vector ( real , 2 ) order 7 group 0 method Euler Input dd_theta : vector ( real , 2 ) Input dt : real Input n : int Constraint ( n ) [ t == 0 ] == 3 Constraint ( dd_theta ) [ t == 0 ] == zeroVec ( 2 ) Constraint ( dt ) [ t == 0 ] == 0.01 Constraint ( d_theta ) [ t == 0 ] == zeroVec ( 2 ) Constraint ( dd_theta ) [ t == 0 ] == zeroVec ( 2 ) }
 	solution { solutionExpr theta : vector ( real , 2 ) order 8 group 0 method Euler Input d_theta : vector ( real , 2 ) Input dt : real Input n : int Constraint ( n ) [ t == 0 ] == 3 Constraint ( d_theta ) [ t == 0 ] == 0 Constraint ( dt ) [ t == 0 ] == 0.01 Constraint ( theta ) [ t == 0 ] == zeroVec ( 2 ) }
-	solution { solutionExpr B_k : Seq( matrix ( real , 4 , 4 ) ) order 3 group 0 method ForwardKinematics Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input X_J : Seq( matrix ( real , 6 , 6 ) ) Input X_T : Seq( matrix ( real , 6 , 6 ) ) Input n : int Input theta : vector ( real , 2 ) Input B_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input X_J_1 : matrix ( real , 6 , 6 ) Input X_J_2 : matrix ( real , 6 , 6 ) Input X_T_1 : matrix ( real , 6 , 6 ) Input X_T_2 : matrix ( real , 6 , 6 ) Input X_T_3 : matrix ( real , 6 , 6 ) Constraint ( n ) [ t == 0 ] == 3 Constraint ( n ) [ t == 0 ] == 3 Constraint ( B_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 4.75 ; 0 , 0 , 0 , 1 |] Constraint ( B_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 2.5 ; 0 , 0 , 0 , 1 |] Constraint ( B_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 0.0 ; 0 , 0 , 0 , 1 |] Constraint ( X_J_1 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( X_J_1 ) [ t == t ] == [| cos ( theta ( 0 ) ) , - sin ( theta ( 0 ) ) , 0 , 0 , 0 , 0 ; sin ( theta ( 0 ) ) , cos ( theta ( 0 ) ) , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0 , 0 , cos ( theta ( 0 ) ) , - sin ( theta ( 0 ) ) , 0 ; 0 , 0 , 0 , sin ( theta ( 0 ) ) , cos ( theta ( 0 ) ) , 0 ; 0 , 0 , 0 , 0 , 0 , 1 |] Constraint ( X_J_2 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( X_J_2 ) [ t == t ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ( 1 ) ) , - sin ( theta ( 1 ) ) , 0 , 0 , 0 ; 0 , sin ( theta ( 1 ) ) , cos ( theta ( 1 ) ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ( 1 ) ) , - sin ( theta ( 1 ) ) ; 0 , 0 , 0 , 0 , sin ( theta ( 1 ) ) , cos ( theta ( 1 ) ) |] Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 4.0 , - 0.0 , 1 , 0 , 0 ; - 4.0 , 0 , 0.0 , 0 , 1 , 0 ; 0.0 , - 0.0 , 0 , 0 , 0 , 1 |] Constraint ( X_T_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0.5 , - 0.0 , 1 , 0 , 0 ; - 0.5 , 0 , 0.0 , 0 , 1 , 0 ; 0.0 , - 0.0 , 0 , 0 , 0 , 1 |] Constraint ( X_T_3 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , 1 , 0 ; 0 , 0 , 0 , 0 , 0 , 1 |] Constraint ( B_k ) [ t == 0 ] == < B_1 , B_2 , B_3 > Constraint ( X_J ) [ t == 0 ] == < X_J_1 , X_J_2 > Constraint ( X_J ) [ t == t ] == < X_J_1 , X_J_2 > Constraint ( X_T ) [ t == 0 ] == < X_T_1 , X_T_2 , X_T_3 > }
+	solution { solutionExpr B_k : Seq( matrix ( real , 4 , 4 ) ) order 3 group 0 method ForwardKinematics Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input X_J : Seq( matrix ( real , 6 , 6 ) ) Input X_T : Seq( matrix ( real , 6 , 6 ) ) Input n : int Input theta : vector ( real , 2 ) Input B_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input X_J_1 : matrix ( real , 6 , 6 ) Input X_J_2 : matrix ( real , 6 , 6 ) Input X_T_1 : matrix ( real , 6 , 6 ) Input X_T_2 : matrix ( real , 6 , 6 ) Input X_T_3 : matrix ( real , 6 , 6 ) Constraint ( n ) [ t == 0 ] == 3 Constraint ( n ) [ t == 0 ] == 3 Constraint ( B_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 4.5 ; 0 , 0 , 0 , 1 |] Constraint ( B_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 0.5 ; 0 , 0 , 0 , 1 |] Constraint ( B_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 0.0 ; 0 , 0 , 0 , 1 |] Constraint ( X_J_1 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( X_J_1 ) [ t == t ] == [| cos ( theta ( 0 ) ) , - sin ( theta ( 0 ) ) , 0 , 0 , 0 , 0 ; sin ( theta ( 0 ) ) , cos ( theta ( 0 ) ) , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0 , 0 , cos ( theta ( 0 ) ) , - sin ( theta ( 0 ) ) , 0 ; 0 , 0 , 0 , sin ( theta ( 0 ) ) , cos ( theta ( 0 ) ) , 0 ; 0 , 0 , 0 , 0 , 0 , 1 |] Constraint ( X_J_2 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( X_J_2 ) [ t == t ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ( 1 ) ) , - sin ( theta ( 1 ) ) , 0 , 0 , 0 ; 0 , sin ( theta ( 1 ) ) , cos ( theta ( 1 ) ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ( 1 ) ) , - sin ( theta ( 1 ) ) ; 0 , 0 , 0 , 0 , sin ( theta ( 1 ) ) , cos ( theta ( 1 ) ) |] Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 4.0 , - 0.0 , 1 , 0 , 0 ; - 4.0 , 0 , 0.0 , 0 , 1 , 0 ; 0.0 , - 0.0 , 0 , 0 , 0 , 1 |] Constraint ( X_T_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0.5 , - 0.0 , 1 , 0 , 0 ; - 0.5 , 0 , 0.0 , 0 , 1 , 0 ; 0.0 , - 0.0 , 0 , 0 , 0 , 1 |] Constraint ( X_T_3 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , 1 , 0 ; 0 , 0 , 0 , 0 , 0 , 1 |] Constraint ( B_k ) [ t == 0 ] == < B_1 , B_2 , B_3 > Constraint ( X_J ) [ t == 0 ] == < X_J_1 , X_J_2 > Constraint ( X_J ) [ t == t ] == < X_J_1 , X_J_2 > Constraint ( X_T ) [ t == 0 ] == < X_T_1 , X_T_2 , X_T_3 > }
 	solution { solutionExpr T_geom : Seq( matrix ( real , 4 , 4 ) ) order 4 group 0 method Visualisation Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input T_offset : Seq( matrix ( real , 4 , 4 ) ) Input B_1 : matrix ( real , 4 , 4 ) Input T_offset_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input T_offset_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input T_offset_3 : matrix ( real , 4 , 4 ) Input geom_31 : Geom Input geom_21 : Geom Input geom_11 : Geom Input n : int Input T_geom_1 : matrix ( real , 4 , 4 ) Input T_geom_2 : matrix ( real , 4 , 4 ) Input T_geom_3 : matrix ( real , 4 , 4 ) Constraint ( n ) [ t == 0 ] == 3 Constraint ( n ) [ t == 0 ] == 3 Constraint ( T_geom_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 4.75 ; 0 , 0 , 0 , 1 |] Constraint ( T_geom_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 2.5 ; 0 , 0 , 0 , 1 |] Constraint ( T_geom_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , 0.25 ; 0 , 0 , 0 , 1 |] Constraint ( T_geom_1 ) [ t == t ] == B_1 * T_offset_1 Constraint ( T_geom_2 ) [ t == t ] == B_2 * T_offset_2 Constraint ( T_geom_3 ) [ t == t ] == B_3 * T_offset_3 Constraint ( T_geom ) [ t == t ] == < T_geom_1 , T_geom_2 , T_geom_3 > }
 }
 sensor TrivialSensor {

@@ -18,8 +18,8 @@ input Local { name B_3 type "matrix(real,4,4)" }
 input Local { name B_k type "Seq(matrix(real,4,4))" }
 input Local { name n type "int" }
 constraint " (n) [ t == 0] ==3"
-constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.75; 0,0,0,1|]"
-constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,2.5; 0,0,0,1|]"
+constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.5; 0,0,0,1|]"
+constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.5; 0,0,0,1|]"
 constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.0; 0,0,0,1|]"
 constraint " (B_k) [ t == 0] ==<B_1, B_2, B_3>"
 constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
@@ -83,8 +83,8 @@ input Local { name X_T_1 type "matrix(real,6,6)" }
 input Local { name X_T_2 type "matrix(real,6,6)" }
 input Local { name X_T_3 type "matrix(real,6,6)" }
 constraint " (n) [ t == 0] ==3"
-constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.75; 0,0,0,1|]"
-constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,2.5; 0,0,0,1|]"
+constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.5; 0,0,0,1|]"
+constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.5; 0,0,0,1|]"
 constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.0; 0,0,0,1|]"
 constraint " (X_J_1) [ t == 0] ==zeroMat(6, 6)"
 constraint " (X_J_1) [ t == t] ==[|cos(theta(0)),-sin(theta(0)),0,0,0,0; sin(theta(0)),cos(theta(0)),0,0,0,0; 0,0,1,0,0,0; 0,0,0,cos(theta(0)),-sin(theta(0)),0; 0,0,0,sin(theta(0)),cos(theta(0)),0; 0,0,0,0,0,1|]"

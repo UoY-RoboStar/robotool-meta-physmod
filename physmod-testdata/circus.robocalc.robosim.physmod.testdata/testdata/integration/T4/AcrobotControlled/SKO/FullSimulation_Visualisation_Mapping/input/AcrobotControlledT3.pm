@@ -21,7 +21,7 @@ pmodel AcrobotControlled {
 			InOut T_offset_3 : matrix ( real , 4 , 4 )
 			InOut m_3 : real = 0.1
 			InOut I_C_3 : matrix ( real , 3 , 3 ) = [| 0.1 , 0.0 , 0.0 ; 0.0 , 0.1 , 0.0 ; 0.0 , 0.0 , 0.1 |]
-			InOut c_3 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_3 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.1 |]
 			InOut cz_3 : real = 0.0
 			InOut _f_2 : vector ( real , 6 )
 			InOut phi_3_2 : matrix ( real , 6 , 6 )
@@ -29,7 +29,7 @@ pmodel AcrobotControlled {
 			local number : real = 3
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_3 ) ( 0 , 0 , 3 , 3 ) == I_C_3 + m_3 * transpose ( skew ( c_3 ) ) * skew ( c_3 )
-			equation submatrix ( M_3 ) ( 0 , 3 , 3 , 3 ) == m_3 * transpose ( skew ( c_3 ) )
+			equation submatrix ( M_3 ) ( 0 , 3 , 3 , 3 ) == m_3 * skew ( c_3 )
 			equation submatrix ( M_3 ) ( 3 , 0 , 3 , 3 ) == - m_3 * skew ( c_3 )
 			equation submatrix ( M_3 ) ( 3 , 3 , 3 , 3 ) == m_3 * identity ( 3 )
 			equation f_3 == phi_3_2 * _f_2 + M_3 * alpha_3 + b_3
@@ -127,7 +127,7 @@ pmodel AcrobotControlled {
 			InOut T_offset_2 : matrix ( real , 4 , 4 )
 			InOut m_2 : real = 1.0
 			InOut I_C_2 : matrix ( real , 3 , 3 ) = [| 0.083 , 0.0 , 0.0 ; 0.0 , 0.083 , 0.0 ; 0.0 , 0.0 , 0.001 |]
-			InOut c_2 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_2 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.5 |]
 			InOut cz_2 : real = 0.0
 			InOut theta_2 : real
 			InOut phi_3_2 : matrix ( real , 6 , 6 )
@@ -144,7 +144,7 @@ pmodel AcrobotControlled {
 			local number : real = 2
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_2 ) ( 0 , 0 , 3 , 3 ) == I_C_2 + m_2 * transpose ( skew ( c_2 ) ) * skew ( c_2 )
-			equation submatrix ( M_2 ) ( 0 , 3 , 3 , 3 ) == m_2 * transpose ( skew ( c_2 ) )
+			equation submatrix ( M_2 ) ( 0 , 3 , 3 , 3 ) == m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 0 , 3 , 3 ) == - m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 3 , 3 , 3 ) == m_2 * identity ( 3 )
 			equation V_2 == adj ( phi_3_2 ) * _V_3 + adj ( H_2 ) + derivative ( theta_2 )
@@ -257,7 +257,7 @@ pmodel AcrobotControlled {
 			InOut T_offset_1 : matrix ( real , 4 , 4 )
 			InOut m_1 : real = 1.0
 			InOut I_C_1 : matrix ( real , 3 , 3 ) = [| 0.333 , 0.0 , 0.0 ; 0.0 , 0.333 , 0.0 ; 0.0 , 0.0 , 0.001 |]
-			InOut c_1 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_1 : vector ( real , 3 ) = [| 0.0 , 0.0 , 1.0 |]
 			InOut cz_1 : real = 0.0
 			InOut theta_1 : real
 			InOut phi_2_1 : matrix ( real , 6 , 6 )
@@ -272,7 +272,7 @@ pmodel AcrobotControlled {
 			local number : real = 1
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_1 ) ( 0 , 0 , 3 , 3 ) == I_C_1 + m_1 * transpose ( skew ( c_1 ) ) * skew ( c_1 )
-			equation submatrix ( M_1 ) ( 0 , 3 , 3 , 3 ) == m_1 * transpose ( skew ( c_1 ) )
+			equation submatrix ( M_1 ) ( 0 , 3 , 3 , 3 ) == m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 0 , 3 , 3 ) == - m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 3 , 3 , 3 ) == m_1 * identity ( 3 )
 			equation V_1 == adj ( phi_2_1 ) * _V_2 + adj ( H_1 ) + derivative ( theta_1 )
