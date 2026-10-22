@@ -6,7 +6,7 @@ import  physmod::math::*
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.25 , 0.0 , 0.0 , 0.0 |]
 		InOut geom_31 : Geom = Geom (| geomType = "box" , geomVal = [| 1.0 , 1.0 , 0.5 |] |)
 			InOut L3_geom : Geom = Geom (| geomType = "box" , geomVal = [| 1.0 , 1.0 , 0.5 |] |)
-			InOut M_3 : matrix ( real , 6 , 6 ) = [| 16.667 , 0.0 , 0.0 , 0.0 , 25 , 0.0 ; 0.0 , 22.917 , 0.0 , - 25.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 10.417 , 0.0 , 0.0 , 0.0 ; 0.0 , - 25.0 , 0.0 , 100 , 0.0 , 0.0 ; 25 , 0.0 , 0.0 , 0.0 , 100 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 100 |]
+			InOut M_3 : matrix ( real , 6 , 6 ) = [| 16.667 , 0.0 , 0.0 , 0.0 , - 25 , 0.0 ; 0.0 , 22.917 , 0.0 , 25.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 10.417 , 0.0 , 0.0 , 0.0 ; 0.0 , 25.0 , 0.0 , 100 , 0.0 , 0.0 ; - 25 , 0.0 , 0.0 , 0.0 , 100 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 100 |]
 			InOut a_3 : vector ( real , 6 )
 			InOut b_3 : vector ( real , 6 )
 			InOut V_3 : vector ( real , 6 )
@@ -18,13 +18,13 @@ import  physmod::math::*
 			InOut T_offset_3 : matrix ( real , 4 , 4 )
 			InOut m_3 : real = 100.0
 			InOut I_C_3 : matrix ( real , 3 , 3 ) = [| 10.417 , 0.0 , 0.0 ; 0.0 , 16.667 , 0.0 ; 0.0 , 0.0 , 10.417 |]
-			InOut c_3 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_3 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.25 |]
 			InOut cz_3 : real = 0.0
 			InOut _f_2 : vector ( real , 6 )
 			InOut phi_3_2 : matrix ( real , 6 , 6 )
 			InOut tau_3 : vector ( real , 1 )
 			equation submatrix ( M_3 ) ( 0 , 0 , 3 , 3 ) == I_C_3 + m_3 * transpose ( skew ( c_3 ) ) * skew ( c_3 )
-			equation submatrix ( M_3 ) ( 0 , 3 , 3 , 3 ) == m_3 * transpose ( skew ( c_3 ) )
+			equation submatrix ( M_3 ) ( 0 , 3 , 3 , 3 ) == m_3 * skew ( c_3 )
 			equation submatrix ( M_3 ) ( 3 , 0 , 3 , 3 ) == - m_3 * skew ( c_3 )
 			equation submatrix ( M_3 ) ( 3 , 3 , 3 , 3 ) == m_3 * identity ( 3 )
 			equation f_3 == phi_3_2 * _f_2 + M_3 * alpha_3 + b_3
@@ -153,7 +153,7 @@ import  physmod::math::*
 		input test_2 : vector ( real , 1 )
 			InOut geom_21 : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.25 , 4.0 |] |)
 			InOut L2_geom : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.25 , 4.0 |] |)
-			InOut M_2 : matrix ( real , 6 , 6 ) = [| 5.349 , 0.0 , 0.0 , 0.0 , 2 , 0.0 ; 0.0 , 5.349 , 0.0 , - 2.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0313 , 0.0 , 0.0 , 0.0 ; 0.0 , - 2.0 , 0.0 , 1 , 0.0 , 0.0 ; 2 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |]
+			InOut M_2 : matrix ( real , 6 , 6 ) = [| 5.349 , 0.0 , 0.0 , 0.0 , - 2 , 0.0 ; 0.0 , 5.349 , 0.0 , 2.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0313 , 0.0 , 0.0 , 0.0 ; 0.0 , 2.0 , 0.0 , 1 , 0.0 , 0.0 ; - 2 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |]
 			InOut a_2 : vector ( real , 6 )
 			InOut b_2 : vector ( real , 6 )
 			InOut V_2 : vector ( real , 6 )
@@ -165,7 +165,7 @@ import  physmod::math::*
 			InOut T_offset_2 : matrix ( real , 4 , 4 )
 			InOut m_2 : real = 1.0
 			InOut I_C_2 : matrix ( real , 3 , 3 ) = [| 1.349 , 0.0 , 0.0 ; 0.0 , 1.349 , 0.0 ; 0.0 , 0.0 , 0.0313 |]
-			InOut c_2 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_2 : vector ( real , 3 ) = [| 0.0 , 0.0 , 2.0 |]
 			InOut cz_2 : real = 0.0
 			InOut theta_2 : real
 			InOut phi_3_2 : matrix ( real , 6 , 6 )
@@ -180,7 +180,7 @@ import  physmod::math::*
 			InOut r_v2 : real = 1
 			InOut tau_2 : vector ( real , 1 )
 			equation submatrix ( M_2 ) ( 0 , 0 , 3 , 3 ) == I_C_2 + m_2 * transpose ( skew ( c_2 ) ) * skew ( c_2 )
-			equation submatrix ( M_2 ) ( 0 , 3 , 3 , 3 ) == m_2 * transpose ( skew ( c_2 ) )
+			equation submatrix ( M_2 ) ( 0 , 3 , 3 , 3 ) == m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 0 , 3 , 3 ) == - m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 3 , 3 , 3 ) == m_2 * identity ( 3 )
 			equation V_2 == adj ( phi_3_2 ) * _V_3 + adj ( H_2 ) + derivative ( theta_2 )
@@ -190,7 +190,7 @@ import  physmod::math::*
 			equation f_2 == phi_2_1 * _f_1 + M_2 * alpha_2 + b_2
 			Constraint ( B_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 0.5 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_geom_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 2.5 ; 0 , 0 , 0 , 1 |]
-			Constraint ( T_offset_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 2.5 ; 0 , 0 , 0 , 1 |]
+			Constraint ( T_offset_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 2.0 ; 0 , 0 , 0 , 1 |]
 			Constraint ( X_T_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 0.5 , - 0.000000 , 1 , 0 , 0 ; 0.5 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
 		}
 		local body IntermediateLink {
@@ -295,7 +295,7 @@ import  physmod::math::*
 		input test_1 : vector ( real , 1 )
 			InOut geom_11 : Geom = Geom (| geomType = "box" , geomVal = [| 0.5 , 0.5 , 0.5 |] |)
 			InOut L1_geom : Geom = Geom (| geomType = "box" , geomVal = [| 0.5 , 0.5 , 0.5 |] |)
-			InOut M_1 : matrix ( real , 6 , 6 ) = [| 0.05205 , 0.0 , 0.0 , 0.0 , 0.125 , 0.0 ; 0.0 , 0.05205 , 0.0 , - 0.125 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0208 , 0.0 , 0.0 , 0.0 ; 0.0 , - 0.125 , 0.0 , 0.5 , 0.0 , 0.0 ; 0.125 , 0.0 , 0.0 , 0.0 , 0.5 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.5 |]
+			InOut M_1 : matrix ( real , 6 , 6 ) = [| 0.05205 , 0.0 , 0.0 , 0.0 , - 0.125 , 0.0 ; 0.0 , 0.05205 , 0.0 , 0.125 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0208 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.125 , 0.0 , 0.5 , 0.0 , 0.0 ; - 0.125 , 0.0 , 0.0 , 0.0 , 0.5 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.5 |]
 			InOut a_1 : vector ( real , 6 )
 			InOut b_1 : vector ( real , 6 )
 			InOut V_1 : vector ( real , 6 )
@@ -307,7 +307,7 @@ import  physmod::math::*
 			InOut T_offset_1 : matrix ( real , 4 , 4 )
 			InOut m_1 : real = 0.5
 			InOut I_C_1 : matrix ( real , 3 , 3 ) = [| 0.0208 , 0.0 , 0.0 ; 0.0 , 0.0208 , 0.0 ; 0.0 , 0.0 , 0.0208 |]
-			InOut c_1 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_1 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.25 |]
 			InOut cz_1 : real = 0.0
 			InOut theta_1 : real
 			InOut phi_2_1 : matrix ( real , 6 , 6 )
@@ -320,7 +320,7 @@ import  physmod::math::*
 			InOut r_v1 : real = 1
 			InOut tau_1 : vector ( real , 1 )
 			equation submatrix ( M_1 ) ( 0 , 0 , 3 , 3 ) == I_C_1 + m_1 * transpose ( skew ( c_1 ) ) * skew ( c_1 )
-			equation submatrix ( M_1 ) ( 0 , 3 , 3 , 3 ) == m_1 * transpose ( skew ( c_1 ) )
+			equation submatrix ( M_1 ) ( 0 , 3 , 3 , 3 ) == m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 0 , 3 , 3 ) == - m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 3 , 3 , 3 ) == m_1 * identity ( 3 )
 			equation V_1 == adj ( phi_2_1 ) * _V_2 + adj ( H_1 ) + derivative ( theta_1 )
@@ -330,7 +330,7 @@ import  physmod::math::*
 			equation f_1 == M_1 * alpha_1 + b_1
 			Constraint ( B_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 4.5 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_geom_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 4.75 ; 0 , 0 , 0 , 1 |]
-			Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 4.75 ; 0 , 0 , 0 , 1 |]
+			Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.25 ; 0 , 0 , 0 , 1 |]
 			Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 4 , - 0.000000 , 1 , 0 , 0 ; 4 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
 		}
 		local body Gripper {

@@ -10,7 +10,7 @@ pmodel AcrobotSerial {
     local link BaseLink {
         def { InOut geom_31 : Geom = Geom (| geomType = "box" , geomVal = [| 0.2 , 0.2 , 0.2 |] |)
 			InOut L3_geom : Geom = Geom (| geomType = "box" , geomVal = [| 0.2 , 0.2 , 0.2 |] |)
-			InOut M_3 : matrix ( real , 6 , 6 ) = [| 0.101 , 0.0 , 0.0 , 0.0 , 0.010000001 , 0.0 ; 0.0 , 0.101 , 0.0 , - 0.010000001 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.1 , 0.0 , 0.0 , 0.0 ; 0.0 , - 0.010000001 , 0.0 , 0.1 , 0.0 , 0.0 ; 0.010000001 , 0.0 , 0.0 , 0.0 , 0.1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.1 |]
+			InOut M_3 : matrix ( real , 6 , 6 ) = [| 0.101 , 0.0 , 0.0 , 0.0 , - 0.010000001 , 0.0 ; 0.0 , 0.101 , 0.0 , 0.010000001 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.1 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.010000001 , 0.0 , 0.1 , 0.0 , 0.0 ; - 0.010000001 , 0.0 , 0.0 , 0.0 , 0.1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.1 |]
 			InOut a_3 : vector ( real , 6 )
 			InOut b_3 : vector ( real , 6 )
 			InOut V_3 : vector ( real , 6 )
@@ -22,7 +22,7 @@ pmodel AcrobotSerial {
 			InOut T_offset_3 : matrix ( real , 4 , 4 )
 			InOut m_3 : real = 0.1
 			InOut I_C_3 : matrix ( real , 3 , 3 ) = [| 0.1 , 0.0 , 0.0 ; 0.0 , 0.1 , 0.0 ; 0.0 , 0.0 , 0.1 |]
-			InOut c_3 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_3 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.1 |]
 			InOut cz_3 : real = 0.0
 			InOut _f_2 : vector ( real , 6 )
 			InOut phi_3_2 : matrix ( real , 6 , 6 )
@@ -30,7 +30,7 @@ pmodel AcrobotSerial {
 			local number : real = 3
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_3 ) ( 0 , 0 , 3 , 3 ) == I_C_3 + m_3 * transpose ( skew ( c_3 ) ) * skew ( c_3 )
-			equation submatrix ( M_3 ) ( 0 , 3 , 3 , 3 ) == m_3 * transpose ( skew ( c_3 ) )
+			equation submatrix ( M_3 ) ( 0 , 3 , 3 , 3 ) == m_3 * skew ( c_3 )
 			equation submatrix ( M_3 ) ( 3 , 0 , 3 , 3 ) == - m_3 * skew ( c_3 )
 			equation submatrix ( M_3 ) ( 3 , 3 , 3 , 3 ) == m_3 * identity ( 3 )
 			equation f_3 == phi_3_2 * _f_2 + M_3 * alpha_3 + b_3
@@ -38,7 +38,7 @@ pmodel AcrobotSerial {
 			equation alpha_3 == a_3
 			Constraint ( B_3 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 0.10000000149011612 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_geom_3 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 0 ; 0 , 0 , 0 , 1 |]
-			Constraint ( T_offset_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0 ; 0 , 0 , 0 , 1 |]
+			Constraint ( T_offset_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.1 ; 0 , 0 , 0 , 1 |]
 			Constraint ( X_T_3 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , 1 , 0 ; 0 , 0 , 0 , 0 , 0 , 1 |]
 		}
         local body BaseBody {
@@ -115,7 +115,7 @@ pmodel AcrobotSerial {
         def { input test_2 : vector ( real , 1 )
 			InOut geom_21 : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.05 , 1.0 |] |)
 			InOut L2_geom : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.05 , 1.0 |] |)
-			InOut M_2 : matrix ( real , 6 , 6 ) = [| 0.333 , 0.0 , 0.0 , 0.0 , 0.5 , 0.0 ; 0.0 , 0.333 , 0.0 , - 0.5 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , - 0.5 , 0.0 , 1 , 0.0 , 0.0 ; 0.5 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |]
+			InOut M_2 : matrix ( real , 6 , 6 ) = [| 0.333 , 0.0 , 0.0 , 0.0 , - 0.5 , 0.0 ; 0.0 , 0.333 , 0.0 , 0.5 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.5 , 0.0 , 1 , 0.0 , 0.0 ; - 0.5 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |]
 			InOut a_2 : vector ( real , 6 )
 			InOut b_2 : vector ( real , 6 )
 			InOut V_2 : vector ( real , 6 )
@@ -127,7 +127,7 @@ pmodel AcrobotSerial {
 			InOut T_offset_2 : matrix ( real , 4 , 4 )
 			InOut m_2 : real = 1.0
 			InOut I_C_2 : matrix ( real , 3 , 3 ) = [| 0.083 , 0.0 , 0.0 ; 0.0 , 0.083 , 0.0 ; 0.0 , 0.0 , 0.001 |]
-			InOut c_2 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_2 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.5 |]
 			InOut cz_2 : real = 0.0
 			InOut theta_2 : real
 			InOut phi_3_2 : matrix ( real , 6 , 6 )
@@ -144,7 +144,7 @@ pmodel AcrobotSerial {
 			local number : real = 2
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_2 ) ( 0 , 0 , 3 , 3 ) == I_C_2 + m_2 * transpose ( skew ( c_2 ) ) * skew ( c_2 )
-			equation submatrix ( M_2 ) ( 0 , 3 , 3 , 3 ) == m_2 * transpose ( skew ( c_2 ) )
+			equation submatrix ( M_2 ) ( 0 , 3 , 3 , 3 ) == m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 0 , 3 , 3 ) == - m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 3 , 3 , 3 ) == m_2 * identity ( 3 )
 			equation V_2 == adj ( phi_3_2 ) * _V_3 + adj ( H_2 ) + derivative ( theta_2 )
@@ -154,7 +154,7 @@ pmodel AcrobotSerial {
 			equation f_2 == phi_2_1 * _f_1 + M_2 * alpha_2 + b_2
 			Constraint ( B_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 0.5 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_geom_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 0 ; 0 , 0 , 0 , 1 |]
-			Constraint ( T_offset_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0 ; 0 , 0 , 0 , 1 |]
+			Constraint ( T_offset_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.5 ; 0 , 0 , 0 , 1 |]
 			Constraint ( X_T_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 0.20000000298023224 , - 0.000000 , 1 , 0 , 0 ; 0.20000000298023224 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
 		}
         local body Link1Body {
@@ -248,7 +248,7 @@ pmodel AcrobotSerial {
         def { input test_1 : vector ( real , 1 )
 			InOut geom_11 : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.05 , 2.0 |] |)
 			InOut L1_geom : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.05 , 2.0 |] |)
-			InOut M_1 : matrix ( real , 6 , 6 ) = [| 1.333 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 1.333 , 0.0 , - 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , - 1.0 , 0.0 , 1 , 0.0 , 0.0 ; 1 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |]
+			InOut M_1 : matrix ( real , 6 , 6 ) = [| 1.333 , 0.0 , 0.0 , 0.0 , - 1 , 0.0 ; 0.0 , 1.333 , 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 1 , 0.0 , 0.0 ; - 1 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |]
 			InOut a_1 : vector ( real , 6 )
 			InOut b_1 : vector ( real , 6 )
 			InOut V_1 : vector ( real , 6 )
@@ -260,7 +260,7 @@ pmodel AcrobotSerial {
 			InOut T_offset_1 : matrix ( real , 4 , 4 )
 			InOut m_1 : real = 1.0
 			InOut I_C_1 : matrix ( real , 3 , 3 ) = [| 0.333 , 0.0 , 0.0 ; 0.0 , 0.333 , 0.0 ; 0.0 , 0.0 , 0.001 |]
-			InOut c_1 : vector ( real , 3 ) = [| 0.0 , 0.0 , 0.0 |]
+			InOut c_1 : vector ( real , 3 ) = [| 0.0 , 0.0 , 1.0 |]
 			InOut cz_1 : real = 0.0
 			InOut theta_1 : real
 			InOut phi_2_1 : matrix ( real , 6 , 6 )
@@ -275,7 +275,7 @@ pmodel AcrobotSerial {
 			local number : real = 1
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_1 ) ( 0 , 0 , 3 , 3 ) == I_C_1 + m_1 * transpose ( skew ( c_1 ) ) * skew ( c_1 )
-			equation submatrix ( M_1 ) ( 0 , 3 , 3 , 3 ) == m_1 * transpose ( skew ( c_1 ) )
+			equation submatrix ( M_1 ) ( 0 , 3 , 3 , 3 ) == m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 0 , 3 , 3 ) == - m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 3 , 3 , 3 ) == m_1 * identity ( 3 )
 			equation V_1 == adj ( phi_2_1 ) * _V_2 + adj ( H_1 ) + derivative ( theta_1 )
@@ -285,7 +285,7 @@ pmodel AcrobotSerial {
 			equation f_1 == M_1 * alpha_1 + b_1
 			Constraint ( B_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 1 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_geom_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 0 ; 0 , 0 , 0 , 1 |]
-			Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0 ; 0 , 0 , 0 , 1 |]
+			Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 1.0 ; 0 , 0 , 0 , 1 |]
 			Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 1 , - 0.000000 , 1 , 0 , 0 ; 1 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
 		}
         local body Link2Body {
