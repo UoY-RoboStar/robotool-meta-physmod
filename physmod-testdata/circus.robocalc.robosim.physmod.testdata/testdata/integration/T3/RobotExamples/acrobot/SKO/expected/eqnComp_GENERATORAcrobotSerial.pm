@@ -2,7 +2,7 @@
 // Uses reference components from physmod-lib for joints, actuators, and sensors
 
 import physmod::math::*
-import physmod::SKO::joints::Revolute_y
+import physmod::SKO::joints::Revolute_x
 import physmod::trivial::actuators::ControlledMotor
 import physmod::trivial::sensors::JointEncoder
 
@@ -71,8 +71,8 @@ pmodel AcrobotSerial {
 				InOut phi_3_2 : matrix ( real , 6 , 6 )
 				local number : real = 2
 				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
-				const H : vector ( real , 6 ) = (| 0 , 1 , 0 , 0 , 0 , 0 |)
-				equation XJ == [| cos ( theta ) , 0 , sin ( theta ) , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; - sin ( theta ) , 0 , cos ( theta ) , 0 , 0 , 0 ; 0 , 0 , 0 , cos ( theta ) , 0 , sin ( theta ) ; 0 , 0 , 0 , 0 , 1 , 0 ; 0 , 0 , 0 , - sin ( theta ) , 0 , cos ( theta ) |]
+				const H : vector ( real , 6 ) = (| 1 , 0 , 0 , 0 , 0 , 0 |)
+				equation XJ == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ) , - sin ( theta ) , 0 , 0 , 0 ; 0 , sin ( theta ) , cos ( theta ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ) , - sin ( theta ) ; 0 , 0 , 0 , 0 , sin ( theta ) , cos ( theta ) |]
 				equation _B_3 == B_3
 				equation _V_3 == V_3
 				equation _alpha_3 == alpha_3
@@ -187,8 +187,8 @@ pmodel AcrobotSerial {
 				InOut phi_2_1 : matrix ( real , 6 , 6 )
 				local number : real = 1
 				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
-				const H : vector ( real , 6 ) = (| 0 , 1 , 0 , 0 , 0 , 0 |)
-				equation XJ == [| cos ( theta ) , 0 , sin ( theta ) , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; - sin ( theta ) , 0 , cos ( theta ) , 0 , 0 , 0 ; 0 , 0 , 0 , cos ( theta ) , 0 , sin ( theta ) ; 0 , 0 , 0 , 0 , 1 , 0 ; 0 , 0 , 0 , - sin ( theta ) , 0 , cos ( theta ) |]
+				const H : vector ( real , 6 ) = (| 1 , 0 , 0 , 0 , 0 , 0 |)
+				equation XJ == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ) , - sin ( theta ) , 0 , 0 , 0 ; 0 , sin ( theta ) , cos ( theta ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ) , - sin ( theta ) ; 0 , 0 , 0 , 0 , sin ( theta ) , cos ( theta ) |]
 				equation _B_2 == B_2
 				equation _V_2 == V_2
 				equation _alpha_2 == alpha_2

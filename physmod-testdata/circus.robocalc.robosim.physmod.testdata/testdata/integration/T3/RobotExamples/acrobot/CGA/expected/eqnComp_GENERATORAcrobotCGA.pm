@@ -1,5 +1,5 @@
 import physmod::math::*
-import physmod::CGA::joints::RevoluteJoint_CGA
+import physmod::CGA::joints::RevoluteJoint_CGA_X
 import physmod::CGA::joints::*
 
 pmodel AcrobotCGA {
@@ -23,7 +23,7 @@ pmodel AcrobotCGA {
 		local joint ShoulderJoint {
 			def {
 				InOut q : real
-				InOut axis_rot : vector ( real , 3 ) = (| 0 , 1 , 0 |)
+				InOut axis_rot : vector ( real , 3 ) = (| 0 , 0 , 1 |)
 				InOut motor_frame : vector ( real , 8 )
 				InOut motor_joint : vector ( real , 8 )
 				local number : real = 2
@@ -63,7 +63,7 @@ pmodel AcrobotCGA {
 		local joint ElbowJoint {
 			def {
 				InOut q : real
-				InOut axis_rot : vector ( real , 3 ) = (| 0 , 1 , 0 |)
+				InOut axis_rot : vector ( real , 3 ) = (| 0 , 0 , 1 |)
 				InOut motor_frame : vector ( real , 8 )
 				InOut motor_joint : vector ( real , 8 )
 				local number : real = 1
@@ -191,10 +191,10 @@ InOut n : int
 	Constraint ( motor_T_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.5 , 0.0 |]
 	Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0 ; 0.0 , 1.0 , 0.0 , 0 ; 0.0 , 0.0 , 1.0 , - 1 ; 0.0 , 0.0 , 0.0 , 1.0 |]
 	Constraint ( T_geom_1 ) [ t == 0 ] == B_1 * T_offset_1
-	Constraint ( axis_rot_2 ) [ t == 0 ] == [| 0 , 1 , 0 |]
+	Constraint ( axis_rot_2 ) [ t == 0 ] == [| 0 , 0 , 1 |]
 	Constraint ( axis_lin_2 ) [ t == 0 ] == [| 0 , 0 , 0 |]
 	Constraint ( joint_type_2 ) [ t == 0 ] == 0
-	Constraint ( axis_rot_1 ) [ t == 0 ] == [| 0 , 1 , 0 |]
+	Constraint ( axis_rot_1 ) [ t == 0 ] == [| 0 , 0 , 1 |]
 	Constraint ( axis_lin_1 ) [ t == 0 ] == [| 0 , 0 , 0 |]
 	Constraint ( joint_type_1 ) [ t == 0 ] == 0
 	Constraint ( gravity ) [ t == 0 ] == 9.81

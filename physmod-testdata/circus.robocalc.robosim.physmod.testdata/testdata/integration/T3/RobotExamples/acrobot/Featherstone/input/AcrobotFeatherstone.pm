@@ -15,22 +15,22 @@ pmodel AcrobotFeatherstone {
 			}
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		// ShoulderJoint - revolute about y-axis using Featherstone/RBDL formulation
+		// ShoulderJoint - revolute about x-axis using Featherstone/RBDL formulation
 		// Uses 'S' (motion subspace) to trigger Featherstone detection
 		// Uses 'X_lambda' (total spatial transform) following RBDL naming
 		local joint ShoulderJoint {
 			def {
-				// RBDL motion subspace for revolute y-axis: S = [0,1,0,0,0,0]^T
-				const S : vector ( real , 6 ) = (| 0 , 1 , 0 , 0 , 0 , 0 |)
+				// RBDL motion subspace for revolute x-axis: S = [1,0,0,0,0,0]^T
+				const S : vector ( real , 6 ) = (| 1 , 0 , 0 , 0 , 0 , 0 |)
 				InOut q : real
 				InOut X_lambda : matrix ( real , 6 , 6 )
-				// X_lambda: total spatial transform (X_J * X_T) for rotation about y
-				equation X_lambda == [| cos ( q ) , 0 , - sin ( q ) , 0 , 0 , 0 ;
-				                        0 , 1 , 0 , 0 , 0 , 0 ;
-				                        sin ( q ) , 0 , cos ( q ) , 0 , 0 , 0 ;
-				                        0 , 0 , 0 , cos ( q ) , 0 , - sin ( q ) ;
-				                        0 , 0 , 0 , 0 , 1 , 0 ;
-				                        0 , 0 , 0 , sin ( q ) , 0 , cos ( q ) |]
+				// X_lambda: total spatial transform (X_J * X_T) for rotation about x
+				equation X_lambda == [| 1 , 0 , 0 , 0 , 0 , 0 ;
+				                        0 , cos ( q ) , sin ( q ) , 0 , 0 , 0 ;
+				                        0 , - sin ( q ) , cos ( q ) , 0 , 0 , 0 ;
+				                        0 , 0 , 0 , 1 , 0 , 0 ;
+				                        0 , 0 , 0 , 0 , cos ( q ) , sin ( q ) ;
+				                        0 , 0 , 0 , 0 , - sin ( q ) , cos ( q ) |]
 			}
 			flexibly connected to Link1
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
@@ -54,20 +54,20 @@ pmodel AcrobotFeatherstone {
 			}
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		// ElbowJoint - revolute about y-axis (local frame)
+		// ElbowJoint - revolute about x-axis (local frame)
 		local joint ElbowJoint {
 			def {
-				// RBDL motion subspace for revolute y-axis
-				const S : vector ( real , 6 ) = (| 0 , 1 , 0 , 0 , 0 , 0 |)
+				// RBDL motion subspace for revolute x-axis
+				const S : vector ( real , 6 ) = (| 1 , 0 , 0 , 0 , 0 , 0 |)
 				InOut q : real
 				InOut X_lambda : matrix ( real , 6 , 6 )
-				// X_lambda: total spatial transform for rotation about y
-				equation X_lambda == [| cos ( q ) , 0 , - sin ( q ) , 0 , 0 , 0 ;
-				                        0 , 1 , 0 , 0 , 0 , 0 ;
-				                        sin ( q ) , 0 , cos ( q ) , 0 , 0 , 0 ;
-				                        0 , 0 , 0 , cos ( q ) , 0 , - sin ( q ) ;
-				                        0 , 0 , 0 , 0 , 1 , 0 ;
-				                        0 , 0 , 0 , sin ( q ) , 0 , cos ( q ) |]
+				// X_lambda: total spatial transform for rotation about x
+				equation X_lambda == [| 1 , 0 , 0 , 0 , 0 , 0 ;
+				                        0 , cos ( q ) , sin ( q ) , 0 , 0 , 0 ;
+				                        0 , - sin ( q ) , cos ( q ) , 0 , 0 , 0 ;
+				                        0 , 0 , 0 , 1 , 0 , 0 ;
+				                        0 , 0 , 0 , 0 , cos ( q ) , sin ( q ) ;
+				                        0 , 0 , 0 , 0 , - sin ( q ) , cos ( q ) |]
 			}
 			flexibly connected to Link2
 			pose { x = 0.0 y = 1.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }

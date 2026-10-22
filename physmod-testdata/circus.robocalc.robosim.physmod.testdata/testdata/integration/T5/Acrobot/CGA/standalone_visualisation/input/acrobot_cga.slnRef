@@ -13,7 +13,7 @@ SolutionRef {
 	constraint " (N) [ t == 0] ==2"
 	constraint " (theta) [ t == 0] ==(|1.0,1.0|)"
 	constraint " (motor_T) [ t == 0] ==<[|1.0,0.0,0.0,0.0,0.0,0.0,0.5,0.0|], [|1.0,0.0,0.0,0.0,0.0,0.0,0.1,0.0|], [|1.0,0.0,0.0,0.0,0.0,0.0,0.05,0.0|]>"
-	constraint " (axis_rot) [ t == 0] ==<[|0.0,1.0,0.0|], [|0.0,1.0,0.0|]>"
+	constraint " (axis_rot) [ t == 0] ==<[|0.0,0.0,1.0|], [|0.0,0.0,1.0|]>"
 	constraint " (axis_lin) [ t == 0] ==<[|0.0,0.0,0.0|], [|0.0,0.0,0.0|]>"
 	constraint " (joint_type) [ t == 0] ==<0,0>"
 }
@@ -40,7 +40,7 @@ SolutionRef {
 	constraint " (tau) [ t == 0] ==(|0.0,0.0|)"
 	constraint " (damping) [ t == 0] ==[|0.0,0.0;0.0,0.0|]"
 	constraint " (gravity) [ t == 0] ==9.81"
-	constraint " (axis_rot) [ t == 0] ==<[|0.0,1.0,0.0|], [|0.0,1.0,0.0|]>"
+	constraint " (axis_rot) [ t == 0] ==<[|0.0,0.0,1.0|], [|0.0,0.0,1.0|]>"
 	constraint " (axis_lin) [ t == 0] ==<[|0.0,0.0,0.0|], [|0.0,0.0,0.0|]>"
 	constraint " (joint_type) [ t == 0] ==<0,0>"
 	constraint " (mass_k) [ t == 0] ==<1.0,1.0>"

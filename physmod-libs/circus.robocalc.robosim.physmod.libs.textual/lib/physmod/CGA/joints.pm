@@ -41,6 +41,54 @@ joint RevoluteJoint_CGA {
   )
 }
 
+// Revolute joint about the x axis: the rotor generator is e23.
+joint RevoluteJoint_CGA_X {
+  InOut q          : real
+  InOut axis_rot   : vector(real,3) = (| 0, 0, 1 |)   // [e12,e13,e23]
+  InOut motor_frame: vector(real,8)
+  InOut motor_joint: vector(real,8)
+  equation motor_joint == motorProduct(
+    motor_frame,
+    (| cos(0.5 * q),
+       sin(0.5 * q) * axis_rot[0],
+       sin(0.5 * q) * axis_rot[1],
+       sin(0.5 * q) * axis_rot[2],
+       0, 0, 0, 0 |)
+  )
+}
+
+// Revolute joint about the y axis: the rotor generator is e13.
+joint RevoluteJoint_CGA_Y {
+  InOut q          : real
+  InOut axis_rot   : vector(real,3) = (| 0, 1, 0 |)   // [e12,e13,e23]
+  InOut motor_frame: vector(real,8)
+  InOut motor_joint: vector(real,8)
+  equation motor_joint == motorProduct(
+    motor_frame,
+    (| cos(0.5 * q),
+       sin(0.5 * q) * axis_rot[0],
+       sin(0.5 * q) * axis_rot[1],
+       sin(0.5 * q) * axis_rot[2],
+       0, 0, 0, 0 |)
+  )
+}
+
+// Revolute joint about the z axis: the rotor generator is e12.
+joint RevoluteJoint_CGA_Z {
+  InOut q          : real
+  InOut axis_rot   : vector(real,3) = (| 1, 0, 0 |)   // [e12,e13,e23]
+  InOut motor_frame: vector(real,8)
+  InOut motor_joint: vector(real,8)
+  equation motor_joint == motorProduct(
+    motor_frame,
+    (| cos(0.5 * q),
+       sin(0.5 * q) * axis_rot[0],
+       sin(0.5 * q) * axis_rot[1],
+       sin(0.5 * q) * axis_rot[2],
+       0, 0, 0, 0 |)
+  )
+}
+
 // Prismatic joint in CGA (translator along axis_lin).
 joint PrismaticJoint_CGA {
   InOut q          : real

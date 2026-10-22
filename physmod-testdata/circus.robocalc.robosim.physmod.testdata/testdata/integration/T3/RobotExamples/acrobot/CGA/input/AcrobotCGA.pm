@@ -1,5 +1,5 @@
 import physmod::math::*
-import physmod::CGA::joints::RevoluteJoint_CGA
+import physmod::CGA::joints::RevoluteJoint_CGA_X
 import physmod::CGA::joints::*
 
 pmodel AcrobotCGA {
@@ -16,7 +16,7 @@ pmodel AcrobotCGA {
 			}
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		jref ShoulderJoint = RevoluteJoint_CGA {
+		jref ShoulderJoint = RevoluteJoint_CGA_X {
 			flexibly connected to Link1
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
@@ -36,7 +36,7 @@ pmodel AcrobotCGA {
 			}
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		jref ElbowJoint = RevoluteJoint_CGA {
+		jref ElbowJoint = RevoluteJoint_CGA_X {
 			flexibly connected to Link2
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}

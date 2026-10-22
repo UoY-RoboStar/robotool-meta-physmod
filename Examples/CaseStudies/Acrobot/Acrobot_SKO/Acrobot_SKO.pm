@@ -2,7 +2,7 @@
 // Uses reference components from physmod-lib for joints, actuators, and sensors
 
 import physmod::math::*
-import physmod::SKO::joints::Revolute_y
+import physmod::SKO::joints::Revolute_x
 import physmod::trivial::actuators::ControlledMotor
 import physmod::trivial::sensors::JointEncoder
 
@@ -20,7 +20,7 @@ pmodel Acrobot_SKO {
             }
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        jref ShoulderJoint = Revolute_y {
+        jref ShoulderJoint = Revolute_x {
             flexibly connected to Link1
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
@@ -43,7 +43,7 @@ pmodel Acrobot_SKO {
             }
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        jref ElbowJoint = Revolute_y {
+        jref ElbowJoint = Revolute_x {
             flexibly connected to Link2
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
             aref ElbowMotor = ControlledMotor {
