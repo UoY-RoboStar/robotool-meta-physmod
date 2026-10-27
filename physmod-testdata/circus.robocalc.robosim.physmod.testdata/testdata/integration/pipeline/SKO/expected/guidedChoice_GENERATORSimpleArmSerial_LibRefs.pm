@@ -38,7 +38,7 @@ import physmod::SKO::joints::* import physmod::math::* pmodel SimpleArmSerial {
 			}
 		} local joint ElbowJoint {
 			def {
-				InOut B_2 : matrix ( real , 4 , 4 ) InOut B_3 : matrix ( real , 4 , 4 ) InOut _B_3 : matrix ( real , 4 , 4 ) InOut T_3_2 : matrix ( real , 4 , 4 ) InOut V_3 : vector ( real , 6 ) InOut _V_3 : vector ( real , 6 ) InOut alpha_3 : vector ( real , 6 ) InOut _alpha_3 : vector ( real , 6 ) InOut f_2 : vector ( real , 6 ) InOut r_v2 : real = 1 InOut theta_2 : real InOut phi_3_2 : matrix ( real , 6 , 6 ) local number : real = 2 local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |] const H : vector ( real , 6 ) = (| 1 , 0 , 0 , 0 , 0 , 0 |) equation _B_3 == B_3 equation _V_3 == V_3 equation _alpha_3 == alpha_3 equation _f_2 == f_2 } flexibly connected to IntermediateLink aref ElbowActuator = TrivialMotor {
+				InOut B_2 : matrix ( real , 4 , 4 ) InOut B_3 : matrix ( real , 4 , 4 ) InOut _B_3 : matrix ( real , 4 , 4 ) InOut T_3_2 : matrix ( real , 4 , 4 ) InOut V_3 : vector ( real , 6 ) InOut _V_3 : vector ( real , 6 ) InOut alpha_3 : vector ( real , 6 ) InOut _alpha_3 : vector ( real , 6 ) InOut f_2 : vector ( real , 6 ) InOut r_v2 : real = 1 InOut theta_2 : real InOut phi_3_2 : matrix ( real , 6 , 6 ) local number : real = 2 local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.25 , 0.0 , 0.0 , 0.0 |] const H : vector ( real , 6 ) = (| 1 , 0 , 0 , 0 , 0 , 0 |) equation _B_3 == B_3 equation _V_3 == V_3 equation _alpha_3 == alpha_3 equation _f_2 == f_2 } flexibly connected to IntermediateLink aref ElbowActuator = TrivialMotor {
 				pose {
 					x = 0.0
 					y = 0.0
@@ -52,7 +52,7 @@ import physmod::SKO::joints::* import physmod::math::* pmodel SimpleArmSerial {
 				
 				0.0
 				y = 0.0
-				z = 0.0
+				z = 0.25
 				roll = 0.0
 				pitch = 0.0
 				yaw = 0.0
@@ -92,7 +92,7 @@ import physmod::SKO::joints::* import physmod::math::* pmodel SimpleArmSerial {
 			}
 		} local joint WristJoint {
 			def {
-				InOut B_1 : matrix ( real , 4 , 4 ) InOut B_2 : matrix ( real , 4 , 4 ) InOut _B_2 : matrix ( real , 4 , 4 ) InOut T_2_1 : matrix ( real , 4 , 4 ) InOut V_2 : vector ( real , 6 ) InOut _V_2 : vector ( real , 6 ) InOut alpha_2 : vector ( real , 6 ) InOut _alpha_2 : vector ( real , 6 ) InOut f_1 : vector ( real , 6 ) InOut r_v1 : real = 1 InOut theta_1 : real InOut phi_2_1 : matrix ( real , 6 , 6 ) local number : real = 1 local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |] const  H : vector ( real , 6 ) = (| 0 , 0 , 1 , 0 , 0 , 0 |) equation _B_2 == B_2 equation _V_2 == V_2 equation _alpha_2 == alpha_2 equation _f_1 == f_1 } flexibly connected to Gripper aref WristActuator = TrivialMotor {
+				InOut B_1 : matrix ( real , 4 , 4 ) InOut B_2 : matrix ( real , 4 , 4 ) InOut _B_2 : matrix ( real , 4 , 4 ) InOut T_2_1 : matrix ( real , 4 , 4 ) InOut V_2 : vector ( real , 6 ) InOut _V_2 : vector ( real , 6 ) InOut alpha_2 : vector ( real , 6 ) InOut _alpha_2 : vector ( real , 6 ) InOut f_1 : vector ( real , 6 ) InOut r_v1 : real = 1 InOut theta_1 : real InOut phi_2_1 : matrix ( real , 6 , 6 ) local number : real = 1 local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 2.0 , 0.0 , 0.0 , 0.0 |] const  H : vector ( real , 6 ) = (| 0 , 0 , 1 , 0 , 0 , 0 |) equation _B_2 == B_2 equation _V_2 == V_2 equation _alpha_2 == alpha_2 equation _f_1 == f_1 } flexibly connected to Gripper aref WristActuator = TrivialMotor {
 				pose {
 					x = 0.0
 					y = 0.0
@@ -106,7 +106,7 @@ import physmod::SKO::joints::* import physmod::math::* pmodel SimpleArmSerial {
 				
 				0.0
 				y = 0.0
-				z = 0.0
+				z = 2.0
 				roll = 0.0
 				pitch = 0.0
 				yaw = 0.0

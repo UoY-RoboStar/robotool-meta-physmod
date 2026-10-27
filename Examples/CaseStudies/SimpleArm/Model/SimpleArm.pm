@@ -1,3 +1,4 @@
+package SimpleArm
 import physmod::joints::Revolute import physmod::sensors::IR import physmod::actuators::SpeedControlMotor import physmod::actuators::LinearSpeedControlMotor import physmod::sensors::Camera import physmod::math::* pmodel SimpleArm {	
 	local link BaseLink {
 		def {
@@ -175,46 +176,6 @@ import physmod::joints::Revolute import physmod::sensors::IR import physmod::act
 	local link Gripper {
 		def {
 		}
-		jref left_slider = Prismatic_x {
-			flexibly connected to left_finger
-			annotation Prismatic {
-				axis = Axis {
-					xyz = (| 1 , 0 , 0 |)
-					limit = Limit {
-						effort=0
-					}
-				}
-			}
-		pose {
-				x = 0.25
-				y = 0
-				z = 0.25
-				roll = 0
-				pitch = 0
-				yaw = 0
-			}
-		aref left_sliderMotor = TorqueControlMotor
-		}
-		jref right_slider = Prismatic_x {
-			flexibly connected to right_finger
-			annotation Prismatic {
-				axis = Axis {
-					xyz = (| 1 , 0 , 0 |)
-					limit = Limit {
-						effort=0
-					}
-				}
-			}
-		pose {
-				x = 0.25
-				y = 0
-				z = 0.25
-				roll = 0
-				pitch = 0
-				yaw = 0
-			}
-		aref right_sliderMotor = TorqueControlMotor
-		}
 	local body Gripper {
 			def {
 				box ( length =  0.5 , width = 0.5 , height = 0.5 )
@@ -241,80 +202,13 @@ import physmod::joints::Revolute import physmod::sensors::IR import physmod::act
 				yaw = 0.0
 			}
 		}
-	}
-	local link left_finger {
-		def {
-		}
-		local body left_finger {
-			def {
-				inertial information {
-					mass 0.01
-					inertia matrix { ixx 0.000283 ixy 0 ixz 0 iyy 0.0000752 iyz 0 izz 0.00209 }
-					pose {
-						x = 0
-						y = 0
-						z = 0
-						roll = 0
-						pitch = 0
-						yaw = 0
-					}
-				}
-				box ( length =  0.015 , width = 0.5 , height = 0.3 )
-			}
-			pose {
-				x = 0
-				y = 0
-				z = 0
-				roll = 0
-				pitch = 0
-				yaw = 0
-			}
-		}
-	pose {
-			x = - 0.25
+		pose {
+			x = 0
 			y = 0
-			z = 5.15
+			z = 4.75
 			roll = 0
 			pitch = 0
 			yaw = 0
-		}
-	}
-	local link right_finger {
-		def {
-		}
-	local body right_finger {
-			def {
-				inertial information {
-					mass 0.01
-					inertia matrix { ixx 0.000283 ixy 0 ixz 0 iyy 0.0000752 iyz 0 izz 0.00209 }
-					pose {
-						x = 0
-						y = 0
-						z = 0
-						roll = 0
-						pitch = 0
-						yaw = 0
-					}
-				}
-				box ( length =  0.015 , width = 0.5 , height = 0.3 )
-			}
-			pose {
-				x = 
-				0
-				y = 0
-				z = 0
-				roll = 0
-				pitch = 0
-				yaw = 0
-			}
-		}
-	pose {
-			x = 0.25
-			y = 0
-			z = 5.15
-			roll = 0.0
-			pitch = 0.0
-			yaw = 0.0
 		}
 	}
 }
@@ -365,16 +259,6 @@ actuator TorqueControlMotor {
 	input TorqueIn : real
 	output TorqueOut : real
 	equation TorqueIn == TorqueOut
-}
-joint Prismatic_x {
- input v: real, q: real
- local H_FM: matrix(real,6,1), X_FM: matrix(real,3,4), V_FM: real, A_FM: real, N: real  
- equation N == 1.0
- equation H_FM == (|0,0,0,1,0,0|)
- equation X_FM ==[|1,0,0;0,1,0;0,0,1;q,0,0|]
- equation V_FM == H_FM * v
- equation A_FM == H_FM * derivative(v)
- equation derivative(q) == N * v 
 }
 
 

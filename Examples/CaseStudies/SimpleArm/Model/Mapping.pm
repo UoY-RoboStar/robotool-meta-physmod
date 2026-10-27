@@ -1,3 +1,5 @@
+package Mapping
+import SimpleArm::*
 map M dmodel PickPlace to pmodel SimpleArm {
 	operation PrePick{
 		equation SimpleArm::BaseLink::ElbowJoint::ElbowJointMotor.TorqueIn == -ind(t,0,1)* t cat 10* (34683 + 80634 * t - 102817 * t cat 2)/2500 + ind(t,1,2)*t cat 10 * (34683 + 80634 * t - 102817 * t cat 2)/2500
@@ -11,11 +13,11 @@ map M dmodel PickPlace to pmodel SimpleArm {
 		equation SimpleArm::BaseLink::ElbowJoint::ElbowJointMotor.TorqueIn == -ind(t,0,1)*(t cat 10 (34683 + 80634 * t - 102817 * t cat 2))/2500 + ind(t,1,2)*(t cat 10 * (34683 + 80634 * t - 102817 * t cat 2))/2500
 	} 
 	input event detectObject?object{ 
-		predicate object == SimpleArm::BaseLink::ObjectBeamSensor.measurement < 4.75111	/\ 	SimpleArm::BaseLink::ObjectBeamSensor.measurement>4.79
+		predicate object == SimpleArm::BaseLink::ObjectBeamSensor.measurement < 4.75111	/\ 	SimpleArm::BaseLink::ObjectBeamSensor.measurement>4.749
 		}
 		
 	input event detectGoal?goal {
-		predicate goal == SimpleArm::BaseLink::GoalBeamSensor.measurement < 4.75111	/\ 	SimpleArm::BaseLink::GoalBeamSensor.measurement>4.79
+		predicate goal == SimpleArm::BaseLink::GoalBeamSensor.measurement < 4.75111	/\ 	SimpleArm::BaseLink::GoalBeamSensor.measurement>4.749
 		
 	}
 

@@ -1,4 +1,5 @@
-import physmod::joints::Revolute import physmod::sensors::IR import physmod::actuators::SpeedControlMotor import physmod::actuators::LinearSpeedControlMotor import physmod::sensors::Camera import physmod::math::* pmodel SimpleArm {	
+package SimpleArmSerial
+import physmod::joints::Revolute import physmod::sensors::IR import physmod::actuators::SpeedControlMotor import physmod::actuators::LinearSpeedControlMotor import physmod::sensors::Camera import physmod::math::* pmodel SimpleArmSerial {	
 	local link BaseLink {
 		def {
 		}
@@ -32,7 +33,7 @@ import physmod::joints::Revolute import physmod::sensors::IR import physmod::act
 				pitch = 0.0
 				yaw = 0.0
 			}
-		aref ElbowMotor = TrivialMotor {
+		aref ElbowActuator = TrivialMotor {
 				pose {
 					x = 0
 					y = 0
@@ -129,7 +130,7 @@ import physmod::joints::Revolute import physmod::sensors::IR import physmod::act
 				pitch = 0.0
 				yaw = 0.0
 			}
-		aref WristMotor = TrivialMotor {
+		aref WristActuator = TrivialMotor {
 				pose {
 					x = 0
 					y = 0

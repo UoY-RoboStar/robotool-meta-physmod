@@ -9,7 +9,7 @@ import  physmod::SKO::joints::*
 			pose {
 				x = 0.0
 				y = 0.0
-				z = 0.0
+				z = 0.25
 				roll = 0.0
 				pitch = 0.0
 				yaw = 0.0
@@ -77,7 +77,7 @@ import  physmod::SKO::joints::*
 			pose {
 				x = 0.0
 				y = 0.0
-				z = 2.5
+				z = 2.0
 				roll = 0.0
 				pitch = 0.0
 				yaw = 0.0

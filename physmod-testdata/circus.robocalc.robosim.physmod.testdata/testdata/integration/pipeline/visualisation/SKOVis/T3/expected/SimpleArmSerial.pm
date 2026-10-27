@@ -127,7 +127,7 @@ import  physmod::math::*
 				InOut theta_2 : real
 				InOut phi_3_2 : matrix ( real , 6 , 6 )
 				local number : real = 2
-				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.25 , 0.0 , 0.0 , 0.0 |]
 				equation _B_3 == B_3
 				equation _V_3 == V_3
 				equation _alpha_3 == alpha_3
@@ -139,7 +139,7 @@ import  physmod::math::*
 
 				0.0
 				y = 0.0
-				z = 0.0
+				z = 0.25
 				roll = 0.0
 				pitch = 0.0
 				yaw = 0.0
@@ -263,7 +263,7 @@ import  physmod::math::*
 				InOut theta_1 : real
 				InOut phi_2_1 : matrix ( real , 6 , 6 )
 				local number : real = 1
-				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 2.0 , 0.0 , 0.0 , 0.0 |]
 				equation _B_2 == B_2
 				equation _V_2 == V_2
 				equation _alpha_2 == alpha_2
@@ -275,7 +275,7 @@ import  physmod::math::*
 
 				0.0
 				y = 0.0
-				z = 0.0
+				z = 2.0
 				roll = 0.0
 				pitch = 0.0
 				yaw = 0.0

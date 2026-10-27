@@ -19,9 +19,9 @@ pmodel Acrobot_Featherstone {
 		// ShoulderJoint - revolute about x-axis (Featherstone joint library)
 		jref ShoulderJoint = RevoluteJoint_X {
 			flexibly connected to Link1
-			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+			pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 
 	// Link1 - first pendulum link
@@ -43,9 +43,9 @@ pmodel Acrobot_Featherstone {
 		// ElbowJoint - revolute about x-axis (Featherstone joint library)
 		jref ElbowJoint = RevoluteJoint_X {
 			flexibly connected to Link2
-			pose { x = 0.0 y = 1.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+			pose { x = 0.0 y = 0.0 z = -0.5 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.0 z = -0.7 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 
 	// Link2 - second pendulum link (end effector)
@@ -64,6 +64,6 @@ pmodel Acrobot_Featherstone {
 			}
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.0 z = -1.7 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 }

@@ -27,7 +27,7 @@ pmodel AcrobotControlled {
 			InOut phi_3_2 : matrix ( real , 6 , 6 )
 			InOut tau_3 : vector ( real , 1 )
 			local number : real = 3
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.1 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_3 ) ( 0 , 0 , 3 , 3 ) == I_C_3 + m_3 * transpose ( skew ( c_3 ) ) * skew ( c_3 )
 			equation submatrix ( M_3 ) ( 0 , 3 , 3 , 3 ) == m_3 * skew ( c_3 )
 			equation submatrix ( M_3 ) ( 3 , 0 , 3 , 3 ) == - m_3 * skew ( c_3 )
@@ -35,8 +35,8 @@ pmodel AcrobotControlled {
 			equation f_3 == phi_3_2 * _f_2 + M_3 * alpha_3 + b_3
 			equation V_3 == 0
 			equation alpha_3 == a_3
-			Constraint ( B_3 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 0.10000000149011612 ; 0 , 0 , 0 , 1 |]
-			Constraint ( T_geom_3 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 0 ; 0 , 0 , 0 , 1 |]
+			Constraint ( B_3 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 0.2 ; 0 , 0 , 0 , 1 |]
+			Constraint ( T_geom_3 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 0.1 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_offset_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.10000000149011612 ; 0 , 0 , 0 , 1 |]
 			Constraint ( X_T_3 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , 1 , 0 ; 0 , 0 , 0 , 0 , 0 , 1 |]
 		}
@@ -78,14 +78,14 @@ pmodel AcrobotControlled {
 				InOut theta_2 : real
 				InOut phi_3_2 : matrix ( real , 6 , 6 )
 				local number : real = 2
-				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.1 , 0.0 , 0.0 , 0.0 |]
 				equation _B_3 == B_3
 				equation _V_3 == V_3
 				equation _alpha_3 == alpha_3
 				equation _f_2 == f_2
 			}
             flexibly connected to Link1
-            pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+            pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         relation B_3 == ShoulderJoint . B_3 /\ V_3 == ShoulderJoint . V_3 /\ alpha_3 == ShoulderJoint . alpha_3 /\ theta [ 1 ] == ShoulderJoint . theta /\ H_2 == ShoulderJoint . H /\ X_J_2 == ShoulderJoint . XJ
 		}
 		local sensor ShoulderEncoder {
@@ -106,7 +106,7 @@ pmodel AcrobotControlled {
 				yaw = 0.0
 			}
 		}
-        pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+        pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     relation B_3 == BaseLink . B_3 /\ V [ 2 ] == BaseLink . V_3 /\ a [ 2 ] == BaseLink . a_3 /\ b [ 2 ] == BaseLink . b_3 /\ alpha [ 2 ] == BaseLink . alpha_3 /\ submatrix ( M ) ( 12 , 12 , 6 , 6 ) == BaseLink . M_3 /\ tau [ 2 ] == BaseLink . tau_3 /\ L3_geom == geom_31
 	}
 
@@ -141,7 +141,7 @@ pmodel AcrobotControlled {
 			InOut r_v2 : real = 1
 			InOut tau_2 : vector ( real , 1 )
 			local number : real = 2
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.7 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_2 ) ( 0 , 0 , 3 , 3 ) == I_C_2 + m_2 * transpose ( skew ( c_2 ) ) * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 0 , 3 , 3 , 3 ) == m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 0 , 3 , 3 ) == - m_2 * skew ( c_2 )
@@ -151,10 +151,10 @@ pmodel AcrobotControlled {
 			equation tau_2 == H_2 * f_2
 			equation B_2 == _B_3 * T_3_2
 			equation f_2 == phi_2_1 * _f_1 + M_2 * alpha_2 + b_2
-			Constraint ( B_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 0.5 ; 0 , 0 , 0 , 1 |]
-			Constraint ( T_geom_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 0 ; 0 , 0 , 0 , 1 |]
+			Constraint ( B_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 1.2 ; 0 , 0 , 0 , 1 |]
+			Constraint ( T_geom_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 0.7 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_offset_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.5 ; 0 , 0 , 0 , 1 |]
-			Constraint ( X_T_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0.20000000298023224 , - 0.000000 , 1 , 0 , 0 ; - 0.20000000298023224 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
+			Constraint ( X_T_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 1 , - 0.000000 , 1 , 0 , 0 ; 1 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
 		}
         local body Link1Body {
             def {
@@ -195,14 +195,14 @@ pmodel AcrobotControlled {
 				InOut theta_1 : real
 				InOut phi_2_1 : matrix ( real , 6 , 6 )
 				local number : real = 1
-				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.5 , 0.0 , 0.0 , 0.0 |]
 				equation _B_2 == B_2
 				equation _V_2 == V_2
 				equation _alpha_2 == alpha_2
 				equation _f_1 == f_1
 			}
             flexibly connected to Link2
-            pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+            pose { x = 0.0 y = 0.0 z = -0.5 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         relation B_2 == ElbowJoint . B_2 /\ V_2 == ElbowJoint . V_2 /\ alpha_2 == ElbowJoint . alpha_2 /\ theta [ 0 ] == ElbowJoint . theta /\ H_1 == ElbowJoint . H /\ X_J_1 == ElbowJoint . XJ
 		}
         // Local actuator with B_ctrl matrix for control-theoretic proofs
@@ -234,7 +234,7 @@ pmodel AcrobotControlled {
 				yaw = 0.0
 			}
 		}
-        pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+        pose { x = 0.0 y = 0.0 z = -0.7 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     relation B_2 == Link1 . B_2 /\ V [ 1 ] == Link1 . V_2 /\ a [ 1 ] == Link1 . a_2 /\ b [ 1 ] == Link1 . b_2 /\ alpha [ 1 ] == Link1 . alpha_2 /\ submatrix ( M ) ( 6 , 6 , 6 , 6 ) == Link1 . M_2 /\ tau [ 1 ] == Link1 . tau_2 /\ L2_geom == geom_21 /\ submatrix ( H ) ( 1 , 6 , 1 , 6 ) == Link1 . H_2
 		relation_flexi B_2 == Link1 . B_2 /\ f_2 == Link1 . f_2 /\ theta_2 == Link1 . theta_2 /\ T_3_2 == Link1 . T_3_2 /\ phi_3_2 == Link1 . phi_3_2 /\ _V_3 == Link1 . _V_3 /\ H == Link1 . H_2 /\ X_J_2 == Link1 . X_J_2
 	}
@@ -268,7 +268,7 @@ pmodel AcrobotControlled {
 			InOut r_v1 : real = 1
 			InOut tau_1 : vector ( real , 1 )
 			local number : real = 1
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 2.2 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_1 ) ( 0 , 0 , 3 , 3 ) == I_C_1 + m_1 * transpose ( skew ( c_1 ) ) * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 0 , 3 , 3 , 3 ) == m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 0 , 3 , 3 ) == - m_1 * skew ( c_1 )
@@ -278,10 +278,10 @@ pmodel AcrobotControlled {
 			equation tau_1 == H_1 * f_1
 			equation B_1 == _B_2 * T_2_1
 			equation f_1 == M_1 * alpha_1 + b_1
-			Constraint ( B_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 1 ; 0 , 0 , 0 , 1 |]
-			Constraint ( T_geom_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 0 ; 0 , 0 , 0 , 1 |]
+			Constraint ( B_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 3.2 ; 0 , 0 , 0 , 1 |]
+			Constraint ( T_geom_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 2.2 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 1 ; 0 , 0 , 0 , 1 |]
-			Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 1 , - 0.000000 , 1 , 0 , 0 ; - 1 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
+			Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 2 , - 0.000000 , 1 , 0 , 0 ; 2 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
 		}
         local body Link2Body {
             def {
@@ -296,7 +296,7 @@ pmodel AcrobotControlled {
 			}
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+        pose { x = 0.0 y = 0.0 z = -2.2 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     relation B_1 == Link2 . B_1 /\ V [ 0 ] == Link2 . V_1 /\ a [ 0 ] == Link2 . a_1 /\ b [ 0 ] == Link2 . b_1 /\ alpha [ 0 ] == Link2 . alpha_1 /\ submatrix ( M ) ( 0 , 0 , 6 , 6 ) == Link2 . M_1 /\ tau [ 0 ] == Link2 . tau_1 /\ L1_geom == geom_11 /\ submatrix ( H ) ( 0 , 0 , 1 , 6 ) == Link2 . H_1
 		relation_flexi B_1 == Link2 . B_1 /\ f_1 == Link2 . f_1 /\ theta_1 == Link2 . theta_1 /\ T_2_1 == Link2 . T_2_1 /\ phi_2_1 == Link2 . phi_2_1 /\ _V_2 == Link2 . _V_2 /\ H == Link2 . H_1 /\ X_J_1 == Link2 . X_J_1
 	}

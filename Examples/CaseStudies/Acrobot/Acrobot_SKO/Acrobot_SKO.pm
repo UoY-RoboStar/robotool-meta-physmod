@@ -22,12 +22,12 @@ pmodel Acrobot_SKO {
         }
         jref ShoulderJoint = Revolute_x {
             flexibly connected to Link1
-            pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+            pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
         sref ShoulderEncoder = JointEncoder {
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+        pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     }
 
     local link Link1 {
@@ -45,7 +45,7 @@ pmodel Acrobot_SKO {
         }
         jref ElbowJoint = Revolute_x {
             flexibly connected to Link2
-            pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+            pose { x = 0.0 y = 0.0 z = -0.5 roll = 0.0 pitch = 0.0 yaw = 0.0 }
             aref ElbowMotor = ControlledMotor {
                 pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
             }
@@ -53,7 +53,7 @@ pmodel Acrobot_SKO {
         sref ElbowEncoder = JointEncoder {
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+        pose { x = 0.0 y = 0.0 z = -0.7 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     }
 
     local link Link2 {
@@ -69,6 +69,6 @@ pmodel Acrobot_SKO {
             }
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+        pose { x = 0.0 y = 0.0 z = -2.2 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     }
 }

@@ -113,7 +113,7 @@ import  physmod::math::*
                 
 				InOut phi_3_2 : matrix ( real , 6 , 6 )
 				local number : real = 2
-				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.25 , 0.0 , 0.0 , 0.0 |]
 				equation _B_3 == B_3
 				equation _V_3 == V_3
 				equation _alpha_3 == alpha_3
@@ -125,7 +125,7 @@ import  physmod::math::*
 				
 				0.0
 				y = 0.0
-				z = 0.0
+				z = 0.25
 				roll = 0.0
 				pitch = 0.0
 				yaw = 0.0
@@ -199,7 +199,7 @@ import  physmod::math::*
 			equation B_2 == _B_3 * T_3_2
 			equation f_2 == phi_2_1 * _f_1 + M_2 * alpha_2 + b_2
 			Constraint ( B_2 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 0.500000 ; 0 , 0 , 0 , 1 |]
-			Constraint ( X_T_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 0.500000 , 0.000000 , 1 , 0 , 0 ; 0.500000 , 0 , - 0.000000 , 0 , 1 , 0 ; - 0.000000 , 0.000000 , 0 , 0 , 0 , 1 |]
+			Constraint ( X_T_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0.5 , 0.000000 , 1 , 0 , 0 ; - 0.5 , 0 , - 0.000000 , 0 , 1 , 0 ; - 0.000000 , 0.000000 , 0 , 0 , 0 , 1 |]
 		}
 		local body IntermediateLink {
 			def {
@@ -248,7 +248,7 @@ import  physmod::math::*
                 
 				InOut phi_2_1 : matrix ( real , 6 , 6 )
 				local number : real = 1
-				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 2.0 , 0.0 , 0.0 , 0.0 |]
 				equation _B_2 == B_2
 				equation _V_2 == V_2
 				equation _alpha_2 == alpha_2
@@ -260,7 +260,7 @@ import  physmod::math::*
 				
 				0.0
 				y = 0.0
-				z = 0.0
+				z = 2.0
 				roll = 0.0
 				pitch = 0.0
 				yaw = 0.0
@@ -334,7 +334,7 @@ import  physmod::math::*
 			equation B_1 == _B_2 * T_2_1
 			equation f_1 == M_1 * alpha_1 + b_1
 			Constraint ( B_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , 4.500000 ; 0 , 0 , 0 , 1 |]
-			Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 4.000000 , 0.000000 , 1 , 0 , 0 ; 4.000000 , 0 , - 0.000000 , 0 , 1 , 0 ; - 0.000000 , 0.000000 , 0 , 0 , 0 , 1 |]
+			Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 4 , 0.000000 , 1 , 0 , 0 ; - 4 , 0 , - 0.000000 , 0 , 1 , 0 ; - 0.000000 , 0.000000 , 0 , 0 , 0 , 1 |]
 		}
 		local body Gripper {
 			def {

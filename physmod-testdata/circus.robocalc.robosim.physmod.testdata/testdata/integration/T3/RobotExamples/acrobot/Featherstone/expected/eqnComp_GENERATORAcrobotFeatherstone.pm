@@ -5,7 +5,7 @@ pmodel AcrobotFeatherstone {
 	local link BaseLink {
 		def { InOut geom_01 : Geom = Geom (| geomType = "box" , geomVal = [| 0.2 , 0.2 , 0.2 |] |)
 			local number : real = 0
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.1 , 0.0 , 0.0 , 0.0 |]
 		}
 		local body BaseBody {
 			def {
@@ -35,13 +35,13 @@ pmodel AcrobotFeatherstone {
 				                        0 , 0 , 0 , 1 , 0 , 0 ;
 				                        0 , 0 , 0 , 0 , cos ( q ) , sin ( q ) ;
 				                        0 , 0 , 0 , 0 , - sin ( q ) , cos ( q ) |]
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.1 , 0.0 , 0.0 , 0.0 |]
 				local number : real = 1
 			}
 			flexibly connected to Link1
-			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+			pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 
 	// Link1 - first pendulum link
@@ -50,7 +50,7 @@ pmodel AcrobotFeatherstone {
 	local link Link1 {
 		def { InOut geom_11 : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.05 , 1.0 |] |)
 			local number : real = 1
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.7 , 0.0 , 0.0 , 0.0 |]
 		}
 		local body Link1Body {
 			def {
@@ -78,13 +78,13 @@ pmodel AcrobotFeatherstone {
 				                        0 , 0 , 0 , 1 , 0 , 0 ;
 				                        0 , 0 , 0 , 0 , cos ( q ) , sin ( q ) ;
 				                        0 , 0 , 0 , 0 , - sin ( q ) , cos ( q ) |]
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 1.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.5 , 0.0 , 0.0 , 0.0 |]
 				local number : real = 2
 			}
 			flexibly connected to Link2
-			pose { x = 0.0 y = 1.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+			pose { x = 0.0 y = 0.0 z = -0.5 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.0 z = -0.7 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 
 	// Link2 - second pendulum link (end effector)
@@ -93,7 +93,7 @@ pmodel AcrobotFeatherstone {
 	local link Link2 {
 		def { InOut geom_21 : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.05 , 1.0 |] |)
 			local number : real = 2
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 1.7 , 0.0 , 0.0 , 0.0 |]
 		}
 		local body Link2Body {
 			def {
@@ -107,7 +107,7 @@ pmodel AcrobotFeatherstone {
 			}
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.0 z = -1.7 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 InOut n : int
 	InOut N : int

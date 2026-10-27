@@ -6,7 +6,7 @@ pmodel AcrobotCGA {
 	local link BaseLink {
 		def { InOut geom_31 : Geom = Geom (| geomType = "box" , geomVal = [| 0.2 , 0.2 , 0.2 |] |)
 			local number : real = 3
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.1 , 0.0 , 0.0 , 0.0 |]
 		}
 		local body BaseBody {
 			def {
@@ -27,26 +27,26 @@ pmodel AcrobotCGA {
 				InOut motor_frame : vector ( real , 8 )
 				InOut motor_joint : vector ( real , 8 )
 				local number : real = 2
-				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.1 , 0.0 , 0.0 , 0.0 |]
 				equation motor_joint == motorProduct ( motor_frame , (| cos ( 0.5 * q ) , sin ( 0.5 * q ) * axis_rot [ 0 ] , sin ( 0.5 * q ) * axis_rot [ 1 ] , sin ( 0.5 * q ) * axis_rot [ 2 ] , 0 , 0 , 0 , 0 |) )
 			}
 			flexibly connected to Link1
 			pose {
 				x = 0.0
 				y = 0.0
-				z = 0.0
+				z = - 0.1
 				roll = 0.0
 				pitch = 0.0
 				yaw = 0.0
 			}
 		}
-		pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 
 	local link Link1 {
 		def { InOut geom_21 : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.05 , 1.0 |] |)
 			local number : real = 2
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.7 , 0.0 , 0.0 , 0.0 |]
 		}
 		local body Link1Body {
 			def {
@@ -67,26 +67,26 @@ pmodel AcrobotCGA {
 				InOut motor_frame : vector ( real , 8 )
 				InOut motor_joint : vector ( real , 8 )
 				local number : real = 1
-				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.5 , 0.0 , 0.0 , 0.0 |]
 				equation motor_joint == motorProduct ( motor_frame , (| cos ( 0.5 * q ) , sin ( 0.5 * q ) * axis_rot [ 0 ] , sin ( 0.5 * q ) * axis_rot [ 1 ] , sin ( 0.5 * q ) * axis_rot [ 2 ] , 0 , 0 , 0 , 0 |) )
 			}
 			flexibly connected to Link2
 			pose {
 				x = 0.0
 				y = 0.0
-				z = 0.0
+				z = - 0.5
 				roll = 0.0
 				pitch = 0.0
 				yaw = 0.0
 			}
 		}
-		pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.0 z = -0.7 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 
 	local link Link2 {
 		def { InOut geom_11 : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.05 , 2.0 |] |)
 			local number : real = 1
-			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 |]
+			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 2.2 , 0.0 , 0.0 , 0.0 |]
 		}
 		local body Link2Body {
 			def {
@@ -100,7 +100,7 @@ pmodel AcrobotCGA {
 			}
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.0 z = -2.2 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 InOut n : int
 	InOut N : int

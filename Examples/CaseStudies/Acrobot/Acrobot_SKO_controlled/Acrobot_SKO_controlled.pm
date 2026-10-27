@@ -24,13 +24,13 @@ pmodel AcrobotControlled {
         // Shoulder joint: passive revolute about X-axis (unactuated)
         jref ShoulderJoint = Revolute_x {
             flexibly connected to Link1
-            pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+            pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
         // Shoulder encoder measures ShoulderJoint angle and velocity
         sref ShoulderEncoder = JointEncoder {
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+        pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     }
 
     local link Link1 {
@@ -51,7 +51,7 @@ pmodel AcrobotControlled {
         // B_ctrl relates control input u to torque: TorqueOut = B_ctrl * ControlIn
         jref ElbowJoint = Revolute_x {
             flexibly connected to Link2
-            pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+            pose { x = 0.0 y = 0.0 z = -0.5 roll = 0.0 pitch = 0.0 yaw = 0.0 }
             aref ElbowMotor = ControlledMotor {
                 pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
             }
@@ -60,7 +60,7 @@ pmodel AcrobotControlled {
         sref ElbowEncoder = JointEncoder {
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+        pose { x = 0.0 y = 0.0 z = -0.7 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     }
 
     local link Link2 {
@@ -77,6 +77,6 @@ pmodel AcrobotControlled {
             }
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+        pose { x = 0.0 y = 0.0 z = -2.2 roll = 0.0 pitch = 0.0 yaw = 0.0 }
     }
 }

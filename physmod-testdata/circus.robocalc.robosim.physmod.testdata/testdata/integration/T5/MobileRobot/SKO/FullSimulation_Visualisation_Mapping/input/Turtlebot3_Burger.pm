@@ -25,7 +25,7 @@ pmodel Turtlebot3_Burger {
 
 		jref LeftWheelJoint = Revolute_y {
 			flexibly connected to LeftWheel
-			pose { x = 0.0 y = 0.08 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+			pose { x = 0.0 y = 0.08 z = 0.023 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 			aref LeftMotor = ControlledMotor {
 				pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 			}
@@ -33,7 +33,7 @@ pmodel Turtlebot3_Burger {
 
 		jref RightWheelJoint = Revolute_y {
 			flexibly connected to RightWheel
-			pose { x = 0.0 y = -0.08 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+			pose { x = 0.0 y = -0.08 z = 0.023 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 			aref RightMotor = ControlledMotor {
 				pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 			}
@@ -66,7 +66,7 @@ pmodel Turtlebot3_Burger {
 			}
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		pose { x = 0.0 y = 0.08 z = 0.023 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.08 z = 0.033 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 
 	local link RightWheel {
@@ -85,7 +85,7 @@ pmodel Turtlebot3_Burger {
 			}
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		pose { x = 0.0 y = -0.08 z = 0.023 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = -0.08 z = 0.033 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 }
 
