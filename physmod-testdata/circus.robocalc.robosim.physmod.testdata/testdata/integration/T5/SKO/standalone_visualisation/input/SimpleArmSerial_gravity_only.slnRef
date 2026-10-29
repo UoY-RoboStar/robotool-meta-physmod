@@ -116,7 +116,7 @@ input Local { name M type "matrix(real,18,18)" }
 input Local { name a type "vector(real,18)" }
 input Local { name b type "vector(real,18)" }
 constraint " (n) [ t == 0] ==3"
-constraint " (M_inv) [ t == 0] ==zeroMat(18, 18)"
+constraint " (M_inv) [ t == 0] ==zeroMat(2, 2)"
 constraint " (tau) [ t == 0] ==zeroVec(2)"
 constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
 constraint " (C) [ t == 0] ==zeroVec(2)"
@@ -137,7 +137,7 @@ SolutionRef {
 	order 8
 input Local { name d_theta type "vector(real,2)" }
 input Local { name dt type "real" }
-constraint " (d_theta) [ t == 0] ==0"
+constraint " (d_theta) [ t == 0] ==zeroVec(2)"
 constraint " (dt) [ t == 0] ==0.01"
 constraint " (theta) [ t == 0] ==zeroVec(2)"
 }

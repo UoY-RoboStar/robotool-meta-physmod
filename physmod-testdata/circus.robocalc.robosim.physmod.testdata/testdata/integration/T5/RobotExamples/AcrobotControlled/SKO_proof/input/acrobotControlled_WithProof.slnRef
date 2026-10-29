@@ -104,7 +104,6 @@ SolutionRef {
 	constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|0.101,0.0,0.0,0.0,-0.010000001,0.0; 0.0,0.101,0.0,0.010000001,0.0,0.0; 0.0,0.0,0.1,0.0,0.0,0.0; 0.0,0.010000001,0.0,0.1,0.0,0.0; -0.010000001,0.0,0.0,0.0,0.1,0.0; 0.0,0.0,0.0,0.0,0.0,0.1|]"
 	constraint " (C) [ t == 0] ==zeroVec(2)"
 	constraint " (N) [ t == 0] ==2"
-	constraint " (H) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
 	constraint " (theta) [ t == 0] ==zeroVec(2)"
 	constraint " (d_theta) [ t == 0] ==zeroVec(2)"
 	constraint " (dd_theta) [ t == 0] ==zeroVec(2)"

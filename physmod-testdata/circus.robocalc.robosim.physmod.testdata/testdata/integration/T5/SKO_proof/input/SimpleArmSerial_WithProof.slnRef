@@ -78,7 +78,6 @@ constraint " (M_3) [ t == 0] ==zeroMat(6, 6)"
 constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100.0,0.0,0.0; -25.0,0.0,0.0,0.0,100.0,0.0; 0.0,0.0,0.0,0.0,0.0,100.0|]"
 constraint " (C) [ t == 0] ==zeroVec(2)"
 constraint " (N) [ t == 0] ==2"
-constraint " (H) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
 constraint " (theta) [ t == 0] ==zeroVec(2)"
 constraint " (d_theta) [ t == 0] ==zeroVec(2)"
 constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
@@ -90,7 +89,6 @@ constraint " (f) [ t == 0] ==zeroVec(18)"
 constraint " (M_mass) [ t == 0] ==zeroMat(2, 2)"
 constraint " (M_inv) [ t == 0] ==zeroMat(2, 2)"
 constraint " (dt) [ t == 0] ==0.01"
-constraint " (d_theta) [ t == 0] ==0"
 constraint " (X_J_1) [ t == 0] ==zeroMat(6, 6)"
 constraint " (X_J_1) [ t == t] ==[|cos(theta(0)),-sin(theta(0)),0,0,0,0; sin(theta(0)),cos(theta(0)),0,0,0,0; 0,0,1,0,0,0; 0,0,0,cos(theta(0)),-sin(theta(0)),0; 0,0,0,sin(theta(0)),cos(theta(0)),0; 0,0,0,0,0,1|]"
 constraint " (X_J_2) [ t == 0] ==zeroMat(6, 6)"
@@ -209,7 +207,6 @@ constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.
 constraint " (C) [ t == 0] ==zeroVec(2)"
 constraint " (N) [ t == 0] ==2"
 constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
-constraint " (H) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
 constraint " (theta) [ t == 0] ==zeroVec(2)"
 constraint " (d_theta) [ t == 0] ==zeroVec(2)"
 constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
@@ -241,7 +238,6 @@ constraint " (M_3) [ t == 0] ==zeroMat(6, 6)"
 constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100.0,0.0,0.0; -25.0,0.0,0.0,0.0,100.0,0.0; 0.0,0.0,0.0,0.0,0.0,100.0|]"
 constraint " (M_mass) [ t == 0] ==zeroMat(2, 2)"
 constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
-constraint " (H) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
 }
 SolutionRef {
 	expression Local { name M_inv type "matrix(real,2,2)" }
@@ -289,7 +285,7 @@ input Local { name d_theta type "vector(real,2)" }
 input Local { name dt type "real" }
 input Local { name n type "int" }
 constraint " (n) [ t == 0] ==3"
-constraint " (d_theta) [ t == 0] ==0"
+constraint " (d_theta) [ t == 0] ==zeroVec(2)"
 constraint " (dt) [ t == 0] ==0.01"
 constraint " (theta) [ t == 0] ==zeroVec(2)"
 }

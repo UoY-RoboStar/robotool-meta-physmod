@@ -25,7 +25,6 @@ pmodel AcrobotControlled {
 			InOut cz_3 : real = 0.0
 			InOut _f_2 : vector ( real , 6 )
 			InOut phi_3_2 : matrix ( real , 6 , 6 )
-			InOut tau_3 : vector ( real , 1 )
 			local number : real = 3
 			local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.1 , 0.0 , 0.0 , 0.0 |]
 			equation submatrix ( M_3 ) ( 0 , 0 , 3 , 3 ) == I_C_3 + m_3 * transpose ( skew ( c_3 ) ) * skew ( c_3 )
@@ -107,7 +106,7 @@ pmodel AcrobotControlled {
 			}
 		}
         pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
-    relation B_3 == BaseLink . B_3 /\ V [ 2 ] == BaseLink . V_3 /\ a [ 2 ] == BaseLink . a_3 /\ b [ 2 ] == BaseLink . b_3 /\ alpha [ 2 ] == BaseLink . alpha_3 /\ submatrix ( M ) ( 12 , 12 , 6 , 6 ) == BaseLink . M_3 /\ tau [ 2 ] == BaseLink . tau_3 /\ L3_geom == geom_31
+    relation B_3 == BaseLink . B_3 /\ V [ 2 ] == BaseLink . V_3 /\ a [ 2 ] == BaseLink . a_3 /\ b [ 2 ] == BaseLink . b_3 /\ alpha [ 2 ] == BaseLink . alpha_3 /\ submatrix ( M ) ( 12 , 12 , 6 , 6 ) == BaseLink . M_3 /\ L3_geom == geom_31
 	}
 
     local link Link1 {

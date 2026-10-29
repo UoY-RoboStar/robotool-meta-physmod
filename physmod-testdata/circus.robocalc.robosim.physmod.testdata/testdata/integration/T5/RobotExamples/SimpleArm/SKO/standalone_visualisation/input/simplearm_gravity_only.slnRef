@@ -46,7 +46,6 @@ constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.
 constraint " (C) [ t == 0] ==zeroVec(2)"
 constraint " (N) [ t == 0] ==2"
 constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
-constraint " (H) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 |]"
 constraint " (theta) [ t == 0] ==(|1.0,1.0|)"
 constraint " (d_theta) [ t == 0] ==zeroVec(2)"
 constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
@@ -77,7 +76,6 @@ constraint " (M_3) [ t == 0] ==zeroMat(6, 6)"
 constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100.0,0.0,0.0; -25.0,0.0,0.0,0.0,100.0,0.0; 0.0,0.0,0.0,0.0,0.0,100.0|]"
 constraint " (M_mass) [ t == 0] ==zeroMat(2, 2)"
 constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
-constraint " (H) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 |]"
 }
 SolutionRef {
 	expression Local { name M_inv type "matrix(real,2,2)" }
@@ -98,7 +96,7 @@ input Local { name tau type "vector(real,2)" }
 input Local { name M_inv type "matrix(real,2,2)" }
 input Local { name C type "vector(real,2)" }
 constraint " (n) [ t == 0] ==3"
-constraint " (M_inv) [ t == 0] ==zeroMat(18, 18)"
+constraint " (M_inv) [ t == 0] ==zeroMat(2, 2)"
 constraint " (tau) [ t == 0] ==zeroVec(2)"
 constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
 constraint " (C) [ t == 0] ==zeroVec(2)"
@@ -119,7 +117,7 @@ SolutionRef {
 	order 7
 input Local { name d_theta type "vector(real,2)" }
 input Local { name dt type "real" }
-constraint " (d_theta) [ t == 0] ==0"
+constraint " (d_theta) [ t == 0] ==zeroVec(2)"
 constraint " (dt) [ t == 0] ==0.001"
 constraint " (theta) [ t == 0] ==zeroVec(2)"
 }
