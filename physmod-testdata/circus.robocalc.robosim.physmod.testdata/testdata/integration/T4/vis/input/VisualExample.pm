@@ -246,15 +246,15 @@ InOut r_v2 : real = 1
 InOut T_3_2 : matrix ( real , 4 , 4 ) 
 InOut M_3 : matrix ( real , 6 , 6 ) 
 
-equation submatrix ( phi ) ( 0 , 0 , 3 , 3 ) == identity ( 3 ) 
-equation submatrix ( phi ) ( 0 , 3 , 3 , 3 ) == zeroes ( 3 ) 
-equation submatrix ( phi ) ( 0 , 6 , 3 , 3 ) == zeroes ( 3 ) 
-equation submatrix ( phi ) ( 3 , 3 , 3 , 3 ) == identity ( 3 ) 
-equation submatrix ( phi ) ( 3 , 6 , 3 , 3 ) == zeroes ( 3 ) 
-equation submatrix ( phi ) ( 3 , 0 , 3 , 3 ) == Phi ( 2 , 1 , B_k ) 
-equation submatrix ( phi ) ( 6 , 6 , 3 , 3 ) == identity ( 3 ) 
-equation submatrix ( phi ) ( 6 , 0 , 3 , 3 ) == Phi ( 3 , 1 , B_k ) 
-equation submatrix ( phi ) ( 6 , 3 , 3 , 3 ) == Phi ( 3 , 2 , B_k ) 
+equation submatrix ( phi ) ( 0 , 0 , 6 , 6 ) == identity ( 6 ) 
+equation submatrix ( phi ) ( 0 , 6 , 6 , 6 ) == zeroes ( 6 ) 
+equation submatrix ( phi ) ( 0 , 12 , 6 , 6 ) == zeroes ( 6 ) 
+equation submatrix ( phi ) ( 6 , 6 , 6 , 6 ) == identity ( 6 ) 
+equation submatrix ( phi ) ( 6 , 12 , 6 , 6 ) == zeroes ( 6 ) 
+equation submatrix ( phi ) ( 6 , 0 , 6 , 6 ) == Phi ( 2 , 1 , B_k ) 
+equation submatrix ( phi ) ( 12 , 12 , 6 , 6 ) == identity ( 6 ) 
+equation submatrix ( phi ) ( 12 , 0 , 6 , 6 ) == Phi ( 3 , 1 , B_k ) 
+equation submatrix ( phi ) ( 12 , 6 , 6 , 6 ) == Phi ( 3 , 2 , B_k ) 
 equation B_k == < B_1 , B_2 , B_3 > 
 equation XJ_k == < XJ_1 , XJ_2 > 
 equation V == adj ( phi ) * adj ( H ) * derivative ( theta ) 
@@ -305,8 +305,8 @@ actuator TrivialMotor {
 	equation TorqueIn == TorqueOut
 }
 
-function identity ( size : real ) : matrix ( real , 3 , 3 ) { } 
-function zeroes ( size : real ) : matrix ( real , 3 , 3 ) { } 
+function identity ( size : real ) : matrix ( real , 6 , 6 ) { } 
+function zeroes ( size : real ) : matrix ( real , 6 , 6 ) { } 
 function Phi ( m : real , n : real , B_k : Seq( matrix ( real , 4 , 4 ) ) ) : matrix ( real , 6 , 6 ) { } 
 function zeroVec ( a : real ) : vector ( real , 1 ) { } 
 function zeroMat ( a : real , b : real ) : matrix ( real , 0 , 0 ) { } 

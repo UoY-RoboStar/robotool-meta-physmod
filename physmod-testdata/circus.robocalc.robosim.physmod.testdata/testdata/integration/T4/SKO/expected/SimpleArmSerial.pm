@@ -427,15 +427,15 @@ import  physmod::math::*
 	InOut T_offset_3 : matrix ( real , 4 , 4 )
 	InOut X_J_1 : matrix ( real , 6 , 6 )
 	InOut X_J_2 : matrix ( real , 6 , 6 )
-	equation submatrix ( phi ) ( 0 , 0 , 3 , 3 ) == identity ( 3 )
-	equation submatrix ( phi ) ( 0 , 3 , 3 , 3 ) == zeroes ( 3 )
-	equation submatrix ( phi ) ( 0 , 6 , 3 , 3 ) == zeroes ( 3 )
-	equation submatrix ( phi ) ( 3 , 3 , 3 , 3 ) == identity ( 3 )
-	equation submatrix ( phi ) ( 3 , 6 , 3 , 3 ) == zeroes ( 3 )
-	equation submatrix ( phi ) ( 3 , 0 , 3 , 3 ) == Phi ( 2 , 1 , B_k )
-	equation submatrix ( phi ) ( 6 , 6 , 3 , 3 ) == identity ( 3 )
-	equation submatrix ( phi ) ( 6 , 0 , 3 , 3 ) == Phi ( 3 , 1 , B_k )
-	equation submatrix ( phi ) ( 6 , 3 , 3 , 3 ) == Phi ( 3 , 2 , B_k )
+	equation submatrix ( phi ) ( 0 , 0 , 6 , 6 ) == identity ( 6 )
+	equation submatrix ( phi ) ( 0 , 6 , 6 , 6 ) == zeroes ( 6 )
+	equation submatrix ( phi ) ( 0 , 12 , 6 , 6 ) == zeroes ( 6 )
+	equation submatrix ( phi ) ( 6 , 6 , 6 , 6 ) == identity ( 6 )
+	equation submatrix ( phi ) ( 6 , 12 , 6 , 6 ) == zeroes ( 6 )
+	equation submatrix ( phi ) ( 6 , 0 , 6 , 6 ) == Phi ( 2 , 1 , B_k )
+	equation submatrix ( phi ) ( 12 , 12 , 6 , 6 ) == identity ( 6 )
+	equation submatrix ( phi ) ( 12 , 0 , 6 , 6 ) == Phi ( 3 , 1 , B_k )
+	equation submatrix ( phi ) ( 12 , 6 , 6 , 6 ) == Phi ( 3 , 2 , B_k )
 	equation B_k == < B_1 , B_2 , B_3 >
 	equation X_T == < X_T_1 , X_T_2 , X_T_3 >
 	equation X_J == < X_J_1 , X_J_2 >
@@ -483,4 +483,4 @@ actuator TrivialMotor {
 	output TorqueOut : real
 	equation TorqueIn == TorqueOut
 }
-function identity ( size : real ) : matrix ( real , 3 , 3 ) { } function zeroes ( size : real ) : matrix ( real , 3 , 3 ) { } function Phi ( m : real , n : real , B_k : Seq( matrix ( real , 4 , 4 ) ) ) : matrix ( real , 6 , 6 ) { } function zeroVec ( a : real ) : vector ( real , 1 ) { } function zeroMat ( a : real , b : real ) : matrix ( real , 0 , 0 ) { } function skew ( v : vector ( real , 3 ) ) : matrix ( real , 3 , 3 ) { } function getFramePosition ( k : real , B_n : Seq( matrix ( real , 4 , 4 ) ) ) : vector ( real , 3 ) { }
+function identity ( size : real ) : matrix ( real , 6 , 6 ) { } function zeroes ( size : real ) : matrix ( real , 6 , 6 ) { } function Phi ( m : real , n : real , B_k : Seq( matrix ( real , 4 , 4 ) ) ) : matrix ( real , 6 , 6 ) { } function zeroVec ( a : real ) : vector ( real , 1 ) { } function zeroMat ( a : real , b : real ) : matrix ( real , 0 , 0 ) { } function skew ( v : vector ( real , 3 ) ) : matrix ( real , 3 , 3 ) { } function getFramePosition ( k : real , B_n : Seq( matrix ( real , 4 , 4 ) ) ) : vector ( real , 3 ) { }
