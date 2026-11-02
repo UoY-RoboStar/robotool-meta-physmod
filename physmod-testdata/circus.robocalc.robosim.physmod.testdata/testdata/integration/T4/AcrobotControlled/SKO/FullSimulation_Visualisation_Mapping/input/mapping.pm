@@ -16,9 +16,9 @@ map AcrobotMapping dmodel AcrobotSwingUpLQRModule to pmodel AcrobotControlled {
 	// No mapping swap is required - the d-model receives raw physical sensor values.
 
 	input event sensorUpdate?su {
-		equation su.shoulderAngle == AcrobotControlled::BaseLink::ShoulderJoint::ShoulderEncoder.AngleOut
-		equation su.shoulderVelocity == AcrobotControlled::BaseLink::ShoulderJoint::ShoulderEncoder.VelocityOut
-		equation su.elbowAngle == AcrobotControlled::Link1::ElbowJoint::ElbowEncoder.AngleOut
-		equation su.elbowVelocity == AcrobotControlled::Link1::ElbowJoint::ElbowEncoder.VelocityOut 
+		equation su.shoulderAngle == AcrobotControlled::BaseLink::ShoulderEncoder.AngleOut
+		equation su.shoulderVelocity == AcrobotControlled::BaseLink::ShoulderEncoder.VelocityOut
+		equation su.elbowAngle == AcrobotControlled::Link1::ElbowEncoder.AngleOut
+		equation su.elbowVelocity == AcrobotControlled::Link1::ElbowEncoder.VelocityOut 
 	}
 }

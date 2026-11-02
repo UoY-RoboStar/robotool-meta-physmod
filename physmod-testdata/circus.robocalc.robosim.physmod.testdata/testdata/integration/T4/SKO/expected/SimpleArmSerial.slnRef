@@ -18,7 +18,7 @@ input Local { name n type "int" }
 constraint " (n) [ t == 0] ==3"
 constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.5; 0,0,0,1|]"
 constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.5; 0,0,0,1|]"
-constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.0; 0,0,0,1|]"
+constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0; 0,0,0,1|]"
 constraint " (B_k) [ t == 0] ==<B_1, B_2, B_3>"
 constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
 }
@@ -43,13 +43,13 @@ input Local { name f type "vector(real,18)" }
 input Local { name M type "matrix(real,18,18)" }
 constraint " (n) [ t == 0] ==3"
 constraint " (M_1) [ t == 0] ==zeroMat(6, 6)"
-constraint " (submatrix(M)(0,0,6,6)) [ t == 0] ==[|0.052050002,0.0,0.0,0.0,-0.125,0.0; 0.0,0.052050002,0.0,0.125,0.0,0.0; 0.0,0.0,0.0208,0.0,0.0,0.0; 0.0,0.125,0.0,0.5,0.0,0.0; -0.125,0.0,0.0,0.0,0.5,0.0; 0.0,0.0,0.0,0.0,0.0,0.5|]"
+constraint " (submatrix(M)(0,0,6,6)) [ t == 0] ==[|0.05205,0.0,0.0,0.0,-0.125,0.0; 0.0,0.05205,0.0,0.125,0.0,0.0; 0.0,0.0,0.0208,0.0,0.0,0.0; 0.0,0.125,0.0,0.5,0.0,0.0; -0.125,0.0,0.0,0.0,0.5,0.0; 0.0,0.0,0.0,0.0,0.0,0.5|]"
 constraint " (submatrix(H)(0,0,1,6)) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
 constraint " (M_2) [ t == 0] ==zeroMat(6, 6)"
-constraint " (submatrix(M)(6,6,6,6)) [ t == 0] ==[|5.349,0.0,0.0,0.0,-2.0,0.0; 0.0,5.349,0.0,2.0,0.0,0.0; 0.0,0.0,0.0313,0.0,0.0,0.0; 0.0,2.0,0.0,1.0,0.0,0.0; -2.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
+constraint " (submatrix(M)(6,6,6,6)) [ t == 0] ==[|5.349,0.0,0.0,0.0,-2,0.0; 0.0,5.349,0.0,2.0,0.0,0.0; 0.0,0.0,0.0313,0.0,0.0,0.0; 0.0,2.0,0.0,1,0.0,0.0; -2,0.0,0.0,0.0,1,0.0; 0.0,0.0,0.0,0.0,0.0,1|]"
 constraint " (submatrix(H)(1,6,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
 constraint " (M_3) [ t == 0] ==zeroMat(6, 6)"
-constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100.0,0.0,0.0; -25.0,0.0,0.0,0.0,100.0,0.0; 0.0,0.0,0.0,0.0,0.0,100.0|]"
+constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100,0.0,0.0; -25,0.0,0.0,0.0,100,0.0; 0.0,0.0,0.0,0.0,0.0,100|]"
 constraint " (C) [ t == 0] ==zeroVec(2)"
 constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
 constraint " (theta) [ t == 0] ==zeroVec(2)"
@@ -80,12 +80,12 @@ input Local { name X_T_3 type "matrix(real,6,6)" }
 constraint " (n) [ t == 0] ==3"
 constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,4.5; 0,0,0,1|]"
 constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.5; 0,0,0,1|]"
-constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0.0; 0,0,0,1|]"
+constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,0; 0,0,0,1|]"
 constraint " (X_J_1) [ t == 0] ==zeroMat(6, 6)"
 constraint " (X_J_1) [ t == t] ==[|cos(theta(0)),-sin(theta(0)),0,0,0,0; sin(theta(0)),cos(theta(0)),0,0,0,0; 0,0,1,0,0,0; 0,0,0,cos(theta(0)),-sin(theta(0)),0; 0,0,0,sin(theta(0)),cos(theta(0)),0; 0,0,0,0,0,1|]"
 constraint " (X_J_2) [ t == 0] ==zeroMat(6, 6)"
 constraint " (X_J_2) [ t == t] ==[|1,0,0,0,0,0; 0,cos(theta(1)),-sin(theta(1)),0,0,0; 0,sin(theta(1)),cos(theta(1)),0,0,0; 0,0,0,1,0,0; 0,0,0,0,cos(theta(1)),-sin(theta(1)); 0,0,0,0,sin(theta(1)),cos(theta(1))|]"
-constraint " (X_T_1) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,4.0,-0.0,1,0,0; -4.0,0,0.0,0,1,0; 0.0,-0.0,0,0,0,1|]"
+constraint " (X_T_1) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,4,-0.0,1,0,0; -4,0,0.0,0,1,0; 0.0,-0.0,0,0,0,1|]"
 constraint " (X_T_2) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,0.5,-0.0,1,0,0; -0.5,0,0.0,0,1,0; 0.0,-0.0,0,0,0,1|]"
 constraint " (X_T_3) [ t == 0] ==[|1,0,0,0,0,0; 0,1,0,0,0,0; 0,0,1,0,0,0; 0,0,0,1,0,0; 0,0,0,0,1,0; 0,0,0,0,0,1|]"
 constraint " (B_k) [ t == 0] ==<B_1, B_2, B_3>"
@@ -106,13 +106,13 @@ input Local { name n type "int" }
 input Local { name M type "matrix(real,18,18)" }
 constraint " (n) [ t == 0] ==3"
 constraint " (M_1) [ t == 0] ==zeroMat(6, 6)"
-constraint " (submatrix(M)(0,0,6,6)) [ t == 0] ==[|0.052050002,0.0,0.0,0.0,-0.125,0.0; 0.0,0.052050002,0.0,0.125,0.0,0.0; 0.0,0.0,0.0208,0.0,0.0,0.0; 0.0,0.125,0.0,0.5,0.0,0.0; -0.125,0.0,0.0,0.0,0.5,0.0; 0.0,0.0,0.0,0.0,0.0,0.5|]"
+constraint " (submatrix(M)(0,0,6,6)) [ t == 0] ==[|0.05205,0.0,0.0,0.0,-0.125,0.0; 0.0,0.05205,0.0,0.125,0.0,0.0; 0.0,0.0,0.0208,0.0,0.0,0.0; 0.0,0.125,0.0,0.5,0.0,0.0; -0.125,0.0,0.0,0.0,0.5,0.0; 0.0,0.0,0.0,0.0,0.0,0.5|]"
 constraint " (submatrix(H)(0,0,1,6)) [ t == 0] ==[| 0 , 0 , 1 , 0 , 0 , 0 |]"
 constraint " (M_2) [ t == 0] ==zeroMat(6, 6)"
-constraint " (submatrix(M)(6,6,6,6)) [ t == 0] ==[|5.349,0.0,0.0,0.0,-2.0,0.0; 0.0,5.349,0.0,2.0,0.0,0.0; 0.0,0.0,0.0313,0.0,0.0,0.0; 0.0,2.0,0.0,1.0,0.0,0.0; -2.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
+constraint " (submatrix(M)(6,6,6,6)) [ t == 0] ==[|5.349,0.0,0.0,0.0,-2,0.0; 0.0,5.349,0.0,2.0,0.0,0.0; 0.0,0.0,0.0313,0.0,0.0,0.0; 0.0,2.0,0.0,1,0.0,0.0; -2,0.0,0.0,0.0,1,0.0; 0.0,0.0,0.0,0.0,0.0,1|]"
 constraint " (submatrix(H)(1,6,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
 constraint " (M_3) [ t == 0] ==zeroMat(6, 6)"
-constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100.0,0.0,0.0; -25.0,0.0,0.0,0.0,100.0,0.0; 0.0,0.0,0.0,0.0,0.0,100.0|]"
+constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100,0.0,0.0; -25,0.0,0.0,0.0,100,0.0; 0.0,0.0,0.0,0.0,0.0,100|]"
 constraint " (M_mass) [ t == 0] ==zeroMat(2, 2)"
 constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
 }
@@ -129,8 +129,11 @@ input Local { name T_offset_2 type "matrix(real,4,4)" }
 input Local { name B_3 type "matrix(real,4,4)" }
 input Local { name T_offset_3 type "matrix(real,4,4)" }
 input Local { name geom_31 type "Geom" }
+input Local { name L3_geom type "Geom" }
 input Local { name geom_21 type "Geom" }
+input Local { name L2_geom type "Geom" }
 input Local { name geom_11 type "Geom" }
+input Local { name L1_geom type "Geom" }
 input Local { name n type "int" }
 input Local { name T_geom_1 type "matrix(real,4,4)" }
 input Local { name T_geom_2 type "matrix(real,4,4)" }
@@ -145,10 +148,16 @@ constraint " (T_geom_3) [ t == t] ==B_3*T_offset_3"
 constraint " (T_geom) [ t == t] ==<T_geom_1, T_geom_2, T_geom_3>"
 constraint " (geom_31 . geomType) [ t == 0] ==box"
 constraint " (geom_31 . geomVal) [ t == 0] ==[| 1.0 , 1.0 , 0.5 |]"
+constraint " (L3_geom . geomType) [ t == 0] ==box"
+constraint " (L3_geom . geomVal) [ t == 0] ==[| 1.0 , 1.0 , 0.5 |]"
 constraint " (geom_21 . geomType) [ t == 0] ==cylinder"
 constraint " (geom_21 . geomVal) [ t == 0] ==[| 0.25 , 4.0 |]"
+constraint " (L2_geom . geomType) [ t == 0] ==cylinder"
+constraint " (L2_geom . geomVal) [ t == 0] ==[| 0.25 , 4.0 |]"
 constraint " (geom_11 . geomType) [ t == 0] ==box"
 constraint " (geom_11 . geomVal) [ t == 0] ==[| 0.5 , 0.5 , 0.5 |]"
+constraint " (L1_geom . geomType) [ t == 0] ==box"
+constraint " (L1_geom . geomVal) [ t == 0] ==[| 0.5 , 0.5 , 0.5 |]"
 }
 SolutionRef {
 	expression Local { name M_inv type "matrix(real,2,2)" }
@@ -195,6 +204,4 @@ SolutionRef {
 	method SKO::SensorOutputMapping
 	order 11
 constraint " (BaseLink_BaseSensor_SignalIn) [ t == t] ==BaseLink_BaseSensor_MeasurementOut"
-constraint " (BaseLink_ElbowSensor_SignalIn) [ t == t] ==BaseLink_ElbowSensor_MeasurementOut"
-constraint " (IntermediateLink_WristSensor_SignalIn) [ t == t] ==IntermediateLink_WristSensor_MeasurementOut"
 }

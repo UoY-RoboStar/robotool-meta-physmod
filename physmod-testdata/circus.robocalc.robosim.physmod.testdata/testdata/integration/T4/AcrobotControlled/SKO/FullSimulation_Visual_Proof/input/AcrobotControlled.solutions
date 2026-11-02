@@ -1,0 +1,39 @@
+	solution {
+		solutionExpr u : vector(real,1)
+		order 0
+		group 0
+		method PlatformMapping
+	}
+	solution {
+		solutionExpr tau : vector(real,2)
+		order 1
+		group 0
+		method ControlledActuator
+	}
+	solution {
+		solutionExpr theta : vector(real,2)
+		order 2
+		group 0
+		method GeneralisedPosition_method1_gravity_damping
+		Constraint (theta) [t == 0] == [|-0.1; 0.1|]
+		Constraint (d_theta) [t == 0] == [|0.02; 0.0|]
+		Constraint (dt) [t == 0] == 0.005
+	}
+	solution {
+		solutionExpr B_k : Seq(matrix(real,4,4))
+		order 3
+		group 0
+		method Eval
+	}
+	solution {
+		solutionExpr T_geom : Seq(matrix(real,4,4))
+		order 4
+		group 0
+		method Visualisation
+	}
+	solution {
+		solutionExpr L_k_geom : Seq(Geom)
+		order 5
+		group 0
+		method Visual
+	}

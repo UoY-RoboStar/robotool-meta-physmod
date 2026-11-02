@@ -1,11 +1,36 @@
 // Acrobot with ControlledMotor actuator (B_ctrl formulation)
 // This test validates the B_ctrl control input matrix integration
-// Includes JointEncoder sensors for measuring joint angles and velocities
+// Uses reference components from physmod-lib for joints, actuators, and sensors
 
 import physmod::math::*
+import physmod::SKO::joints::Revolute_x
+import physmod::trivial::actuators::ControlledMotor
 import physmod::trivial::sensors::JointEncoder
 
 pmodel AcrobotControlled {
+	solution {
+		solutionExpr 
+		u : vector ( real , 1 ) order 0 group 0 method PlatformMapping Input u : vector ( real , 1 ) Constraint ( u ) [ t == 0 ] == zeroVec ( 1 ) }
+
+	solution {
+		solutionExpr 
+		tau : vector ( real , 2 ) order 1 group 0 method ControlledActuator Input B_ctrl : matrix ( real , 2 , 1 ) Input u : vector ( real , 1 ) Input tau : vector ( real , 2 ) Constraint ( tau ) [ t == 0 ] == zeroVec ( 2 ) Constraint ( B_ctrl ) [ t == 0 ] == [| 1.0 ; 0.0 |] Constraint ( tau ) [ t == t ] == B_ctrl * u }
+
+	solution {
+		solutionExpr 
+		phi : matrix ( real , 18 , 18 ) order 2 group 0 method Eval Input B_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input n : int Constraint ( n ) [ t == 0 ] == 3 Constraint ( B_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 3.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 1.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 0.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_k ) [ t == 0 ] == < B_1 , B_2 , B_3 > Constraint ( phi ) [ t == 0 ] == zeroMat ( 18 , 18 ) }
+
+	solution {
+		solutionExpr 
+		C : vector ( real , 2 ) order 3 group 0 method NewtonEulerInverseDynamics_gravity Input M_1 : matrix ( real , 6 , 6 ) Input M_2 : matrix ( real , 6 , 6 ) Input M_3 : matrix ( real , 6 , 6 ) Input n : int Input theta : vector ( real , 2 ) Input phi : matrix ( real , 18 , 18 ) Input H : matrix ( real , 2 , 18 ) Input d_theta : vector ( real , 2 ) Input dd_theta : vector ( real , 2 ) Input alpha : vector ( real , 18 ) Input V : vector ( real , 18 ) Input a : vector ( real , 18 ) Input b : vector ( real , 18 ) Input f : vector ( real , 18 ) Input M : matrix ( real , 18 , 18 ) Constraint ( n ) [ t == 0 ] == 3 Constraint ( M_1 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 0 , 0 , 6 , 6 ) ) [ t == 0 ] == [| 1.333 , 0.0 , 0.0 , 0.0 , - 1 , 0.0 ; 0.0 , 1.333 , 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 1 , 0.0 , 0.0 ; - 1 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |] Constraint ( submatrix ( H ) ( 0 , 0 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( M_2 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 6 , 6 , 6 , 6 ) ) [ t == 0 ] == [| 0.333 , 0.0 , 0.0 , 0.0 , - 0.5 , 0.0 ; 0.0 , 0.333 , 0.0 , 0.5 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.5 , 0.0 , 1 , 0.0 , 0.0 ; - 0.5 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |] Constraint ( submatrix ( H ) ( 1 , 6 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( M_3 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 12 , 12 , 6 , 6 ) ) [ t == 0 ] == [| 0.101 , 0.0 , 0.0 , 0.0 , - 0.010000001 , 0.0 ; 0.0 , 0.101 , 0.0 , 0.010000001 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.1 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.010000001 , 0.0 , 0.1 , 0.0 , 0.0 ; - 0.010000001 , 0.0 , 0.0 , 0.0 , 0.1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.1 |] Constraint ( C ) [ t == 0 ] == zeroVec ( 2 ) Constraint ( phi ) [ t == 0 ] == zeroMat ( 18 , 18 ) Constraint ( theta ) [ t == 0 ] == [| - 0.1 ; 0.1 |] Constraint ( d_theta ) [ t == 0 ] == [| 0.02 ; 0.0 |] Constraint ( dd_theta ) [ t == 0 ] == zeroVec ( 2 ) Constraint ( alpha ) [ t == 0 ] == zeroVec ( 18 ) Constraint ( V ) [ t == 0 ] == zeroVec ( 18 ) Constraint ( a ) [ t == 0 ] == zeroVec ( 18 ) Constraint ( b ) [ t == 0 ] == zeroVec ( 18 ) Constraint ( f ) [ t == 0 ] == zeroVec ( 18 ) }
+
+	solution {
+		solutionExpr 
+		M_mass : matrix ( real , 2 , 2 ) order 4 group 0 method CompositeBodyAlgorithm Input M_1 : matrix ( real , 6 , 6 ) Input M_2 : matrix ( real , 6 , 6 ) Input M_3 : matrix ( real , 6 , 6 ) Input H : matrix ( real , 2 , 18 ) Input phi : matrix ( real , 18 , 18 ) Input n : int Input M : matrix ( real , 18 , 18 ) Constraint ( n ) [ t == 0 ] == 3 Constraint ( M_1 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 0 , 0 , 6 , 6 ) ) [ t == 0 ] == [| 1.333 , 0.0 , 0.0 , 0.0 , - 1 , 0.0 ; 0.0 , 1.333 , 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 1 , 0.0 , 0.0 ; - 1 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |] Constraint ( submatrix ( H ) ( 0 , 0 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( M_2 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 6 , 6 , 6 , 6 ) ) [ t == 0 ] == [| 0.333 , 0.0 , 0.0 , 0.0 , - 0.5 , 0.0 ; 0.0 , 0.333 , 0.0 , 0.5 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.5 , 0.0 , 1 , 0.0 , 0.0 ; - 0.5 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |] Constraint ( submatrix ( H ) ( 1 , 6 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( M_3 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 12 , 12 , 6 , 6 ) ) [ t == 0 ] == [| 0.101 , 0.0 , 0.0 , 0.0 , - 0.010000001 , 0.0 ; 0.0 , 0.101 , 0.0 , 0.010000001 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.1 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.010000001 , 0.0 , 0.1 , 0.0 , 0.0 ; - 0.010000001 , 0.0 , 0.0 , 0.0 , 0.1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.1 |] Constraint ( M_mass ) [ t == 0 ] == zeroMat ( 2 , 2 ) Constraint ( phi ) [ t == 0 ] == zeroMat ( 18 , 18 ) }
+
+	solution {
+		solutionExpr 
+		M_inv : matrix ( real , 2 , 2 ) order 5 group 0 method CholeskyAlgorithm Input M_mass : matrix ( real , 2 , 2 ) Constraint ( M_mass ) [ t == 0 ] == zeroMat ( 2 , 2 ) Constraint ( M_inv ) [ t == 0 ] == zeroMat ( 2 , 2 ) }
     local link BaseLink {
         def { InOut geom_31 : Geom = Geom (| geomType = "box" , geomVal = [| 0.2 , 0.2 , 0.2 |] |)
 			InOut L3_geom : Geom = Geom (| geomType = "box" , geomVal = [| 0.2 , 0.2 , 0.2 |] |)
@@ -36,7 +61,7 @@ pmodel AcrobotControlled {
 			equation alpha_3 == a_3
 			Constraint ( B_3 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 0.2 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_geom_3 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 0.1 ; 0 , 0 , 0 , 1 |]
-			Constraint ( T_offset_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.10000000149011612 ; 0 , 0 , 0 , 1 |]
+			Constraint ( T_offset_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.1 ; 0 , 0 , 0 , 1 |]
 			Constraint ( X_T_3 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , 1 , 0 ; 0 , 0 , 0 , 0 , 0 , 1 |]
 		}
         local body BaseBody {
@@ -51,20 +76,11 @@ pmodel AcrobotControlled {
 			}
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        local joint ShoulderJoint {
-            def {
-                // Revolute about X (Jain row; Drake column transpose)
-                const H : vector ( real , 6 ) = [| 1 , 0 , 0 , 0 , 0 , 0 |]
-                InOut theta : real
-                InOut XJ : matrix ( real , 6 , 6 )
-                // XJ for R_x(theta): block-diagonal with R in (0:2,0:2) and (3:5,3:5)
-                equation XJ == [| 1 , 0 , 0 , 0 , 0 , 0 ;
-                                         0 , cos ( theta ) , - sin ( theta ) , 0 , 0 , 0 ;
-                                         0 , sin ( theta ) , cos ( theta ) , 0 , 0 , 0 ;
-                                         0 , 0 , 0 , 1 , 0 , 0 ;
-                                         0 , 0 , 0 , 0 , cos ( theta ) , - sin ( theta ) ;
-                                         0 , 0 , 0 , 0 , sin ( theta ) , cos ( theta ) |]
-            InOut B_2 : matrix ( real , 4 , 4 )
+		local joint ShoulderJoint {
+			def {
+				InOut theta : real
+				InOut XJ : matrix ( real , 6 , 6 )
+				InOut B_2 : matrix ( real , 4 , 4 )
 				InOut B_3 : matrix ( real , 4 , 4 )
 				InOut _B_3 : matrix ( real , 4 , 4 )
 				InOut T_3_2 : matrix ( real , 4 , 4 )
@@ -78,14 +94,23 @@ pmodel AcrobotControlled {
 				InOut phi_3_2 : matrix ( real , 6 , 6 )
 				local number : real = 2
 				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.1 , 0.0 , 0.0 , 0.0 |]
+				const H : vector ( real , 6 ) = (| 1 , 0 , 0 , 0 , 0 , 0 |)
+				equation XJ == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ) , - sin ( theta ) , 0 , 0 , 0 ; 0 , sin ( theta ) , cos ( theta ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ) , - sin ( theta ) ; 0 , 0 , 0 , 0 , sin ( theta ) , cos ( theta ) |]
 				equation _B_3 == B_3
 				equation _V_3 == V_3
 				equation _alpha_3 == alpha_3
 				equation _f_2 == f_2
 			}
-            flexibly connected to Link1
-            pose { x = 0.0 y = 0.0 z = -0.1 roll = 0.0 pitch = 0.0 yaw = 0.0 }
-        relation B_3 == ShoulderJoint . B_3 /\ V_3 == ShoulderJoint . V_3 /\ alpha_3 == ShoulderJoint . alpha_3 /\ theta [ 1 ] == ShoulderJoint . theta /\ H_2 == ShoulderJoint . H /\ X_J_2 == ShoulderJoint . XJ
+			flexibly connected to Link1
+			pose {
+				x = 0.0
+				y = 0.0
+				z = - 0.1
+				roll = 0.0
+				pitch = 0.0
+				yaw = 0.0
+			}
+			relation B_3 == ShoulderJoint . B_3 /\ V_3 == ShoulderJoint . V_3 /\ alpha_3 == ShoulderJoint . alpha_3 /\ theta [ 1 ] == ShoulderJoint . theta /\ H_2 == ShoulderJoint . H /\ X_J_2 == ShoulderJoint . XJ
 		}
 		local sensor ShoulderEncoder {
 			def {
@@ -168,20 +193,11 @@ pmodel AcrobotControlled {
 			}
             pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
         }
-        local joint ElbowJoint {
-            def {
-                // Revolute about X (Jain row; Drake column transpose)
-                const H : vector ( real , 6 ) = [| 1 , 0 , 0 , 0 , 0 , 0 |]
-                InOut theta : real
-                InOut XJ : matrix ( real , 6 , 6 )
-                // XJ for R_x(theta): block-diagonal with R in (0:2,0:2) and (3:5,3:5)
-                equation XJ == [| 1 , 0 , 0 , 0 , 0 , 0 ;
-                                         0 , cos ( theta ) , - sin ( theta ) , 0 , 0 , 0 ;
-                                         0 , sin ( theta ) , cos ( theta ) , 0 , 0 , 0 ;
-                                         0 , 0 , 0 , 1 , 0 , 0 ;
-                                         0 , 0 , 0 , 0 , cos ( theta ) , - sin ( theta ) ;
-                                         0 , 0 , 0 , 0 , sin ( theta ) , cos ( theta ) |]
-            InOut B_1 : matrix ( real , 4 , 4 )
+		local joint ElbowJoint {
+			def {
+				InOut theta : real
+				InOut XJ : matrix ( real , 6 , 6 )
+				InOut B_1 : matrix ( real , 4 , 4 )
 				InOut B_2 : matrix ( real , 4 , 4 )
 				InOut _B_2 : matrix ( real , 4 , 4 )
 				InOut T_2_1 : matrix ( real , 4 , 4 )
@@ -195,26 +211,40 @@ pmodel AcrobotControlled {
 				InOut phi_2_1 : matrix ( real , 6 , 6 )
 				local number : real = 1
 				local poseVec : vector ( real , 6 ) = [| 0.0 , 0.0 , - 0.5 , 0.0 , 0.0 , 0.0 |]
+				const H : vector ( real , 6 ) = (| 1 , 0 , 0 , 0 , 0 , 0 |)
+				equation XJ == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ) , - sin ( theta ) , 0 , 0 , 0 ; 0 , sin ( theta ) , cos ( theta ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ) , - sin ( theta ) ; 0 , 0 , 0 , 0 , sin ( theta ) , cos ( theta ) |]
 				equation _B_2 == B_2
 				equation _V_2 == V_2
 				equation _alpha_2 == alpha_2
 				equation _f_1 == f_1
 			}
-            flexibly connected to Link2
-            pose { x = 0.0 y = 0.0 z = -0.5 roll = 0.0 pitch = 0.0 yaw = 0.0 }
-        relation B_2 == ElbowJoint . B_2 /\ V_2 == ElbowJoint . V_2 /\ alpha_2 == ElbowJoint . alpha_2 /\ theta [ 0 ] == ElbowJoint . theta /\ H_1 == ElbowJoint . H /\ X_J_1 == ElbowJoint . XJ
+			flexibly connected to Link2
+			local actuator ElbowMotor {
+				def {
+					input ControlIn : real
+					output TorqueOut : real
+					const B_ctrl : matrix ( real , 1 , 1 ) = [| 1.0 |]
+					equation TorqueOut == B_ctrl * ControlIn
+				}
+				pose {
+					x = 0.0
+					y = 0.0
+					z = 0.0
+					roll = 0.0
+					pitch = 0.0
+					yaw = 0.0
+				}
+			}
+			pose {
+				x = 0.0
+				y = 0.0
+				z = - 0.5
+				roll = 0.0
+				pitch = 0.0
+				yaw = 0.0
+			}
+			relation B_2 == ElbowJoint . B_2 /\ V_2 == ElbowJoint . V_2 /\ alpha_2 == ElbowJoint . alpha_2 /\ theta [ 0 ] == ElbowJoint . theta /\ H_1 == ElbowJoint . H /\ X_J_1 == ElbowJoint . XJ
 		}
-        // Local actuator with B_ctrl matrix for control-theoretic proofs
-        // B_ctrl relates control input u to torque output: TorqueOut = B_ctrl * ControlIn
-        local actuator ElbowMotor {
-            def {
-                const B_ctrl : matrix ( real , 1 , 1 ) = [| 1.0 |]
-                input ControlIn : real
-                output TorqueOut : real
-                equation TorqueOut == B_ctrl * ControlIn
-            }
-            pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
-        }
 		local sensor ElbowEncoder {
 			def {
 				input ThetaIn : real
@@ -242,7 +272,7 @@ pmodel AcrobotControlled {
         def { input test_1 : vector ( real , 1 )
 			InOut geom_11 : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.05 , 2.0 |] |)
 			InOut L1_geom : Geom = Geom (| geomType = "cylinder" , geomVal = [| 0.05 , 2.0 |] |)
-			InOut M_1 : matrix ( real , 6 , 6 ) = [| 1.333 , 0.0 , 0.0 , 0.0 , - 1.0 , 0.0 ; 0.0 , 1.333 , 0.0 , 1 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 1 , 0.0 , 1 , 0.0 , 0.0 ; - 1.0 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |]
+			InOut M_1 : matrix ( real , 6 , 6 ) = [| 1.333 , 0.0 , 0.0 , 0.0 , - 1 , 0.0 ; 0.0 , 1.333 , 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 1 , 0.0 , 0.0 ; - 1 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |]
 			InOut a_1 : vector ( real , 6 )
 			InOut b_1 : vector ( real , 6 )
 			InOut V_1 : vector ( real , 6 )
@@ -279,7 +309,7 @@ pmodel AcrobotControlled {
 			equation f_1 == M_1 * alpha_1 + b_1
 			Constraint ( B_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 3.2 ; 0 , 0 , 0 , 1 |]
 			Constraint ( T_geom_1 ) [ t == 0 ] == [| 1.000000 , 0.000000 , 0.000000 , 0.000000 ; 0.000000 , 1.000000 , 0.000000 , 0.000000 ; - 0.000000 , 0.000000 , 1.000000 , - 2.2 ; 0 , 0 , 0 , 1 |]
-			Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 1 ; 0 , 0 , 0 , 1 |]
+			Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 1.0 ; 0 , 0 , 0 , 1 |]
 			Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 2 , - 0.000000 , 1 , 0 , 0 ; 2 , 0 , 0.000000 , 0 , 1 , 0 ; 0.000000 , - 0.000000 , 0 , 0 , 0 , 1 |]
 		}
         local body Link2Body {
@@ -314,8 +344,6 @@ pmodel AcrobotControlled {
 	InOut phi : matrix ( real , 18 , 18 )
 	InOut M : matrix ( real , 18 , 18 )
 	InOut theta : vector ( real , 2 )
-	InOut d_theta : vector ( real , 2 )
-	InOut dt : real
 	InOut tau : vector ( real , 2 )
 	InOut C : vector ( real , 2 )
 	InOut H : matrix ( real , 2 , 18 )
@@ -343,8 +371,6 @@ pmodel AcrobotControlled {
 	InOut T_offset_3 : matrix ( real , 4 , 4 )
 	InOut X_J_1 : matrix ( real , 6 , 6 )
 	InOut X_J_2 : matrix ( real , 6 , 6 )
-	InOut B_ctrl : matrix ( real , 2 , 1 )
-	InOut u : vector ( real , 1 )
 	equation submatrix ( phi ) ( 0 , 0 , 3 , 3 ) == identity ( 3 )
 	equation submatrix ( phi ) ( 0 , 3 , 3 , 3 ) == zeroes ( 3 )
 	equation submatrix ( phi ) ( 0 , 6 , 3 , 3 ) == zeroes ( 3 )
@@ -368,41 +394,19 @@ pmodel AcrobotControlled {
 	equation B_1 == B_3 * T_3_2 * T_2_1
 	equation B_2 == B_3 * T_3_2
 	equation N == r_v1 + r_v2
-	equation tau == B_ctrl * u
 	Constraint ( submatrix ( M ) ( 0 , 0 , 6 , 6 ) ) [ t == 0 ] == M_1
 	Constraint ( submatrix ( M ) ( 6 , 6 , 6 , 6 ) ) [ t == 0 ] == M_2
 	Constraint ( submatrix ( M ) ( 12 , 12 , 6 , 6 ) ) [ t == 0 ] == M_3
 	Constraint ( submatrix ( H ) ( 0 , 0 , 1 , 6 ) ) [ t == 0 ] == H_1
 	Constraint ( submatrix ( H ) ( 1 , 6 , 1 , 6 ) ) [ t == 0 ] == H_2
-	Constraint ( B_ctrl ) [ t == 0 ] == [| 1.0 ; 0.0 |]
-
-	solution {
-		solutionExpr 
-		u : vector ( real , 1 ) order 0 group 0 method PlatformMapping Input u : vector ( real , 1 ) Constraint ( u ) [ t == 0 ] == zeroVec ( 1 ) }
-
-	solution {
-		solutionExpr 
-		tau : vector ( real , 2 ) order 1 group 0 method ControlledActuator Input B_ctrl : matrix ( real , 2 , 1 ) Input u : vector ( real , 1 ) Input tau : vector ( real , 2 ) Constraint ( tau ) [ t == 0 ] == zeroVec ( 2 ) Constraint ( B_ctrl ) [ t == 0 ] == [| 1.0 ; 0.0 |] Constraint ( tau ) [ t == t ] == B_ctrl * u }
-
-	solution {
-		solutionExpr 
-		phi : matrix ( real , 18 , 18 ) order 2 group 0 method Eval Input B_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input n : int Constraint ( n ) [ t == 0 ] == 3 Constraint ( B_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 3.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 1.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 0.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_k ) [ t == 0 ] == < B_1 , B_2 , B_3 > Constraint ( phi ) [ t == 0 ] == zeroMat ( 18 , 18 ) }
-
-	solution {
-		solutionExpr 
-		C : vector ( real , 2 ) order 3 group 0 method NewtonEulerInverseDynamics_gravity Input M_1 : matrix ( real , 6 , 6 ) Input M_2 : matrix ( real , 6 , 6 ) Input M_3 : matrix ( real , 6 , 6 ) Input n : int Input theta : vector ( real , 2 ) Input phi : matrix ( real , 18 , 18 ) Input H : matrix ( real , 2 , 18 ) Input d_theta : vector ( real , 2 ) Input dd_theta : vector ( real , 2 ) Input alpha : vector ( real , 18 ) Input V : vector ( real , 18 ) Input a : vector ( real , 18 ) Input b : vector ( real , 18 ) Input f : vector ( real , 18 ) Input M : matrix ( real , 18 , 18 ) Constraint ( n ) [ t == 0 ] == 3 Constraint ( M_1 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 0 , 0 , 6 , 6 ) ) [ t == 0 ] == [| 1.333 , 0.0 , 0.0 , 0.0 , - 1.0 , 0.0 ; 0.0 , 1.333 , 0.0 , 1 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 1 , 0.0 , 1 , 0.0 , 0.0 ; - 1.0 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |] Constraint ( submatrix ( H ) ( 0 , 0 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( M_2 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 6 , 6 , 6 , 6 ) ) [ t == 0 ] == [| 0.333 , 0.0 , 0.0 , 0.0 , - 0.5 , 0.0 ; 0.0 , 0.333 , 0.0 , 0.5 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.5 , 0.0 , 1 , 0.0 , 0.0 ; - 0.5 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |] Constraint ( submatrix ( H ) ( 1 , 6 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( M_3 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 12 , 12 , 6 , 6 ) ) [ t == 0 ] == [| 0.101 , 0.0 , 0.0 , 0.0 , - 0.010000001 , 0.0 ; 0.0 , 0.101 , 0.0 , 0.010000001 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.1 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.010000001 , 0.0 , 0.1 , 0.0 , 0.0 ; - 0.010000001 , 0.0 , 0.0 , 0.0 , 0.1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.1 |] Constraint ( C ) [ t == 0 ] == zeroVec ( 2 ) Constraint ( phi ) [ t == 0 ] == zeroMat ( 18 , 18 ) Constraint ( theta ) [ t == 0 ] == [| - 0.1 ; 0.1 |] Constraint ( d_theta ) [ t == 0 ] == [| 0.02 ; 0.0 |] Constraint ( dd_theta ) [ t == 0 ] == zeroVec ( 2 ) Constraint ( alpha ) [ t == 0 ] == zeroVec ( 18 ) Constraint ( V ) [ t == 0 ] == zeroVec ( 18 ) Constraint ( a ) [ t == 0 ] == zeroVec ( 18 ) Constraint ( b ) [ t == 0 ] == zeroVec ( 18 ) Constraint ( f ) [ t == 0 ] == zeroVec ( 18 ) }
-
-	solution {
-		solutionExpr 
-		M_mass : matrix ( real , 2 , 2 ) order 4 group 0 method CompositeBodyAlgorithm Input M_1 : matrix ( real , 6 , 6 ) Input M_2 : matrix ( real , 6 , 6 ) Input M_3 : matrix ( real , 6 , 6 ) Input H : matrix ( real , 2 , 18 ) Input phi : matrix ( real , 18 , 18 ) Input n : int Input M : matrix ( real , 18 , 18 ) Constraint ( n ) [ t == 0 ] == 3 Constraint ( M_1 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 0 , 0 , 6 , 6 ) ) [ t == 0 ] == [| 1.333 , 0.0 , 0.0 , 0.0 , - 1.0 , 0.0 ; 0.0 , 1.333 , 0.0 , 1 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 1 , 0.0 , 1 , 0.0 , 0.0 ; - 1.0 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |] Constraint ( submatrix ( H ) ( 0 , 0 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( M_2 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 6 , 6 , 6 , 6 ) ) [ t == 0 ] == [| 0.333 , 0.0 , 0.0 , 0.0 , - 0.5 , 0.0 ; 0.0 , 0.333 , 0.0 , 0.5 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.001 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.5 , 0.0 , 1 , 0.0 , 0.0 ; - 0.5 , 0.0 , 0.0 , 0.0 , 1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1 |] Constraint ( submatrix ( H ) ( 1 , 6 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( M_3 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( submatrix ( M ) ( 12 , 12 , 6 , 6 ) ) [ t == 0 ] == [| 0.101 , 0.0 , 0.0 , 0.0 , - 0.010000001 , 0.0 ; 0.0 , 0.101 , 0.0 , 0.010000001 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.1 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.010000001 , 0.0 , 0.1 , 0.0 , 0.0 ; - 0.010000001 , 0.0 , 0.0 , 0.0 , 0.1 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.1 |] Constraint ( M_mass ) [ t == 0 ] == zeroMat ( 2 , 2 ) Constraint ( phi ) [ t == 0 ] == zeroMat ( 18 , 18 ) }
-
-	solution {
-		solutionExpr 
-		M_inv : matrix ( real , 2 , 2 ) order 5 group 0 method CholeskyAlgorithm Input M_mass : matrix ( real , 2 , 2 ) Constraint ( M_mass ) [ t == 0 ] == zeroMat ( 2 , 2 ) Constraint ( M_inv ) [ t == 0 ] == zeroMat ( 2 , 2 ) }
+local u : vector ( real , 1 )
+	local B_ctrl : matrix ( real , 2 , 1 )
+	local d_theta : vector ( real , 2 )
 	local dd_theta : vector ( real , 2 )
 	local M_inv : matrix ( real , 2 , 2 )
 	local tau_d : vector ( real , 2 )
 	local damping : matrix ( real , 2 , 2 )
+	local dt : real
 	local geom_31 : Geom
 	local L3_geom : Geom
 	local geom_21 : Geom
@@ -417,6 +421,6 @@ pmodel AcrobotControlled {
 	solution { solutionExpr theta : vector ( real , 2 ) order 9 group 0 method Euler Input d_theta : vector ( real , 2 ) Input dt : real Constraint ( theta ) [ t == 0 ] == [| - 0.1 ; 0.1 |] Constraint ( d_theta ) [ t == 0 ] == [| 0.02 ; 0.0 |] Constraint ( dt ) [ t == 0 ] == 0.005 }
 	solution { solutionExpr B_k : Seq( matrix ( real , 4 , 4 ) ) order 10 group 0 method ForwardKinematics Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input X_J : Seq( matrix ( real , 6 , 6 ) ) Input X_T : Seq( matrix ( real , 6 , 6 ) ) Input n : int Input theta : vector ( real , 2 ) Input B_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input X_J_1 : matrix ( real , 6 , 6 ) Input X_J_2 : matrix ( real , 6 , 6 ) Input X_T_1 : matrix ( real , 6 , 6 ) Input X_T_2 : matrix ( real , 6 , 6 ) Input X_T_3 : matrix ( real , 6 , 6 ) Constraint ( n ) [ t == 0 ] == 3 Constraint ( B_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 3.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 1.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 0.2 ; 0 , 0 , 0 , 1 |] Constraint ( X_J_1 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( X_J_1 ) [ t == t ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ( 0 ) ) , - sin ( theta ( 0 ) ) , 0 , 0 , 0 ; 0 , sin ( theta ( 0 ) ) , cos ( theta ( 0 ) ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ( 0 ) ) , - sin ( theta ( 0 ) ) ; 0 , 0 , 0 , 0 , sin ( theta ( 0 ) ) , cos ( theta ( 0 ) ) |] Constraint ( X_J_2 ) [ t == 0 ] == zeroMat ( 6 , 6 ) Constraint ( X_J_2 ) [ t == t ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ( 1 ) ) , - sin ( theta ( 1 ) ) , 0 , 0 , 0 ; 0 , sin ( theta ( 1 ) ) , cos ( theta ( 1 ) ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ( 1 ) ) , - sin ( theta ( 1 ) ) ; 0 , 0 , 0 , 0 , sin ( theta ( 1 ) ) , cos ( theta ( 1 ) ) |] Constraint ( X_T_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 2 , - 0.0 , 1 , 0 , 0 ; 2 , 0 , 0.0 , 0 , 1 , 0 ; 0.0 , - 0.0 , 0 , 0 , 0 , 1 |] Constraint ( X_T_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , - 1 , - 0.0 , 1 , 0 , 0 ; 1 , 0 , 0.0 , 0 , 1 , 0 ; 0.0 , - 0.0 , 0 , 0 , 0 , 1 |] Constraint ( X_T_3 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , 1 , 0 , 0 , 0 , 0 ; 0 , 0 , 1 , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , 1 , 0 ; 0 , 0 , 0 , 0 , 0 , 1 |] Constraint ( B_k ) [ t == 0 ] == < B_1 , B_2 , B_3 > Constraint ( X_J ) [ t == 0 ] == < X_J_1 , X_J_2 > Constraint ( X_J ) [ t == t ] == < X_J_1 , X_J_2 > Constraint ( X_T ) [ t == 0 ] == < X_T_1 , X_T_2 , X_T_3 > }
 	solution { solutionExpr T_geom : Seq( matrix ( real , 4 , 4 ) ) order 11 group 0 method Visualisation Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input T_offset : Seq( matrix ( real , 4 , 4 ) ) Input B_1 : matrix ( real , 4 , 4 ) Input T_offset_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input T_offset_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input T_offset_3 : matrix ( real , 4 , 4 ) Input geom_31 : Geom Input L3_geom : Geom Input geom_21 : Geom Input L2_geom : Geom Input geom_11 : Geom Input L1_geom : Geom Input n : int Input T_geom_1 : matrix ( real , 4 , 4 ) Input T_geom_2 : matrix ( real , 4 , 4 ) Input T_geom_3 : matrix ( real , 4 , 4 ) Constraint ( n ) [ t == 0 ] == 3 Constraint ( T_geom_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 2.2 ; 0 , 0 , 0 , 1 |] Constraint ( T_geom_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 0.7 ; 0 , 0 , 0 , 1 |] Constraint ( T_geom_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 0.1 ; 0 , 0 , 0 , 1 |] Constraint ( T_geom_1 ) [ t == t ] == B_1 * T_offset_1 Constraint ( T_geom_2 ) [ t == t ] == B_2 * T_offset_2 Constraint ( T_geom_3 ) [ t == t ] == B_3 * T_offset_3 Constraint ( T_geom ) [ t == t ] == < T_geom_1 , T_geom_2 , T_geom_3 > }
-	solution { solutionExpr L_k_geom : Seq( Geom ) order 12 group 0 method Visual Input B_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input L1_geom : Geom Input L2_geom : Geom Input L3_geom : Geom Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input T_geom : Seq( matrix ( real , 4 , 4 ) ) Input T_offset : Seq( matrix ( real , 4 , 4 ) ) Input T_geom_1 : matrix ( real , 4 , 4 ) Input T_offset_1 : matrix ( real , 4 , 4 ) Input T_geom_2 : matrix ( real , 4 , 4 ) Input T_offset_2 : matrix ( real , 4 , 4 ) Input T_geom_3 : matrix ( real , 4 , 4 ) Input T_offset_3 : matrix ( real , 4 , 4 ) Input X_J_k : Seq( matrix ( real , 6 , 6 ) ) Input theta : vector ( real , 2 ) Input H_1 : matrix ( real , 1 , 6 ) Input H_2 : matrix ( real , 1 , 6 ) Input X_J_1 : matrix ( real , 6 , 6 ) Input X_J_2 : matrix ( real , 6 , 6 ) Input H : matrix ( real , 2 , 18 ) Constraint ( B_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 3.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 1.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 0.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_k ) [ t == 0 ] == < B_1 , B_2 , B_3 > Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 1 ; 0 , 0 , 0 , 1 |] Constraint ( T_offset_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.5 ; 0 , 0 , 0 , 1 |] Constraint ( T_offset_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.1 ; 0 , 0 , 0 , 1 |] Constraint ( T_geom_1 ) [ t == t ] == B_1 * T_offset_1 Constraint ( T_geom_2 ) [ t == t ] == B_2 * T_offset_2 Constraint ( T_geom_3 ) [ t == t ] == B_3 * T_offset_3 Constraint ( T_geom ) [ t == t ] == < T_geom_1 , T_geom_2 , T_geom_3 > Constraint ( T_offset ) [ t == 0 ] == < T_offset_1 , T_offset_2 , T_offset_3 > Constraint ( X_J_k ) [ t == 0 ] == < X_J_1 , X_J_2 > Constraint ( X_J_k ) [ t == t ] == < X_J_1 , X_J_2 > Constraint ( H_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( H_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( submatrix ( H ) ( 0 , 0 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( submatrix ( H ) ( 1 , 6 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( theta ) [ t == 0 ] == [| - 0.1 ; 0.1 |] Constraint ( X_J_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 1.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1.0 |] Constraint ( X_J_1 ) [ t == t ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ( 0 ) ) , - sin ( theta ( 0 ) ) , 0 , 0 , 0 ; 0 , sin ( theta ( 0 ) ) , cos ( theta ( 0 ) ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ( 0 ) ) , - sin ( theta ( 0 ) ) ; 0 , 0 , 0 , 0 , sin ( theta ( 0 ) ) , cos ( theta ( 0 ) ) |] Constraint ( X_J_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 1.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1.0 |] Constraint ( X_J_2 ) [ t == t ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ( 1 ) ) , - sin ( theta ( 1 ) ) , 0 , 0 , 0 ; 0 , sin ( theta ( 1 ) ) , cos ( theta ( 1 ) ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ( 1 ) ) , - sin ( theta ( 1 ) ) ; 0 , 0 , 0 , 0 , sin ( theta ( 1 ) ) , cos ( theta ( 1 ) ) |] }
+	solution { solutionExpr L_k_geom : Seq( Geom ) order 12 group 0 method Visual Input B_1 : matrix ( real , 4 , 4 ) Input B_2 : matrix ( real , 4 , 4 ) Input B_3 : matrix ( real , 4 , 4 ) Input L1_geom : Geom Input L2_geom : Geom Input L3_geom : Geom Input B_k : Seq( matrix ( real , 4 , 4 ) ) Input T_geom : Seq( matrix ( real , 4 , 4 ) ) Input T_offset : Seq( matrix ( real , 4 , 4 ) ) Input T_geom_1 : matrix ( real , 4 , 4 ) Input T_offset_1 : matrix ( real , 4 , 4 ) Input T_geom_2 : matrix ( real , 4 , 4 ) Input T_offset_2 : matrix ( real , 4 , 4 ) Input T_geom_3 : matrix ( real , 4 , 4 ) Input T_offset_3 : matrix ( real , 4 , 4 ) Input X_J_k : Seq( matrix ( real , 6 , 6 ) ) Input theta : vector ( real , 2 ) Input H_1 : matrix ( real , 1 , 6 ) Input H_2 : matrix ( real , 1 , 6 ) Input X_J_1 : matrix ( real , 6 , 6 ) Input X_J_2 : matrix ( real , 6 , 6 ) Input H : matrix ( real , 2 , 18 ) Constraint ( B_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 3.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 1.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; - 0.0 , 0.0 , 1.0 , - 0.2 ; 0 , 0 , 0 , 1 |] Constraint ( B_k ) [ t == 0 ] == < B_1 , B_2 , B_3 > Constraint ( T_offset_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 1.0 ; 0 , 0 , 0 , 1 |] Constraint ( T_offset_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.5 ; 0 , 0 , 0 , 1 |] Constraint ( T_offset_3 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.1 ; 0 , 0 , 0 , 1 |] Constraint ( T_geom_1 ) [ t == t ] == B_1 * T_offset_1 Constraint ( T_geom_2 ) [ t == t ] == B_2 * T_offset_2 Constraint ( T_geom_3 ) [ t == t ] == B_3 * T_offset_3 Constraint ( T_geom ) [ t == t ] == < T_geom_1 , T_geom_2 , T_geom_3 > Constraint ( T_offset ) [ t == 0 ] == < T_offset_1 , T_offset_2 , T_offset_3 > Constraint ( X_J_k ) [ t == 0 ] == < X_J_1 , X_J_2 > Constraint ( X_J_k ) [ t == t ] == < X_J_1 , X_J_2 > Constraint ( H_1 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( H_2 ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( submatrix ( H ) ( 0 , 0 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( submatrix ( H ) ( 1 , 6 , 1 , 6 ) ) [ t == 0 ] == [| 1 , 0 , 0 , 0 , 0 , 0 |] Constraint ( theta ) [ t == 0 ] == [| - 0.1 ; 0.1 |] Constraint ( X_J_1 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 1.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1.0 |] Constraint ( X_J_1 ) [ t == t ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ( 0 ) ) , - sin ( theta ( 0 ) ) , 0 , 0 , 0 ; 0 , sin ( theta ( 0 ) ) , cos ( theta ( 0 ) ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ( 0 ) ) , - sin ( theta ( 0 ) ) ; 0 , 0 , 0 , 0 , sin ( theta ( 0 ) ) , cos ( theta ( 0 ) ) |] Constraint ( X_J_2 ) [ t == 0 ] == [| 1.0 , 0.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 1.0 , 0.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 1.0 , 0.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 1.0 , 0.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 1.0 , 0.0 ; 0.0 , 0.0 , 0.0 , 0.0 , 0.0 , 1.0 |] Constraint ( X_J_2 ) [ t == t ] == [| 1 , 0 , 0 , 0 , 0 , 0 ; 0 , cos ( theta ( 1 ) ) , - sin ( theta ( 1 ) ) , 0 , 0 , 0 ; 0 , sin ( theta ( 1 ) ) , cos ( theta ( 1 ) ) , 0 , 0 , 0 ; 0 , 0 , 0 , 1 , 0 , 0 ; 0 , 0 , 0 , 0 , cos ( theta ( 1 ) ) , - sin ( theta ( 1 ) ) ; 0 , 0 , 0 , 0 , sin ( theta ( 1 ) ) , cos ( theta ( 1 ) ) |] }
 }
-datatype Geom { geomType : string geomVal : vector ( real ) } function identity ( size : real ) : matrix ( real , 3 , 3 ) { } function zeroes ( size : real ) : matrix ( real , 3 , 3 ) { } function Phi ( m : real , n : real , B_k : Seq( matrix ( real , 4 , 4 ) ) ) : matrix ( real , 6 , 6 ) { } function zeroVec ( a : real ) : vector ( real , 1 ) { } function zeroMat ( a : real , b : real ) : matrix ( real , 0 , 0 ) { } function skew ( v : vector ( real , 3 ) ) : matrix ( real , 3 , 3 ) { } function getFramePosition ( k : real , B_n : Seq( matrix ( real , 4 , 4 ) ) ) : vector ( real , 3 ) { }
+datatype Geom { geomType : string geomVal : vector ( real ) meshUri : string meshScale : vector ( real ) } function identity ( size : real ) : matrix ( real , 3 , 3 ) { } function zeroes ( size : real ) : matrix ( real , 3 , 3 ) { } function Phi ( m : real , n : real , B_k : Seq( matrix ( real , 4 , 4 ) ) ) : matrix ( real , 6 , 6 ) { } function zeroVec ( a : real ) : vector ( real , 1 ) { } function zeroMat ( a : real , b : real ) : matrix ( real , 0 , 0 ) { } function skew ( v : vector ( real , 3 ) ) : matrix ( real , 3 , 3 ) { } function getFramePosition ( k : real , B_n : Seq( matrix ( real , 4 , 4 ) ) ) : vector ( real , 3 ) { }

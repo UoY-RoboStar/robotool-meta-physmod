@@ -1,0 +1,24 @@
+	solution{ 
+        solutionExpr tau: vector(real,2)
+        order 1
+        group 1
+        method PlatformMapping
+    }
+    solution{
+        solutionExpr theta: vector(real,2)
+        order 2
+        group 1
+        method GeneralisedPosition_method1
+    }
+    solution{
+        solutionExpr B_k: Seq(matrix(real,4,4))
+        order 3
+        group 1
+        method Eval
+    }
+    solution{
+        solutionExpr T_geom: Seq(matrix(real,4,4))
+        order 4
+        group 1
+        method Visualisation
+    }
