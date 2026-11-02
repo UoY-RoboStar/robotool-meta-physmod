@@ -97,7 +97,7 @@ public class TestAcrobotControlled_T5FullSimulation_Visualisation {
             deleteDirectory(tempDir);
         }
 
-        Path input = InputCheck.valid(scenarioRoot().resolve("input").resolve("AcrobotControlled.slnRef"));
+        Path input = InputCheck.valid(TestData.path("integration/T4/AcrobotControlled/SKO/FullSimulation_Visual_Proof/expected/AcrobotControlled.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

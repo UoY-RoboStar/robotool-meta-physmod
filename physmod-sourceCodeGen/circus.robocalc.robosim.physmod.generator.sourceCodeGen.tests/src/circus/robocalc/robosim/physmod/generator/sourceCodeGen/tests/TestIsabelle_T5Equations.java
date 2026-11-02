@@ -35,8 +35,6 @@ public class TestIsabelle_T5Equations {
 
     @Inject
     private ParseHelper<SlnRefs> slnRefParseHelper;
-    private static final Path TESTDATA_PROJECT_PATH =
-        TestData.path("integration/T5/SKO");
 
     private ParseHelper<Solution> solutionDSLParseHelper;
 
@@ -53,17 +51,13 @@ public class TestIsabelle_T5Equations {
         return Paths.get("").toAbsolutePath().resolve("tests").resolve("integrationTests").resolve("SKO");
     }
 
-    private Path testdataRoot() {
-        return TESTDATA_PROJECT_PATH;
-    }
-
     private Path isabelleRoot() {
         return integrationRoot().resolve("isabelle");
     }
 
     @Test
     public void testIsabelleEquationsGeneration() throws Exception {
-        Path input = InputCheck.valid(testdataRoot().resolve("integrated").resolve("input").resolve("SimpleArmSerial.slnRef"));
+        Path input = InputCheck.valid(TestData.path("integration/T4/SKO/expected/SimpleArmSerial.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

@@ -30,26 +30,14 @@ public class TestSKO_T5Integration_LibRefs {
 
     @Inject
     private ParseHelper<SlnRefs> slnRefParseHelper;
-    private static final Path TESTDATA_PROJECT_PATH =
-        TestData.path("integration/T5/SKO");
 
     private Path integrationRoot() {
         return Paths.get("").toAbsolutePath().resolve("tests").resolve("integrationTests").resolve("SKO");
     }
 
-    private Path testdataRoot() {
-        return TESTDATA_PROJECT_PATH;
-    }
-
     @Test
     public void testGenerateFromT4SlnRef_SKO_LibRefs() throws Exception {
-        // Input: T4 slnRef copied into T5 tests
-        Path input = testdataRoot().resolve("default").resolve("input").resolve("SimpleArmSerial.slnRef");
-        if (!Files.exists(input)) {
-            input = testdataRoot().resolve("integrated").resolve("input").resolve("SimpleArmSerial.slnRef");
-        }
-        assertTrue(Files.exists(input), "Missing input slnRef in default or integrated input directory");
-        InputCheck.valid(input);
+        Path input = InputCheck.valid(TestData.path("integration/T4/SKO/expected/SimpleArmSerial.slnRef"));
 
         String slnRefText = Files.readString(input);
 

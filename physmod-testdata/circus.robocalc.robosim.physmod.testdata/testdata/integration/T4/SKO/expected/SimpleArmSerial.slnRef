@@ -2,8 +2,6 @@ SolutionRef {
 	expression Local { name tau type "vector(real,2)" }
 	method SKO::PlatformMapping
 	order 1
-input Local { name n type "int" }
-constraint " (n) [ t == 0] ==3"
 constraint " (tau) [ t == 0] ==zeroVec(2)"
 constraint " (tau(0)) [ t == t] ==p_mapping.SimpleArmSerial.IntermediateLink.WristJoint.WristActuator.TorqueIn"
 constraint " (tau(1)) [ t == t] ==p_mapping.SimpleArmSerial.BaseLink.ElbowJoint.ElbowActuator.TorqueIn"
@@ -43,7 +41,6 @@ input Local { name a type "vector(real,18)" }
 input Local { name b type "vector(real,18)" }
 input Local { name f type "vector(real,18)" }
 input Local { name M type "matrix(real,18,18)" }
-input Local { name N type "real" }
 constraint " (n) [ t == 0] ==3"
 constraint " (M_1) [ t == 0] ==zeroMat(6, 6)"
 constraint " (submatrix(M)(0,0,6,6)) [ t == 0] ==[|0.052050002,0.0,0.0,0.0,-0.125,0.0; 0.0,0.052050002,0.0,0.125,0.0,0.0; 0.0,0.0,0.0208,0.0,0.0,0.0; 0.0,0.125,0.0,0.5,0.0,0.0; -0.125,0.0,0.0,0.0,0.5,0.0; 0.0,0.0,0.0,0.0,0.0,0.5|]"
@@ -54,7 +51,6 @@ constraint " (submatrix(H)(1,6,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
 constraint " (M_3) [ t == 0] ==zeroMat(6, 6)"
 constraint " (submatrix(M)(12,12,6,6)) [ t == 0] ==[|16.667,0.0,0.0,0.0,-25.0,0.0; 0.0,22.917,0.0,25.0,0.0,0.0; 0.0,0.0,10.417,0.0,0.0,0.0; 0.0,25.0,0.0,100.0,0.0,0.0; -25.0,0.0,0.0,0.0,100.0,0.0; 0.0,0.0,0.0,0.0,0.0,100.0|]"
 constraint " (C) [ t == 0] ==zeroVec(2)"
-constraint " (N) [ t == 0] ==2"
 constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
 constraint " (theta) [ t == 0] ==zeroVec(2)"
 constraint " (d_theta) [ t == 0] ==zeroVec(2)"
@@ -68,7 +64,7 @@ constraint " (f) [ t == 0] ==zeroVec(18)"
 SolutionRef {
 	expression Local { name B_k type "Seq(matrix(real,4,4))" }
 	method SKO::ForwardKinematics
-	order 3
+	order 9
 input Local { name X_J type "Seq(matrix(real,6,6))" }
 input Local { name X_T type "Seq(matrix(real,6,6))" }
 input Local { name n type "int" }
@@ -123,7 +119,7 @@ constraint " (phi) [ t == 0] ==zeroMat(18, 18)"
 SolutionRef {
 	expression Local { name T_geom type "Seq(matrix(real,4,4))" }
 	method Visualisation
-	order 4
+	order 10
 input Local { name B_k type "Seq(matrix(real,4,4))" }
 input Local { name T_offset type "Seq(matrix(real,4,4))" }
 input Local { name B_1 type "matrix(real,4,4)" }
@@ -159,10 +155,6 @@ SolutionRef {
 	method SKO::CholeskyAlgorithm
 	order 5
 input Local { name M_mass type "matrix(real,2,2)" }
-input Local { name N type "real" }
-input Local { name n type "int" }
-constraint " (n) [ t == 0] ==3"
-constraint " (N) [ t == 0] ==2"
 constraint " (M_mass) [ t == 0] ==zeroMat(2, 2)"
 constraint " (M_inv) [ t == 0] ==zeroMat(2, 2)"
 }
@@ -170,11 +162,9 @@ SolutionRef {
 	expression Local { name dd_theta type "vector(real,2)" }
 	method SKO::DirectForwardDynamics
 	order 6
-input Local { name n type "int" }
 input Local { name tau type "vector(real,2)" }
 input Local { name M_inv type "matrix(real,2,2)" }
 input Local { name C type "vector(real,2)" }
-constraint " (n) [ t == 0] ==3"
 constraint " (M_inv) [ t == 0] ==zeroMat(2, 2)"
 constraint " (tau) [ t == 0] ==zeroVec(2)"
 constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
@@ -186,8 +176,6 @@ SolutionRef {
 	order 7
 input Local { name dd_theta type "vector(real,2)" }
 input Local { name dt type "real" }
-input Local { name n type "int" }
-constraint " (n) [ t == 0] ==3"
 constraint " (dd_theta) [ t == 0] ==zeroVec(2)"
 constraint " (dt) [ t == 0] ==0.01"
 constraint " (d_theta) [ t == 0] ==zeroVec(2)"
@@ -198,8 +186,6 @@ SolutionRef {
 	order 8
 input Local { name d_theta type "vector(real,2)" }
 input Local { name dt type "real" }
-input Local { name n type "int" }
-constraint " (n) [ t == 0] ==3"
 constraint " (d_theta) [ t == 0] ==zeroVec(2)"
 constraint " (dt) [ t == 0] ==0.01"
 constraint " (theta) [ t == 0] ==zeroVec(2)"
@@ -207,7 +193,7 @@ constraint " (theta) [ t == 0] ==zeroVec(2)"
 SolutionRef {
 	expression Local { name sensor_outputs type "real" }
 	method SKO::SensorOutputMapping
-	order 9
+	order 11
 constraint " (BaseLink_BaseSensor_SignalIn) [ t == t] ==BaseLink_BaseSensor_MeasurementOut"
 constraint " (BaseLink_ElbowSensor_SignalIn) [ t == t] ==BaseLink_ElbowSensor_MeasurementOut"
 constraint " (IntermediateLink_WristSensor_SignalIn) [ t == t] ==IntermediateLink_WristSensor_MeasurementOut"

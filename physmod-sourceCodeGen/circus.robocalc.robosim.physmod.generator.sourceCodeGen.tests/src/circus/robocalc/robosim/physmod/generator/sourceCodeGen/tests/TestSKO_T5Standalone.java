@@ -72,8 +72,7 @@ public class TestSKO_T5Standalone {
 
     @Test
     public void testStandaloneModeWithTrajectory() throws Exception {
-        // Input: T4 slnRef
-        Path input = InputCheck.valid(testdataRoot().resolve("standalone").resolve("input").resolve("SimpleArmSerial.slnRef"));
+        Path input = InputCheck.valid(TestData.path("integration/T4/SKO/expected/SimpleArmSerial.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

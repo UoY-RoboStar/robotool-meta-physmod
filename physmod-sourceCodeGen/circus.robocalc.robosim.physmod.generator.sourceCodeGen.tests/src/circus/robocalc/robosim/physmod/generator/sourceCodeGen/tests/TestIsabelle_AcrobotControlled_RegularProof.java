@@ -33,9 +33,6 @@ public class TestIsabelle_AcrobotControlled_RegularProof {
 
     private ParseHelper<Solution> solutionDSLParseHelper;
 
-    private static final Path TESTDATA_PROJECT_PATH =
-        TestData.path("integration/T5/AcrobotControlled/SKO/FullSimulation_Visualisation");
-
     private ParseHelper<Solution> getSolutionDSLParseHelper() {
         if (solutionDSLParseHelper == null) {
             SlnDFInjectorProvider provider = new SlnDFInjectorProvider();
@@ -45,31 +42,8 @@ public class TestIsabelle_AcrobotControlled_RegularProof {
         return solutionDSLParseHelper;
     }
 
-    private Path repoRoot() {
-        // .../T5_sourceCodeGen/<this-project> -> .../T5_sourceCodeGen -> .../physmod-physics-engine-private
-        Path here = Paths.get("").toAbsolutePath();
-        return here.getParent().getParent();
-    }
-
-    private Path testdataRoot() {
-        return TESTDATA_PROJECT_PATH;
-    }
-
     private Path inputSlnRef() {
-        Path pipelineOutput = repoRoot()
-            .resolve("IntegrationTests")
-            .resolve("circus.robocalc.robosim.physmod.generator.pipeline.tests")
-            .resolve("tests")
-            .resolve("integrationTests")
-            .resolve("AcrobotControlled")
-            .resolve("temp")
-            .resolve("T4")
-            .resolve("guidedChoice_GENERATORAcrobotControlled.slnRef");
-        if (Files.exists(pipelineOutput)) {
-            return pipelineOutput;
-        }
-
-        return InputCheck.valid(testdataRoot().resolve("input").resolve("AcrobotControlled.slnRef"));
+        return InputCheck.valid(TestData.path("integration/T4/AcrobotControlled/SKO/FullSimulation_Visual_Proof/expected/AcrobotControlled.slnRef"));
     }
 
     private Path outputDir() {

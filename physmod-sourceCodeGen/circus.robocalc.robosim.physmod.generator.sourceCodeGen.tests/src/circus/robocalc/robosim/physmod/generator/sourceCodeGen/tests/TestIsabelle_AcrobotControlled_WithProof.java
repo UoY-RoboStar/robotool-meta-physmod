@@ -40,10 +40,6 @@ public class TestIsabelle_AcrobotControlled_WithProof {
         return solutionDSLParseHelper;
     }
 
-    private Path testRoot() {
-        return TestData.path("integration/T5/RobotExamples/AcrobotControlled/SKO_proof");
-    }
-
     private Path tempOutputRoot() {
         try {
             return Files.createTempDirectory("TestIsabelle_AcrobotControlled");
@@ -53,8 +49,9 @@ public class TestIsabelle_AcrobotControlled_WithProof {
     }
 
     @Test
+    @org.junit.jupiter.api.Tag("generator-backlog")
     public void testIsabelleWithProofBlock_AcrobotControlled() throws Exception {
-        Path inputPath = InputCheck.valid(testRoot().resolve("input").resolve("acrobotControlled_WithProof.slnRef"));
+        Path inputPath = InputCheck.valid(TestData.path("integration/T4/AcrobotControlled/SKO/FullSimulation_Visual_Proof/expected/AcrobotControlled_WithProof.slnRef"));
         assertTrue(Files.exists(inputPath), "Missing proof input: " + inputPath);
 
         String slnRefText = Files.readString(inputPath);

@@ -41,8 +41,6 @@ public class TestSKO_T5Latex {
 
     @Inject
     private ParseHelper<SlnRefs> slnRefParseHelper;
-    private static final Path TESTDATA_PROJECT_PATH =
-        TestData.path("integration/T5/SKO");
 
     // For SolutionDSL, we'll get the injector from SlnDFInjectorProvider
     private ParseHelper<Solution> solutionDSLParseHelper;
@@ -65,15 +63,10 @@ public class TestSKO_T5Latex {
         return integrationRoot().resolve("latex");
     }
 
-    private Path testdataRoot() {
-        return TESTDATA_PROJECT_PATH;
-    }
-
     @Test
     @Tag("generator-backlog")
     public void testLatexGeneration() throws Exception {
-        // Use input from latex test folder
-        Path input = InputCheck.valid(testdataRoot().resolve("latex").resolve("input").resolve("SimpleArmSerial.slnRef"));
+        Path input = InputCheck.valid(TestData.path("integration/T4/SKO/expected/SimpleArmSerial.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);
