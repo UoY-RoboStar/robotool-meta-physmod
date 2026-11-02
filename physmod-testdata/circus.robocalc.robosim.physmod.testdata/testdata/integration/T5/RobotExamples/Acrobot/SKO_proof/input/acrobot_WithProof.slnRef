@@ -51,11 +51,11 @@ SolutionRef {
 	constraint " (X_J) [ t == t ] ==<X_J_1, X_J_2>"
 	// Kinematics/dynamics relations
 	constraint " (V) [ t == t ] ==adj ( phi )*adj ( H )*derivative(theta)"
-	constraint " (alpha) [ t == t ] ==adj ( phi )*adj ( H )*derivative(theta)+a"
+	constraint " (alpha) [ t == t ] ==adj ( phi )*( adj ( H ) * derivative ( derivative ( theta ) ) + a )"
 	constraint " (f) [ t == t ] ==phi*( M * alpha + b )"
 	constraint " (tau) [ t == t ] ==M_mass*derivative(derivative(theta))+C"
 	constraint " (M_mass) [ t == t ] ==H*phi*M*adj ( phi )*adj ( H )"
-	constraint " (C) [ t == t ] ==H*phi(M*adj ( phi )*a+b)"
+	constraint " (C) [ t == t ] ==H*phi*( M * adj ( phi ) * a + b )"
 	constraint " (B_1) [ t == t ] ==B_3*T_3_2*T_2_1"
 	constraint " (B_2) [ t == t ] ==B_3*T_3_2"
 	constraint " (N) [ t == t ] ==r_v1+r_v2"

@@ -170,8 +170,8 @@ pmodel AcrobotControlled {
 			equation submatrix ( M_2 ) ( 0 , 3 , 3 , 3 ) == m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 0 , 3 , 3 ) == - m_2 * skew ( c_2 )
 			equation submatrix ( M_2 ) ( 3 , 3 , 3 , 3 ) == m_2 * identity ( 3 )
-			equation V_2 == adj ( phi_3_2 ) * _V_3 + adj ( H_2 ) + derivative ( theta_2 )
-			equation alpha_2 == adj ( phi_3_2 ) * _alpha_3 + adj ( H_2 ) * derivative ( theta_2 ) + a_2
+			equation V_2 == adj ( phi_3_2 ) * _V_3 + adj ( H_2 ) * derivative ( theta_2 )
+			equation alpha_2 == adj ( phi_3_2 ) * _alpha_3 + adj ( H_2 ) * derivative ( derivative ( theta_2 ) ) + a_2
 			equation tau_2 == H_2 * f_2
 			equation B_2 == _B_3 * T_3_2
 			equation f_2 == phi_2_1 * _f_1 + M_2 * alpha_2 + b_2
@@ -302,8 +302,8 @@ pmodel AcrobotControlled {
 			equation submatrix ( M_1 ) ( 0 , 3 , 3 , 3 ) == m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 0 , 3 , 3 ) == - m_1 * skew ( c_1 )
 			equation submatrix ( M_1 ) ( 3 , 3 , 3 , 3 ) == m_1 * identity ( 3 )
-			equation V_1 == adj ( phi_2_1 ) * _V_2 + adj ( H_1 ) + derivative ( theta_1 )
-			equation alpha_1 == adj ( phi_2_1 ) * _alpha_2 + adj ( H_1 ) * derivative ( theta_1 ) + a_1
+			equation V_1 == adj ( phi_2_1 ) * _V_2 + adj ( H_1 ) * derivative ( theta_1 )
+			equation alpha_1 == adj ( phi_2_1 ) * _alpha_2 + adj ( H_1 ) * derivative ( derivative ( theta_1 ) ) + a_1
 			equation tau_1 == H_1 * f_1
 			equation B_1 == _B_2 * T_2_1
 			equation f_1 == M_1 * alpha_1 + b_1
@@ -386,11 +386,11 @@ pmodel AcrobotControlled {
 	equation T_geom == < T_geom_1 , T_geom_2 , T_geom_3 >
 	equation T_offset == < T_offset_1 , T_offset_2 , T_offset_3 >
 	equation V == adj ( phi ) * adj ( H ) * derivative ( theta )
-	equation alpha == adj ( phi ) * adj ( H ) * derivative ( theta ) + a
+	equation alpha == adj ( phi ) * ( adj ( H ) * derivative ( derivative ( theta ) ) + a )
 	equation f == phi * ( M * alpha + b )
 	equation tau == M_mass * derivative ( derivative ( theta ) ) + C
 	equation M_mass == H * phi * M * adj ( phi ) * adj ( H )
-	equation C == H * phi ( M * adj ( phi ) * a + b )
+	equation C == H * phi * ( M * adj ( phi ) * a + b )
 	equation B_1 == B_3 * T_3_2 * T_2_1
 	equation B_2 == B_3 * T_3_2
 	equation N == r_v1 + r_v2
