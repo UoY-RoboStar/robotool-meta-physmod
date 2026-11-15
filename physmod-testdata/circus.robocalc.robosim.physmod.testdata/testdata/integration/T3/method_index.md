@@ -11,6 +11,7 @@ Each method listed here maps to the data directory it uses. Data directories con
 | [AcrobotSKOTest] | testSKOGenerator_Acrobot | [RobotExamples/acrobot/SKO/](RobotExamples/acrobot/SKO/) |
 | [AcrobotCGATest] | testCGAGenerator_Acrobot | [RobotExamples/acrobot/CGA/](RobotExamples/acrobot/CGA/) |
 | [AcrobotFeatherstoneTest] | testFeatherstoneGenerator_Acrobot | [RobotExamples/acrobot/Featherstone/](RobotExamples/acrobot/Featherstone/) |
+| [AcrobotFeatherstoneTest] | testExpectedOutputIsValid | [RobotExamples/acrobot/Featherstone/](RobotExamples/acrobot/Featherstone/) |
 | [AcrobotFeatherstoneTest] | testFeatherstoneFormulationDetection | [RobotExamples/acrobot/Featherstone/](RobotExamples/acrobot/Featherstone/) |
 | [AcrobotControlledTest] | testSKOGenerator_AcrobotWithControlledMotor | [RobotExamples/acrobot_controlled/SKO/](RobotExamples/acrobot_controlled/SKO/) |
 | [MobileRobotSKOTest] | testSKOGenerator_TurtlebotMesh | [RobotExamples/MobileRobot/SKO/](RobotExamples/MobileRobot/SKO/) |

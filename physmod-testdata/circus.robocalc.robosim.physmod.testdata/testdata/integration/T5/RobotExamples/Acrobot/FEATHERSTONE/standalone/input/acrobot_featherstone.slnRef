@@ -15,7 +15,7 @@ SolutionRef {
 	constraint " (d_q) [ t == 0] ==zeroVec(2)"
 	constraint " (tau) [ t == 0] ==zeroVec(2)"
 	constraint " (damping) [ t == 0] ==zeroMat(2, 2)"
-	constraint " (jtype) [ t == 0] ==<-1,-1>"
+	constraint " (jtype) [ t == 0] ==<1,1>"
 	// XT uses the same translation-only convention as SKO's X_T: X = [I,0; -p×, I] with p=[0,0,-offset]
 	constraint " (XT) [ t == 0] ==<[|1,0,0,0,0,0;0,1,0,0,0,0;0,0,1,0,0,0;0,0,0,1,0,0;0,0,0,0,1,0;0,0,0,0,0,1|],[|1,0,0,0,0,0;0,1,0,0,0,0;0,0,1,0,0,0;0,-1.0,0,1,0,0;1.0,0,0,0,1,0;0,0,0,0,0,1|]>"
 	// Spatial inertias include a COM offset cz=-halfHeight (matches SKO_serial.sln convention)

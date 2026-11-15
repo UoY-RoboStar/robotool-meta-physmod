@@ -39,16 +39,14 @@ pmodel AcrobotFeatherstone {
 	}
 
 	// Link1 - first pendulum link
-	// RBDL parameters: m=1.0kg, l=1.0m, COM at (0,0.5,0) relative to link frame
-	// Inertia: Ixx=Izz=ml^2/3=0.333, Iyy=ml^2/30=0.033
 	local link Link1 {
 		def { }
 		local body Link1Body {
 			def {
 				inertial information {
 					mass 1.0
-					inertia matrix { ixx 0.333 ixy 0.0 ixz 0.0 iyy 0.033 iyz 0.0 izz 0.333 }
-					pose { x = 0.0 y = 0.5 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+					inertia matrix { ixx 0.083 ixy 0.0 ixz 0.0 iyy 0.083 iyz 0.0 izz 0.001 }
+					pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 				}
 				cylinder ( radius = 0.05 , length = 1.0 )
 			}
@@ -76,21 +74,19 @@ pmodel AcrobotFeatherstone {
 	}
 
 	// Link2 - second pendulum link (end effector)
-	// RBDL parameters: m=1.0kg, l=1.0m, COM at (0.5,0,0)
-	// Inertia: Ixx=ml^2/30=0.033, Iyy=Izz=ml^2/3=0.333
 	local link Link2 {
 		def { }
 		local body Link2Body {
 			def {
 				inertial information {
 					mass 1.0
-					inertia matrix { ixx 0.033 ixy 0.0 ixz 0.0 iyy 0.333 iyz 0.0 izz 0.333 }
-					pose { x = 0.5 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+					inertia matrix { ixx 0.333 ixy 0.0 ixz 0.0 iyy 0.333 iyz 0.0 izz 0.001 }
+					pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 				}
-				cylinder ( radius = 0.05 , length = 1.0 )
+				cylinder ( radius = 0.05 , length = 2.0 )
 			}
 			pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 		}
-		pose { x = 0.0 y = 0.0 z = -1.7 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+		pose { x = 0.0 y = 0.0 z = -2.2 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 	}
 }
