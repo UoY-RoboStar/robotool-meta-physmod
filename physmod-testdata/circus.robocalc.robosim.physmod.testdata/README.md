@@ -24,7 +24,7 @@ testdata/
 | C1 Unit coverage | every algorithm has at least one test covering normal, boundary, and error cases | `testdata/unit/T3/`, `testdata/unit/T4/`, `testdata/unit/T5/` |
 | C2 Integration coverage | end-to-end pipeline tests validate generated artifacts | `testdata/integration/T3/`, `testdata/integration/T4/`, `testdata/integration/T5/`, `testdata/integration/pipeline/` |
 | C3 Formulation coverage | SKO, Featherstone, and CGA formulations are exercised | `testdata/integration/T3/RobotExamples/`, `testdata/integration/T5/Acrobot/`, `testdata/integration/pipeline/RobotExamples/` |
-| C4 Topology coverage | serial, tree, and closed-chain topologies are exercised | `testdata/integration/T3/RobotExamples/`, `testdata/integration/T3/ClosedChain/`, `testdata/integration/T5/ClosedChain/` |
+| C4 Topology coverage | serial, tree, and closed-chain topologies are exercised | `testdata/integration/T3/RobotExamples/`, `testdata/integration/T3/ClosedChain/`, `testdata/integration/T4/ClosedChain/` |
 | C5 P-model coverage | PhysMod metamodel elements are exercised | `testdata/integration/T3/metamodelCoverage/` |
 
 ## Formulation Coverage Summary

@@ -39,8 +39,9 @@ Each method listed here maps to the data directory it uses. Data directories con
 | [TestAcrobot_T5FullSimulation_Visualisation] | testFullSimulationWithVisualisation | [RobotExamples/Acrobot/SKO/fullSimulation_visualisation/](RobotExamples/Acrobot/SKO/fullSimulation_visualisation/) |
 | [TestAcrobotControlled_T5FullSimulation_Visualisation] | testFullSimulationWithVisualisation | [AcrobotControlled/SKO/FullSimulation_Visualisation/](AcrobotControlled/SKO/FullSimulation_Visualisation/) |
 | [TestSimpleArm_T5Standalone_Visualisation] | testStandaloneVisualisationMode | [../T4/SKO/expected/SimpleArmSerial.slnRef](../T4/SKO/expected/SimpleArmSerial.slnRef) |
-| [FourBarClosedChainSourceCodeGenTest] | testClosedChainSlnRefGeneratesSolutionDsl | [ClosedChain/SKO/](ClosedChain/SKO/) |
-| [FourBarClosedChainStandaloneVisualisationTest] | testStandaloneVisualisationMode | [ClosedChain/SKO/](ClosedChain/SKO/) |
+| [FourBarClosedChainSourceCodeGenTest] | testInputIsValid | [../T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef](../T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef) |
+| [FourBarClosedChainSourceCodeGenTest] | testClosedChainSlnRefGeneratesSolutionDsl | [../T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef](../T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef) |
+| [FourBarClosedChainStandaloneVisualisationTest] | testStandaloneVisualisationMode | [../T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef](../T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef) |
 
 <!-- Test source files -->
 [SolutionToCppGeneratorTest]: ../../../../../physmod-sourceCodeGen/circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests/src/circus/robocalc/robosim/physmod/generator/sourceCodeGen/tests/SolutionToCppGeneratorTest.java

@@ -2,7 +2,6 @@ package circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.RobotExamp
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,7 +26,6 @@ import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.testdata.TestData;
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.InputCheck;
 
-@org.junit.jupiter.api.Tag("generator-backlog")
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
 public class FourBarClosedChainSourceCodeGenTest {
@@ -36,6 +34,8 @@ public class FourBarClosedChainSourceCodeGenTest {
     private ParseHelper<SlnRefs> slnRefParseHelper;
 
     private ParseHelper<Solution> solutionDSLParseHelper;
+
+    private static final String INPUT = "integration/T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef";
 
     private ParseHelper<Solution> getSolutionDSLParseHelper() {
         if (solutionDSLParseHelper == null) {
@@ -47,8 +47,14 @@ public class FourBarClosedChainSourceCodeGenTest {
     }
 
     @Test
+    void testInputIsValid() {
+        InputCheck.valid(TestData.path(INPUT));
+    }
+
+    @Test
+    @org.junit.jupiter.api.Tag("generator-backlog")
     void testClosedChainSlnRefGeneratesSolutionDsl() throws Exception {
-        Path input = resolveSlnRefInput();
+        Path input = InputCheck.valid(TestData.path(INPUT));
         String slnRefText = Files.readString(input, StandardCharsets.UTF_8);
 
         SlnRefs slnRefs = slnRefParseHelper.parse(slnRefText);
@@ -86,9 +92,5 @@ public class FourBarClosedChainSourceCodeGenTest {
             .map(Object::toString)
             .anyMatch(content -> content.contains("lambda_c"));
         assertTrue(foundLambda, "Generated C++ should include lambda_c for constrained dynamics");
-    }
-
-    private static Path resolveSlnRefInput() throws IOException {
-        return InputCheck.valid(TestData.path("integration/T5/ClosedChain/SKO/input/FourBarPlanarLinkage.slnRef"));
     }
 }

@@ -34,7 +34,8 @@ Each method listed here maps to the data directory it uses. Data directories con
 | [MappingGeneratorTest] | testGenerateMappingSlnRef | [Examples/RobotExamples/Acrobot_SKO_controlled/](../../../../../Examples/RobotExamples/Acrobot_SKO_controlled/) |
 | [Vis_integrationTest] | test_Visual_Appended_SlnRef | [vis/](vis/) |
 | [Vis_AlgebraicConstraints_Test] | test_Algebraic_Constraints_T_Eq_T | [vis/](vis/) |
-| [ClosedChainSKOIntegrationTest] | testClosedChainGuidedChoice | [../T3/ClosedChain/SKO/](../T3/ClosedChain/SKO/) |
+| [ClosedChainSKOIntegrationTest] | testClosedChainGuidedChoice | [ClosedChain/SKO/](ClosedChain/SKO/) |
+| [ClosedChainSKOIntegrationTest] | testMatchesExpected | [ClosedChain/SKO/](ClosedChain/SKO/) |
 | [CGA_integrationTest_AcrobotFromT3] | testT3ToT4_AcrobotCGA | T3 eqnComp temp output |
 | [FEATHERSTONE_integrationTest_AcrobotFromT3] | testT3ToT4_AcrobotFeatherstone | [../T3/RobotExamples/acrobot/Featherstone/](../T3/RobotExamples/acrobot/Featherstone/) |
 

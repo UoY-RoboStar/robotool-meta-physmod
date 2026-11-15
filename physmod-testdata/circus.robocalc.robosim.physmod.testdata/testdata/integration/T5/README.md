@@ -28,8 +28,8 @@ Target key: C++ = C++ source code, LaTeX = LaTeX equations, Isabelle = Isabelle 
 | AcrobotControlled SKO fullSimulation visualisation | SKO | C++ | fullSimulation_visualisation | S1, S2 | [AcrobotControlled/SKO/FullSimulation_Visualisation/](AcrobotControlled/SKO/FullSimulation_Visualisation/) |
 | AcrobotControlled Isabelle proof | SKO | Isabelle | proof | S1, S2 | [AcrobotControlled/SKO/](AcrobotControlled/SKO/) |
 | SimpleArm SKO standalone visualisation | SKO | C++ | standalone_visualisation | S1, S2 | [../T4/SKO/expected/SimpleArmSerial.slnRef](../T4/SKO/expected/SimpleArmSerial.slnRef) |
-| ClosedChain SKO[^1] | SKO | C++ | constraint dynamics | S1, S2 | [ClosedChain/SKO/](ClosedChain/SKO/) |
-| ClosedChain SKO standalone visualisation[^1] | SKO | C++ | standalone_visualisation | S1, S2 | [ClosedChain/SKO/](ClosedChain/SKO/) |
+| ClosedChain SKO[^1] | SKO | C++ | constraint dynamics | S1, S2 | [../T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef](../T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef) |
+| ClosedChain SKO standalone visualisation[^1] | SKO | C++ | standalone_visualisation | S1, S2 | [../T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef](../T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef) |
 
 [^1]: Jain's augmented approach (Robot and Multibody Dynamics, section 11.2).
 

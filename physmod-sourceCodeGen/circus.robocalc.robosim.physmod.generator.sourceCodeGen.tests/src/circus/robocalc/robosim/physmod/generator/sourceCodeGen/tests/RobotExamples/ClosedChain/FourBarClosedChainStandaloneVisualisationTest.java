@@ -45,7 +45,7 @@ public class FourBarClosedChainStandaloneVisualisationTest {
 
     private ParseHelper<Solution> solutionDSLParseHelper;
 
-    private static final String INPUT = "integration/T5/ClosedChain/SKO/input/FourBarPlanarLinkage.slnRef";
+    private static final String INPUT = "integration/T4/ClosedChain/SKO/expected/FourBarPlanarLinkage.slnRef";
 
     private ParseHelper<Solution> getSolutionDSLParseHelper() {
         if (solutionDSLParseHelper == null) {

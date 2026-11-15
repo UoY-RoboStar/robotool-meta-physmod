@@ -1,0 +1,21 @@
+	solution {
+		solutionExpr theta : vector(real,3)
+		order 1
+		group 1
+		method GeneralisedPosition_method1_closedChain_gravity_damping
+		Constraint (theta) [t == 0] == [|-1.8234765819369751; -1.8234765819369751; 1.8234765819369751|]
+		Constraint (d_theta) [t == 0] == [|1.5; -1.5; 3.0|]
+		Constraint (dt) [t == 0] == 0.001
+	}
+	solution {
+		solutionExpr B_k : Seq(matrix(real,4,4))
+		order 2
+		group 1
+		method Eval
+	}
+	solution {
+		solutionExpr T_geom : Seq(matrix(real,4,4))
+		order 3
+		group 1
+		method Visual
+	}
