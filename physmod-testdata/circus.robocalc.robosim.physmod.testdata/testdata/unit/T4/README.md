@@ -11,7 +11,7 @@ See [method_index.md](method_index.md) for the test method to data directory map
 | Step | Algorithm | Count | Test Method(s) |
 | --- | --- | --- | --- |
 | S1 | `initialiseSidecar`, `addNullDatatype` | 74 | [GuidedChoiceUtilsTest] (72), [HeadlessInitializationTest] (1), [SimpleHeadlessTest] (1) |
-| S3 | `resolveSolutionFirstPass` | 98 | [GuidedChoiceUtilsTest] (72), [AlgebraicConstraintsTest] (11), [HeadlessPrintingServicesTest] (14), [SimpleArmSerialGuidedChoiceTests] (1) |
+| S3 | `resolveSolutionFirstPass` | 98 | [GuidedChoiceUtilsTest] (72), [AlgebraicConstraintsTest] (11), [HeadlessPrintingServicesTest] (14), [SimpleArmSerialGuidedChoiceTest] (1) |
 | S3a | `calculateInitialConditions` | subset of S3 | [HeadlessPrintingServicesTest], [GuidedChoiceUtilsTest] (constraint evaluation) |
 | S3b | `processAlgebraicConstraints` | subset of S3 | [AlgebraicConstraintsTest], [GuidedChoiceUtilsTest] |
 
@@ -21,7 +21,7 @@ Total counts distinct tests; some tests exercise multiple steps, so row totals a
 [AlgebraicConstraintsTest]: ../../../../../physmod-guidedChoice/circus.robocalc.robosim.physmod.generator.guidedChoice.tests/src/circus/robocalc/robosim/physmod/generator/guidedChoice/tests/AlgebraicConstraintsTest.java
 [HeadlessPrintingServicesTest]: ../../../../../physmod-guidedChoice/circus.robocalc.robosim.physmod.generator.guidedChoice.tests/src/circus/robocalc/robosim/physmod/generator/guidedChoice/tests/HeadlessPrintingServicesTest.java
 [GuidedChoiceUtilsTest]: ../../../../../physmod-guidedChoice/circus.robocalc.robosim.physmod.generator.guidedChoice.tests/src/circus/robocalc/robosim/physmod/generator/guidedChoice/tests/GuidedChoiceUtilsTest.xtend
-[SimpleArmSerialGuidedChoiceTests]: ../../../../../physmod-guidedChoice/circus.robocalc.robosim.physmod.generator.guidedChoice.tests/src/circus/robocalc/robosim/physmod/generator/guidedChoice/tests/SimpleArmSerialGuidedChoiceTests.xtend
-[HeadlessInitializationTest]: ../../../../../physmod-guidedChoice/circus.robocalc.robosim.physmod.generator.guidedChoice.tests/src/circus/robocalc/robosim/physmod/generator/guidedChoice/tests/HeadlessInitializationTest.xtend
-[SimpleHeadlessTest]: ../../../../../physmod-guidedChoice/circus.robocalc.robosim.physmod.generator.guidedChoice.tests/src/circus/robocalc/robosim/physmod/generator/guidedChoice/tests/SimpleHeadlessTest.xtend
+[SimpleArmSerialGuidedChoiceTest]: ../../../../../physmod-guidedChoice/circus.robocalc.robosim.physmod.generator.guidedChoice.tests/src/circus/robocalc/robosim/physmod/generator/guidedChoice/tests/SimpleArmSerialGuidedChoiceTest.java
+[HeadlessInitializationTest]: ../../../../../physmod-guidedChoice/circus.robocalc.robosim.physmod.generator.guidedChoice.tests/src/circus/robocalc/robosim/physmod/generator/guidedChoice/tests/HeadlessInitializationTest.java
+[SimpleHeadlessTest]: ../../../../../physmod-guidedChoice/circus.robocalc.robosim.physmod.generator.guidedChoice.tests/src/circus/robocalc/robosim/physmod/generator/guidedChoice/tests/SimpleHeadlessTest.java
 [SimpleXJTest]: ../../../../../physmod-guidedChoice/circus.robocalc.robosim.physmod.generator.guidedChoice.tests/src/circus/robocalc/robosim/physmod/generator/guidedChoice/tests/SimpleXJTest.xtend
