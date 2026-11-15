@@ -61,22 +61,22 @@ SolutionRef {
 	input Local { name T_offset_1 type "matrix(real,4,4)" }
 	input Local { name T_offset_2 type "matrix(real,4,4)" }
 	input Local { name T_offset_3 type "matrix(real,4,4)" }
-	constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,-3.2; 0,0,0,1|]"
-	constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,-1.2; 0,0,0,1|]"
+	constraint " (B_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,-1.2; 0,0,0,1|]"
+	constraint " (B_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,-0.2; 0,0,0,1|]"
 	constraint " (B_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; -0.0,0.0,1.0,-0.2; 0,0,0,1|]"
 	constraint " (B_k) [ t == 0] ==<B_1, B_2, B_3>"
 	constraint " (T_geom_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-2.2; 0,0,0,1|]"
 	constraint " (T_geom_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-0.7; 0,0,0,1|]"
 	constraint " (T_geom_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-0.1; 0,0,0,1|]"
-	constraint " (T_offset_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,1; 0,0,0,1|]"
-	constraint " (T_offset_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.5; 0,0,0,1|]"
+	constraint " (T_offset_1) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-1; 0,0,0,1|]"
+	constraint " (T_offset_2) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,-0.5; 0,0,0,1|]"
 	constraint " (T_offset_3) [ t == 0] ==[|1.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0; 0.0,0.0,1.0,0.1; 0,0,0,1|]"
 	constraint " (T_geom) [ t == 0] ==<T_geom_1, T_geom_2, T_geom_3>"
 	constraint " (T_offset) [ t == 0] ==<T_offset_1, T_offset_2, T_offset_3>"
 	constraint " (L1_geom . geomType) [ t == 0] ==cylinder"
-	constraint " (L1_geom . geomVal) [ t == 0] ==[| 0.05 , 2.1 |]"
+	constraint " (L1_geom . geomVal) [ t == 0] ==[| 0.05 , 2.0 |]"
 	constraint " (L2_geom . geomType) [ t == 0] ==cylinder"
-	constraint " (L2_geom . geomVal) [ t == 0] ==[| 0.05 , 1.1 |]"
+	constraint " (L2_geom . geomVal) [ t == 0] ==[| 0.05 , 1.0 |]"
 	constraint " (L3_geom . geomType) [ t == 0] ==box"
 	constraint " (L3_geom . geomVal) [ t == 0] ==[| 0.2 , 0.2 , 0.2 |]"
 }

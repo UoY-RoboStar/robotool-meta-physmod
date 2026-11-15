@@ -38,8 +38,8 @@ def solve_velocity_constraint(q, dqA, length):
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run MuJoCo four-bar and log joint angles.")
-    parser.add_argument("--xml", default="/home/arjunbadyal/RoboStar/physmod-physics-engine-private/Examples/ReferenceImplementations/FourBar/fourbar_mujoco.xml")
-    parser.add_argument("--output", default="trajectory_mujoco_fourbar.csv")
+    parser.add_argument("--xml", default=str(Path(__file__).with_name("fourbar_mujoco.xml")))
+    parser.add_argument("--output", default=str(Path(__file__).with_name("trajectory_mujoco_fourbar.csv")))
     parser.add_argument("--duration", type=float, default=2.0)
     parser.add_argument("--dqA", type=float, default=3.0)
     parser.add_argument("--link-length", type=float, default=4.0)

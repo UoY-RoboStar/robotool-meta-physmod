@@ -31,6 +31,7 @@ import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.slnDF.slnDF.Solution;
 import circus.robocalc.robosim.physmod.testdata.TestData;
 import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.InputCheck;
+import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.ProcessLimit;
 
 /**
  * STANDALONE_VISUALISATION mode test for SimpleArm:
@@ -236,12 +237,13 @@ public class TestSimpleArm_T5Standalone_Visualisation {
             Path dynamicsFile = buildDir.resolve("dynamics.csv");
             Path posesFile = buildDir.resolve("poses_ours.csv");
             
-            // Run physics simulation for 5 seconds (timeout after 10 to kill it)
+            // The simulation runs for 30 s; stop it after 10
             System.out.println("Running 5-second simulation to capture dynamics...");
-            ProcessBuilder pb = new ProcessBuilder("timeout", "10", "./platform1_sim");
+            ProcessBuilder pb = new ProcessBuilder("./platform1_sim");
             pb.directory(buildDir.toFile());
             pb.redirectErrorStream(true);
             Process process = pb.start();
+            ProcessLimit.stopAfter(process, 10);
             
             // Capture output
             try (BufferedReader reader = new BufferedReader(
