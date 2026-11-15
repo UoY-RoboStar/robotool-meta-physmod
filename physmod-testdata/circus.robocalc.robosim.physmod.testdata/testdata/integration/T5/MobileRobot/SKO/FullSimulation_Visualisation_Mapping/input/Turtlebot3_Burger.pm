@@ -1,6 +1,3 @@
-// Simplified Turtlebot3 Burger physical model for the SKO pipeline.
-// Uses two controlled wheel joints and minimal inertial parameters.
-
 import physmod::math::*
 import physmod::SKO::joints::Revolute_y
 import physmod::trivial::actuators::ControlledMotor 
@@ -13,7 +10,7 @@ pmodel Turtlebot3_Burger {
 				inertial information {
 					mass 0.82573504
 					inertia matrix { ixx 0.72397393 ixy 0.0000000004686399 ixz -0.0000000109525703 iyy 0.72397393 iyz 0.0000000028582649 izz 0.653050163 }
-					pose { x = -0.032 y = 0.0 z = 0.070 roll = 0.0 pitch = 0.0 yaw = 0.0 }
+					pose { x = 0.0 y = 0.0 z = 0.0 roll = 0.0 pitch = 0.0 yaw = 0.0 }
 				}
 				mesh {
 					shape "meshes/bases/burger_base.stl"
