@@ -17,7 +17,7 @@ Target key: C++ = C++ source code, LaTeX = LaTeX equations, Isabelle = Isabelle 
 | SKO fullSimulation | SKO | C++ | fullSimulation | S1, S2 | [SKO/fullSimulation/](SKO/fullSimulation/) |
 | SKO fullSimulation visualisation | SKO | C++ | fullSimulation_visualisation | S1, S2 | [SKO/fullSimulation_visualisation/](SKO/fullSimulation_visualisation/) |
 | SKO standalone | SKO | C++ | standalone | S1, S2 | [SKO/standalone/](SKO/standalone/) |
-| SKO standalone visualisation | SKO | C++ | standalone_visualisation | S1, S2 | [SKO/standalone_visualisation/](SKO/standalone_visualisation/) |
+| SKO standalone visualisation | SKO | C++ | standalone_visualisation | S1, S2 | [../T4/SKO/expected/SimpleArmSerial.slnRef](../T4/SKO/expected/SimpleArmSerial.slnRef) |
 | SKO latex | SKO | LaTeX | latex | S1, S2 | [SKO/latex/](SKO/latex/) |
 | SKO Isabelle equations | SKO | Isabelle | integrated | S1, S2 | [SKO/integrated/](SKO/integrated/) |
 | SKO Isabelle proof | SKO | Isabelle | proof | S1, S2 | [SKO_proof/](SKO_proof/) |
@@ -27,7 +27,7 @@ Target key: C++ = C++ source code, LaTeX = LaTeX equations, Isabelle = Isabelle 
 | Acrobot CGA standalone visualisation | CGA | C++ | standalone_visualisation | S1, S2 | [Acrobot/CGA/](Acrobot/CGA/) |
 | AcrobotControlled SKO fullSimulation visualisation | SKO | C++ | fullSimulation_visualisation | S1, S2 | [AcrobotControlled/SKO/FullSimulation_Visualisation/](AcrobotControlled/SKO/FullSimulation_Visualisation/) |
 | AcrobotControlled Isabelle proof | SKO | Isabelle | proof | S1, S2 | [AcrobotControlled/SKO/](AcrobotControlled/SKO/) |
-| SimpleArm SKO standalone visualisation | SKO | C++ | standalone_visualisation | S1, S2 | [RobotExamples/SimpleArm/SKO/](RobotExamples/SimpleArm/SKO/) |
+| SimpleArm SKO standalone visualisation | SKO | C++ | standalone_visualisation | S1, S2 | [../T4/SKO/expected/SimpleArmSerial.slnRef](../T4/SKO/expected/SimpleArmSerial.slnRef) |
 | ClosedChain SKO[^1] | SKO | C++ | constraint dynamics | S1, S2 | [ClosedChain/SKO/](ClosedChain/SKO/) |
 | ClosedChain SKO standalone visualisation[^1] | SKO | C++ | standalone_visualisation | S1, S2 | [ClosedChain/SKO/](ClosedChain/SKO/) |
 
@@ -44,7 +44,7 @@ Target key: C++ = C++ source code, LaTeX = LaTeX equations, Isabelle = Isabelle 
 | proof | [SKO/proof/](SKO/proof/) | Proof mode output |
 | fullSimulation | [SKO/fullSimulation/](SKO/fullSimulation/) | Full simulation with orchestrator |
 | fullSimulation_visualisation | [SKO/fullSimulation_visualisation/](SKO/fullSimulation_visualisation/) | Full simulation with visualisation |
-| standalone_visualisation | [SKO/standalone_visualisation/](SKO/standalone_visualisation/) | Standalone with visualisation |
+| standalone_visualisation | [../T4/SKO/expected/SimpleArmSerial.slnRef](../T4/SKO/expected/SimpleArmSerial.slnRef) | Standalone with visualisation |
 
 ## Algorithm substep coverage
 

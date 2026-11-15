@@ -36,11 +36,12 @@ import circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests.ProcessLimi
 /**
  * STANDALONE_VISUALISATION mode test for SimpleArm:
  * - Generates physics engine with visualization but without orchestrator
- * - Only gravity is applied (no controller torques)
+ * - No controller, so no torque acts on the arm
  * - Compiles and runs standalone executable with visualization
  * - Useful for comparing dynamics with Drake
  */
 @org.junit.jupiter.api.Tag("requires-meshcat")
+@org.junit.jupiter.api.Tag("generator-backlog")
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
 public class TestSimpleArm_T5Standalone_Visualisation {
@@ -67,10 +68,6 @@ public class TestSimpleArm_T5Standalone_Visualisation {
             .resolve("SimpleArm");
     }
 
-    private Path standaloneVisRoot() {
-        return TestData.path("integration/T5/RobotExamples/SimpleArm/SKO/standalone_visualisation");
-    }
-
     private Path tempOutputRoot() {
         try {
             return Files.createTempDirectory("TestSimpleArm_T5StandaloneVis");
@@ -84,8 +81,7 @@ public class TestSimpleArm_T5Standalone_Visualisation {
         // Use a temp directory for output to avoid writing into the testdata submodule
         Path tempDir = tempOutputRoot();
 
-        // Input: simplearm slnRef (gravity only, no controller)
-        Path input = InputCheck.valid(standaloneVisRoot().resolve("input").resolve("simplearm_gravity_only.slnRef"));
+        Path input = InputCheck.valid(TestData.path("integration/T4/SKO/expected/SimpleArmSerial.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);

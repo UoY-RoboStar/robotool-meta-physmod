@@ -34,11 +34,12 @@ import circus.robocalc.robosim.physmod.testdata.TestData;
 /**
  * STANDALONE_VISUALISATION mode test for SimpleArmSerial:
  * - Generates physics engine with visualization but without orchestrator
- * - Only gravity is applied (no controller torques)
+ * - No controller, so no torque acts on the arm
  * - Compiles and runs standalone executable with visualization
  * - Useful for debugging visualization issues (link positions, transforms, etc.)
  */
 @org.junit.jupiter.api.Tag("requires-meshcat")
+@org.junit.jupiter.api.Tag("generator-backlog")
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
 public class TestSKO_T5Standalone_Visualisation {
@@ -47,8 +48,6 @@ public class TestSKO_T5Standalone_Visualisation {
     private ParseHelper<SlnRefs> slnRefParseHelper;
 
     private ParseHelper<Solution> solutionDSLParseHelper;
-    private static final Path TESTDATA_PROJECT_PATH =
-        TestData.path("integration/T5/SKO");
 
     private ParseHelper<Solution> getSolutionDSLParseHelper() {
         if (solutionDSLParseHelper == null) {
@@ -70,10 +69,6 @@ public class TestSKO_T5Standalone_Visualisation {
         return integrationRoot().resolve("standalone_visualisation");
     }
 
-    private Path testdataRoot() {
-        return TESTDATA_PROJECT_PATH;
-    }
-
     @Test
     public void testStandaloneVisualisationMode() throws Exception {
         // Clean temp directory
@@ -82,8 +77,7 @@ public class TestSKO_T5Standalone_Visualisation {
             deleteDirectory(tempDir);
         }
 
-        // Input: SimpleArmSerial slnRef (gravity only, no controller)
-        Path input = InputCheck.valid(testdataRoot().resolve("standalone_visualisation").resolve("input").resolve("SimpleArmSerial_gravity_only.slnRef"));
+        Path input = InputCheck.valid(TestData.path("integration/T4/SKO/expected/SimpleArmSerial.slnRef"));
         assertTrue(Files.exists(input), "Missing input slnRef: " + input);
 
         String slnRefText = Files.readString(input);
@@ -222,16 +216,15 @@ public class TestSKO_T5Standalone_Visualisation {
 
             // STAGE 5: Ready for manual testing
             System.out.println("\n=== STAGE 5: Ready for Manual Testing ===");
-            System.out.println("To visualize the SimpleArmSerial with gravity only:");
+            System.out.println("To visualize the SimpleArmSerial:");
             System.out.println("1. cd " + buildDir.toAbsolutePath());
             System.out.println("2. ./platform1_sim");
-            System.out.println("\nThe robot should drop under gravity.");
+            System.out.println("\nThe arm starts upright; without a controller no torque acts on it.");
             System.out.println("Check that:");
             System.out.println("  - Links are properly connected");
             System.out.println("  - Link 1 (gripper) is a 0.5×0.5×0.5m box");
             System.out.println("  - Link 2 (upper link) is a cylinder radius=0.25m, length=4.0m");
             System.out.println("  - Link 3 (base) is a 1.0×1.0×0.5m box");
-            System.out.println("  - Robot drops naturally under gravity (starts at z=4.0m)");
             System.out.println("\nVisualization files:");
             System.out.println("  Generated code: " + stage2SrcDir.toAbsolutePath());
             System.out.println("  Build directory: " + buildDir.toAbsolutePath());

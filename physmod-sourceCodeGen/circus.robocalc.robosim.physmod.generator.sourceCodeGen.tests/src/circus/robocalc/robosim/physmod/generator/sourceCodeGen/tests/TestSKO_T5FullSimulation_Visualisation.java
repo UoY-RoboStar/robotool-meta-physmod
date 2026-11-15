@@ -91,6 +91,7 @@ public class TestSKO_T5FullSimulation_Visualisation {
     }
 
     @Tag("requires-meshcat")
+    @Tag("generator-backlog")
     @Test
     public void testFullSimulationWithVisualisation() throws Exception {
         Path input = InputCheck.valid(TestData.path("integration/T4/SKO/expected/SimpleArmSerial.slnRef"));

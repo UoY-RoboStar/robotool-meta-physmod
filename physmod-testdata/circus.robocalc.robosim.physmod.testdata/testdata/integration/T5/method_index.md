@@ -28,7 +28,7 @@ Each method listed here maps to the data directory it uses. Data directories con
 | [TestSKO_T5FullSimulation] | testFullSimulation | [SKO/fullSimulation/](SKO/fullSimulation/) |
 | [TestSKO_T5FullSimulation_Visualisation] | testFullSimulationWithVisualisation | [SKO/fullSimulation_visualisation/](SKO/fullSimulation_visualisation/) |
 | [TestSKO_T5Standalone] | testStandaloneModeWithTrajectory | [SKO/standalone/](SKO/standalone/) |
-| [TestSKO_T5Standalone_Visualisation] | testStandaloneVisualisationMode | [SKO/standalone_visualisation/](SKO/standalone_visualisation/) |
+| [TestSKO_T5Standalone_Visualisation] | testStandaloneVisualisationMode | [../T4/SKO/expected/SimpleArmSerial.slnRef](../T4/SKO/expected/SimpleArmSerial.slnRef) |
 | [TestSKO_T5Latex] | testLatexGeneration | [SKO/latex/](SKO/latex/) |
 | [TestSKO_Acrobot_Latex] | testAcrobotLatexGeneration | [RobotExamples/Acrobot/SKO/](RobotExamples/Acrobot/SKO/) |
 | [TestIsabelle_T5Equations] | testIsabelleEquationsGeneration | [SKO/integrated/](SKO/integrated/) |
@@ -38,7 +38,7 @@ Each method listed here maps to the data directory it uses. Data directories con
 | [TestAcrobot_T5Standalone_Visualisation] | testStandaloneVisualisationMode | [Acrobot/SKO/standalone_visualisation/](Acrobot/SKO/standalone_visualisation/) |
 | [TestAcrobot_T5FullSimulation_Visualisation] | testFullSimulationWithVisualisation | [RobotExamples/Acrobot/SKO/fullSimulation_visualisation/](RobotExamples/Acrobot/SKO/fullSimulation_visualisation/) |
 | [TestAcrobotControlled_T5FullSimulation_Visualisation] | testFullSimulationWithVisualisation | [AcrobotControlled/SKO/FullSimulation_Visualisation/](AcrobotControlled/SKO/FullSimulation_Visualisation/) |
-| [TestSimpleArm_T5Standalone_Visualisation] | testStandaloneVisualisationMode | [RobotExamples/SimpleArm/SKO/](RobotExamples/SimpleArm/SKO/) |
+| [TestSimpleArm_T5Standalone_Visualisation] | testStandaloneVisualisationMode | [../T4/SKO/expected/SimpleArmSerial.slnRef](../T4/SKO/expected/SimpleArmSerial.slnRef) |
 | [FourBarClosedChainSourceCodeGenTest] | testClosedChainSlnRefGeneratesSolutionDsl | [ClosedChain/SKO/](ClosedChain/SKO/) |
 | [FourBarClosedChainStandaloneVisualisationTest] | testStandaloneVisualisationMode | [ClosedChain/SKO/](ClosedChain/SKO/) |
 
