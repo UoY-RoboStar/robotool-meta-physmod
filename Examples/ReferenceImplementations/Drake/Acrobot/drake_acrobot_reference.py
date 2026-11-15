@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run the Acrobot in Drake and log its dynamics and link frames.
 
-The model is the thesis Acrobot: Link1 (1 kg, 1 m) hangs from the shoulder at z = -0.2, Link2 (1 kg, 2 m)
+The model is the Acrobot: Link1 (1 kg, 1 m) hangs from the shoulder at z = -0.2, Link2 (1 kg, 2 m)
 from the elbow at z = -1.2, both hinged about x, gravity along -z. Index 0 is the shoulder, 1 the elbow.
 The frames B1 and B2 sit at the shoulder and the elbow, written row by row as 4x4 world transforms.
 """

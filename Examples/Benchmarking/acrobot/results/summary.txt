@@ -1,0 +1,17 @@
+
+Largest difference from sko in any angle or rate over the 5 s:
+rbdl         0.000e+00
+robcogen     1.641e-06
+gafro        0.000e+00
+drake        0.000e+00
+mujoco       0.000e+00
+pinocchio    0.000e+00
+
+Mean time of one forward-dynamics call, microseconds (mean over the nine shoulder angles):
+sko             10.630
+rbdl             0.291
+robcogen         0.232
+gafro            2.249
+drake            7.408
+mujoco           5.917
+pinocchio        3.146

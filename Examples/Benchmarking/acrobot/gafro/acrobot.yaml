@@ -1,0 +1,174 @@
+# The Acrobot of acrobot_benchmark.h, for GAFRO.
+
+system:
+  name: acrobot
+  root_link: base_link
+
+joints:
+  shoulder:
+    type: revolute
+    name: shoulder
+    parent_link: base_link
+    child_link: link1
+    transform:
+      translation:
+        x: 0
+        y: 0
+        z: 0
+      rotation:
+        w: 1
+        x: 0
+        y: 0
+        z: 0
+    axis:
+      x: 1
+      y: 0
+      z: 0
+    limits:
+      lower: -3.14159
+      upper: 3.14159
+      velocity: 10
+      effort: 100
+
+  elbow:
+    type: revolute
+    name: elbow
+    parent_link: link1
+    child_link: link2
+    transform:
+      translation:
+        x: 0
+        y: 0
+        z: -1.0
+      rotation:
+        w: 1
+        x: 0
+        y: 0
+        z: 0
+    axis:
+      x: 1
+      y: 0
+      z: 0
+    limits:
+      lower: -3.14159
+      upper: 3.14159
+      velocity: 10
+      effort: 100
+
+  ee_joint:
+    type: fixed
+    name: ee_joint
+    parent_link: link2
+    child_link: ee_link
+    transform:
+      translation:
+        x: 0
+        y: 0
+        z: -2.0
+      rotation:
+        w: 1
+        x: 0
+        y: 0
+        z: 0
+    axis:
+      x: 0
+      y: 0
+      z: 0
+
+links:
+  base_link:
+    name: base_link
+    joints:
+      - shoulder
+    inertial:
+      mass: 0
+      inertia:
+        xx: 0
+        xy: 0
+        yy: 0
+        yz: 0
+        zz: 0
+        xz: 0
+      origin:
+        position:
+          x: 0
+          y: 0
+          z: 0
+        orientation:
+          w: 1
+          x: 0
+          y: 0
+          z: 0
+
+  link1:
+    name: link1
+    parent_joint: shoulder
+    joints:
+      - elbow
+    inertial:
+      mass: 1.0
+      inertia:
+        xx: 0.083
+        xy: 0
+        yy: 0.083
+        yz: 0
+        zz: 0.001
+        xz: 0
+      origin:
+        position:
+          x: 0
+          y: 0
+          z: -0.5
+        orientation:
+          w: 1
+          x: 0
+          y: 0
+          z: 0
+
+  link2:
+    name: link2
+    parent_joint: elbow
+    joints:
+      - ee_joint
+    inertial:
+      mass: 1.0
+      inertia:
+        xx: 0.333
+        xy: 0
+        yy: 0.333
+        yz: 0
+        zz: 0.001
+        xz: 0
+      origin:
+        position:
+          x: 0
+          y: 0
+          z: -1.0
+        orientation:
+          w: 1
+          x: 0
+          y: 0
+          z: 0
+
+  ee_link:
+    name: ee_link
+    parent_joint: ee_joint
+    inertial:
+      mass: 0
+      inertia:
+        xx: 0
+        xy: 0
+        yy: 0
+        yz: 0
+        zz: 0
+        xz: 0
+      origin:
+        position:
+          x: 0
+          y: 0
+          z: 0
+        orientation:
+          w: 1
+          x: 0
+          y: 0
+          z: 0

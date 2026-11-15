@@ -1,0 +1,16 @@
+Robot Acrobot
+
+Frames {
+    fr_base, fr_link1, fr_link2,
+    fr_shoulder, fr_elbow
+}
+
+Transforms
+{
+    fr_link1 <- fr_base
+    fr_link2 <- fr_link1
+}
+
+Jacobians
+{
+}

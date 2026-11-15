@@ -15,7 +15,7 @@ import circus.robocalc.robosim.physmod.libs.sourceCodeGen.solutionLib.SolutionLi
 import circus.robocalc.robosim.physmod.slnRef.slnRef.SlnRefs;
 import circus.robocalc.robosim.physmod.testdata.TestData;
 
-/** The proof block of the Simple Arm's proof file becomes the proof solution the thesis describes. */
+/** Generates the proof solution from the Simple Arm's proof input and compares it with the expected file. */
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SlnRefInjectorProvider.class)
 public class GenerateProofSolution {

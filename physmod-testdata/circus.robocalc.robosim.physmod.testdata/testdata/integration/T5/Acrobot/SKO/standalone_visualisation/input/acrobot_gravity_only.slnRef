@@ -163,7 +163,7 @@ input Local { name d_theta type "vector(real,2)" }
 input Local { name dt type "real" }
 constraint " (d_theta) [ t == 0] ==zeroVec(2)"
 constraint " (dt) [ t == 0] ==0.01"
-constraint " (theta) [ t == 0] ==zeroVec(2)"
+constraint " (theta) [ t == 0] ==(|1.0,1.0|)"
 }
 SolutionRef {
 	expression Local { name T_geom type "Seq(matrix(real,4,4))" }
@@ -213,7 +213,7 @@ constraint " (H_1) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
 constraint " (H_2) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
 constraint " (submatrix(H)(0,0,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
 constraint " (submatrix(H)(1,6,1,6)) [ t == 0] ==[| 1 , 0 , 0 , 0 , 0 , 0 |]"
-constraint " (theta) [ t == 0] ==zeroVec(2)"
+constraint " (theta) [ t == 0] ==(|1.0,1.0|)"
 constraint " (X_J_1) [ t == 0] ==[|1.0,0.0,0.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0,0.0,0.0; 0.0,0.0,1.0,0.0,0.0,0.0; 0.0,0.0,0.0,1.0,0.0,0.0; 0.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
 constraint " (X_J_1) [ t == t] ==[|1,0,0,0,0,0; 0,cos(theta(0)),-sin(theta(0)),0,0,0; 0,sin(theta(0)),cos(theta(0)),0,0,0; 0,0,0,1,0,0; 0,0,0,0,cos(theta(0)),-sin(theta(0)); 0,0,0,0,sin(theta(0)),cos(theta(0))|]"
 constraint " (X_J_2) [ t == 0] ==[|1.0,0.0,0.0,0.0,0.0,0.0; 0.0,1.0,0.0,0.0,0.0,0.0; 0.0,0.0,1.0,0.0,0.0,0.0; 0.0,0.0,0.0,1.0,0.0,0.0; 0.0,0.0,0.0,0.0,1.0,0.0; 0.0,0.0,0.0,0.0,0.0,1.0|]"
