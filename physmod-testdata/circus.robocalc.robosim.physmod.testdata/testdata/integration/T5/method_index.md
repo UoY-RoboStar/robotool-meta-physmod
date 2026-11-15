@@ -33,6 +33,8 @@ Each method listed here maps to the data directory it uses. Data directories con
 | [TestSKO_Acrobot_Latex] | testAcrobotLatexGeneration | [RobotExamples/Acrobot/SKO/](RobotExamples/Acrobot/SKO/) |
 | [TestIsabelle_T5Equations] | testIsabelleEquationsGeneration | [SKO/integrated/](SKO/integrated/) |
 | [TestIsabelle_SKO_WithProof] | testIsabelleWithProofBlock | [SKO_proof/](SKO_proof/) |
+| [GenerateProofSolution] | testExpectedOutputIsValid | [SKO_proof/](SKO_proof/) |
+| [GenerateProofSolution] | generateProofSolutionDSL | [SKO_proof/](SKO_proof/) |
 | [TestIsabelle_AcrobotControlled_RegularProof] | testIsabelleEquationsFromRegularSolution_AcrobotControlled | [AcrobotControlled/SKO/](AcrobotControlled/SKO/) |
 | [TestAcrobot_CGA] | testCGAFormulation | [Acrobot/CGA/](Acrobot/CGA/) |
 | [TestAcrobot_T5Standalone_Visualisation] | testStandaloneVisualisationMode | [Acrobot/SKO/standalone_visualisation/](Acrobot/SKO/standalone_visualisation/) |
@@ -53,6 +55,7 @@ Each method listed here maps to the data directory it uses. Data directories con
 [TestSKO_Acrobot_Latex]: ../../../../../physmod-sourceCodeGen/circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests/src/circus/robocalc/robosim/physmod/generator/sourceCodeGen/tests/TestSKO_Acrobot_Latex.java
 [TestIsabelle_T5Equations]: ../../../../../physmod-sourceCodeGen/circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests/src/circus/robocalc/robosim/physmod/generator/sourceCodeGen/tests/TestIsabelle_T5Equations.java
 [TestIsabelle_SKO_WithProof]: ../../../../../physmod-sourceCodeGen/circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests/src/circus/robocalc/robosim/physmod/generator/sourceCodeGen/tests/TestIsabelle_SKO_WithProof.java
+[GenerateProofSolution]: ../../../../../physmod-sourceCodeGen/circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests/src/circus/robocalc/robosim/physmod/generator/sourceCodeGen/tests/GenerateProofSolution.java
 [TestIsabelle_AcrobotControlled_RegularProof]: ../../../../../physmod-sourceCodeGen/circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests/src/circus/robocalc/robosim/physmod/generator/sourceCodeGen/tests/TestIsabelle_AcrobotControlled_RegularProof.java
 [TestAcrobot_CGA]: ../../../../../physmod-sourceCodeGen/circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests/src/circus/robocalc/robosim/physmod/generator/sourceCodeGen/tests/RobotExamples/TestAcrobot_CGA.java
 [TestAcrobot_T5Standalone_Visualisation]: ../../../../../physmod-sourceCodeGen/circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests/src/circus/robocalc/robosim/physmod/generator/sourceCodeGen/tests/RobotExamples/TestAcrobot_T5Standalone_Visualisation.java

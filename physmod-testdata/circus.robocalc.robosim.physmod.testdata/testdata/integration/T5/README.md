@@ -41,7 +41,7 @@ Target key: C++ = C++ source code, LaTeX = LaTeX equations, Isabelle = Isabelle 
 | standalone | [SKO/standalone/](SKO/standalone/) | Standalone mode with trajectory logging |
 | integrated | [SKO/integrated/](SKO/integrated/) | Integrated mode |
 | latex | [SKO/latex/](SKO/latex/) | LaTeX equation generation |
-| proof | [SKO/proof/](SKO/proof/) | Proof mode output |
+| proof | [SKO_proof/](SKO_proof/) | Proof mode output |
 | fullSimulation | [SKO/fullSimulation/](SKO/fullSimulation/) | Full simulation with orchestrator |
 | fullSimulation_visualisation | [SKO/fullSimulation_visualisation/](SKO/fullSimulation_visualisation/) | Full simulation with visualisation |
 | standalone_visualisation | [../T4/SKO/expected/SimpleArmSerial.slnRef](../T4/SKO/expected/SimpleArmSerial.slnRef) | Standalone with visualisation |

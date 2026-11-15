@@ -65,6 +65,7 @@
 						<include>**/*Test.class</include>
 						<include>**/*Tests.class</include>
 						<include>**/*TestCase.class</include>
+						<include>**/GenerateProofSolution.class</include>
 					</includes>
 				</configuration>
 			</plugin>
