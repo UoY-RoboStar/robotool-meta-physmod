@@ -18,6 +18,7 @@ Each method listed here maps to the data directory it uses. Data directories con
 | [ClosedChainSKOTest] | testClosedChainTopologyDetection | [ClosedChain/SKO/](ClosedChain/SKO/) |
 | [ClosedChainSKOTest] | testClosedChainFormulationDetection | [ClosedChain/SKO/](ClosedChain/SKO/) |
 | [ClosedChainSKOTest] | testClosedChainSKOGenerator | [ClosedChain/SKO/](ClosedChain/SKO/) |
+| [ClosedChainSKOTest] | testExpectedOutputIsValid | [ClosedChain/SKO/](ClosedChain/SKO/) |
 | [MetamodelCoverageGeneratorTest] | generateDefaultModels | [metamodelCoverage/Default/](metamodelCoverage/Default/) |
 | [MetamodelCoverageSKOGeneratorTest] | generateSKOModels | [metamodelCoverage/SKO/](metamodelCoverage/SKO/) |
 

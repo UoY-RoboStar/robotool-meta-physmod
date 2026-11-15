@@ -1,3 +1,0 @@
-	 	circus.robocalc.robosim.physmod.impl.PModelImpl@d6d55cb (name: FourBarPlanarLinkage)
-Closed Chain
-

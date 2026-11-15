@@ -25,7 +25,9 @@ Solution key: GP = GeneralisedPosition, FD = ForwardDynamics, NI = NumericalInte
 | MappingPM | SKO | Serial | PM | S1, S2, S3, S3a, S3b, S4, S5 | [AcrobotControlled/SKO/FullSimulation_Visualisation_Mapping/](AcrobotControlled/SKO/FullSimulation_Visualisation_Mapping/) |
 | Visualisation | Visual | Serial | Vis | S1, S2, S3, S3a, S4, S5 | [vis/](vis/) |
 | Vis algebraic constraints | Visual | Serial | Vis | S1, S2, S3, S3a, S3b, S4, S5 | [vis/](vis/) |
-| ClosedChain | SKO | Closed | GP, FD, Vis | S1, S2, S3, S3a, S4, S5 | [../T3/ClosedChain/SKO/](../T3/ClosedChain/SKO/) |
+| ClosedChain[^1] | SKO | Closed | GP, FD, Vis | S1, S2, S3, S3a, S4, S5 | [../T3/ClosedChain/SKO/](../T3/ClosedChain/SKO/) |
+
+[^1]: Jain's augmented approach (Robot and Multibody Dynamics, section 11.2).
 
 ## Algorithm substep coverage
 

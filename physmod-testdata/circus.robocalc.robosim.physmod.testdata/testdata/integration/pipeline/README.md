@@ -22,9 +22,11 @@ Feature key: TV = trajectory validation, LR = library references, PM = platform 
 | AcrobotControlled | Acrobot | SKO | Serial | TV | [AcrobotControlled/](AcrobotControlled/) |
 | AcrobotControlled mapping | Acrobot | SKO | Serial | PM, TV | [AcrobotControlled/Mapping/](AcrobotControlled/Mapping/) |
 | SKOVis | SimpleArm | SKO | Serial | Vis | [visualisation/SKOVis/](visualisation/SKOVis/) |
-| ClosedChain FourBar | Four-Bar | SKO | Closed | TV | [ClosedChain/FourBar/](ClosedChain/FourBar/) |
+| ClosedChain FourBar[^1] | Four-Bar | SKO | Closed | TV | [ClosedChain/FourBar/](ClosedChain/FourBar/) |
 | MobileRobot mapping | Turtlebot | SKO | Tree | PM, Vis | [MobileRobot/Mapping/](MobileRobot/Mapping/) |
 | MobileRobot Isabelle proof | Turtlebot | SKO | Tree | IP | [MobileRobot/IsabelleProof/](MobileRobot/IsabelleProof/) |
 | AcrobotSerial20 benchmarking | Acrobot (20-link) | SKO | Serial | BM | `Examples/Benchmarking/` (external) |
+
+[^1]: Jain's augmented approach (Robot and Multibody Dynamics, section 11.2).
 
 The AcrobotSerial20 benchmarking test uses data from `Examples/Benchmarking/` outside the testdata directory. All other tests read exclusively from their listed pipeline directory.

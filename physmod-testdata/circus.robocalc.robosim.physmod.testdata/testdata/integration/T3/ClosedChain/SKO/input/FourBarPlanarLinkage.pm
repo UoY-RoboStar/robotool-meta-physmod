@@ -34,7 +34,7 @@ pmodel FourBarPlanarLinkage {
 	}
 
 	local link Link1 {
-		pose { x=0.0 y=0.0 z=0.0 roll=0.0 pitch=0.0 yaw=0.0 }
+		pose { x=0.0 y=0.0 z=0.0 roll=0.0 pitch=1.8234765819369751 yaw=0.0 }
 		def { }
 		local body Link1Body {
 			def {
@@ -54,7 +54,7 @@ pmodel FourBarPlanarLinkage {
 	}
 
 	local link Link2 {
-		pose { x=0.0 y=0.0 z=0.0 roll=0.0 pitch=0.0 yaw=0.0 }
+		pose { x=-1.0 y=0.0 z=-3.872983346207417 roll=0.0 pitch=0.0 yaw=0.0 }
 		def { }
 		local body Link2Body {
 			def {
@@ -74,7 +74,7 @@ pmodel FourBarPlanarLinkage {
 	}
 
 	local link Link3 {
-		pose { x=0.0 y=0.0 z=0.0 roll=0.0 pitch=0.0 yaw=0.0 }
+		pose { x=3.0 y=0.0 z=-3.872983346207417 roll=0.0 pitch=-1.8234765819369751 yaw=0.0 }
 		def { }
 		local body Link3Body {
 			def {

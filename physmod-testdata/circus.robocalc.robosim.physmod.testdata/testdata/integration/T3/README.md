@@ -21,9 +21,11 @@ Component key: LJ = local joint, RJ = reference joint, LS = local sensor, RS = r
 | Acrobot CGA | CGA | Serial | LJ, B | S1a, S3, S4, S5a, S5b, S5c, S6a | [RobotExamples/acrobot/CGA/](RobotExamples/acrobot/CGA/) |
 | Acrobot controlled | SKO | Serial | RJ, RS, RA, B | S1a, S1b, S1c, S2a, S2b, S3, S4, S5a, S5b, S5c, S6a, S6b, S6c | [RobotExamples/acrobot_controlled/SKO/](RobotExamples/acrobot_controlled/SKO/) |
 | MobileRobot | SKO | Tree | RJ, LS, RA, B | S1a, S1b, S1c, S2a, S2b, S3, S4, S5a, S5b, S5c, S6a, S6b, S6c | [RobotExamples/MobileRobot/SKO/](RobotExamples/MobileRobot/SKO/) |
-| ClosedChain | SKO | Closed | RJ, B | S1a, S2a, S2b, S3, S4, S5a, S5b, S5c, S6a | [ClosedChain/SKO/](ClosedChain/SKO/) |
+| ClosedChain[^1] | SKO | Closed | RJ, B | S1a, S2a, S2b, S3, S4, S5a, S5b, S5c, S6a | [ClosedChain/SKO/](ClosedChain/SKO/) |
 | Metamodel coverage (Default) | Default | Serial | LJ, RJ, LS, RS, LA, RA, B | S1a, S1b, S1c, S2a, S2b, S3, S4, S5a, S5b, S5c, S6a, S6b, S6c | [metamodelCoverage/Default/](metamodelCoverage/Default/) |
 | Metamodel coverage (SKO) | SKO | Serial | LJ, RJ, LS, RS, LA, RA, B | S1a, S1b, S1c, S2a, S2b, S3, S4, S5a, S5b, S5c, S6a, S6b, S6c | [metamodelCoverage/SKO/](metamodelCoverage/SKO/) |
+
+[^1]: Jain's augmented approach (Robot and Multibody Dynamics, section 11.2).
 
 ## Algorithm substep coverage
 

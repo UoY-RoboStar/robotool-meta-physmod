@@ -40,7 +40,7 @@ Each method listed here maps to the data directory it uses. Data directories con
 | [TestAcrobotControlled_T5FullSimulation_Visualisation] | testFullSimulationWithVisualisation | [AcrobotControlled/SKO/FullSimulation_Visualisation/](AcrobotControlled/SKO/FullSimulation_Visualisation/) |
 | [TestSimpleArm_T5Standalone_Visualisation] | testStandaloneVisualisationMode | [RobotExamples/SimpleArm/SKO/](RobotExamples/SimpleArm/SKO/) |
 | [FourBarClosedChainSourceCodeGenTest] | testClosedChainSlnRefGeneratesSolutionDsl | [ClosedChain/SKO/](ClosedChain/SKO/) |
-| [FourBarClosedChainStandaloneVisualisationTest] | testStandaloneVisualisationMode | [ClosedChain/SKO/standalone_visualisation/](ClosedChain/SKO/standalone_visualisation/) |
+| [FourBarClosedChainStandaloneVisualisationTest] | testStandaloneVisualisationMode | [ClosedChain/SKO/](ClosedChain/SKO/) |
 
 <!-- Test source files -->
 [SolutionToCppGeneratorTest]: ../../../../../physmod-sourceCodeGen/circus.robocalc.robosim.physmod.generator.sourceCodeGen.tests/src/circus/robocalc/robosim/physmod/generator/sourceCodeGen/tests/SolutionToCppGeneratorTest.java
